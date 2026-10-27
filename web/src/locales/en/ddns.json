@@ -56,5 +56,7 @@
   "recordDeactivated": "This record is disabled",
   "savedChecking": "Saved; checking now",
   "triggered": "Triggered",
-  "recordsCollapsed": "{count} records hidden, click to expand"
+  "recordsCollapsed": "{count} records hidden, click to expand",
+  "filterPlaceholder": "Search name, group, domain or provider",
+  "groupCount": "{count} tasks"
 }

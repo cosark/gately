@@ -73,6 +73,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | ポートフォワードルール を削除 |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | ポートフォワードルール の有効/無効を切り替え |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | ポートフォワードルール の並び順を変更 |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | ポートフォワードルール のグループを一括設定 |
 | GET | `/api/portforward/settings` | `portforward:read` | ポートフォワードのグローバル設定を読み取り |
 | PUT | `/api/portforward/settings` | `portforward:write` | ポートフォワードのグローバル設定を保存 |
 
@@ -88,6 +89,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | DDNS タスク を削除 |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | DDNS タスク の有効/無効を切り替え |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | DDNS タスク の並び順を変更 |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | DDNS タスク のグループを一括設定 |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | シークレットを平文で表示 |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | DDNS タスクを即時同期 |
 | GET | `/api/ddns/providers` | `ddns:read` | 対応する DNS プロバイダーと必要なパラメーターを一覧表示 |
@@ -763,6 +765,13 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| フィールド | 型 |
+| --- | --- |
+| `group` | string |
+| `keys` | 配列 of string |
+
 ### crud.orderRequest
 
 | フィールド | 型 |
@@ -790,6 +799,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | フィールド | 型 |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |

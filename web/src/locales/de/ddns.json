@@ -56,5 +56,7 @@
   "recordDeactivated": "Dieser Eintrag ist deaktiviert",
   "savedChecking": "Gespeichert; Prüfung läuft",
   "triggered": "Ausgelöst",
-  "recordsCollapsed": "{count} Einträge ausgeblendet, zum Ausklappen klicken"
+  "recordsCollapsed": "{count} Einträge ausgeblendet, zum Ausklappen klicken",
+  "filterPlaceholder": "Name, Gruppe, Domain oder Anbieter suchen",
+  "groupCount": "{count} Aufgaben"
 }

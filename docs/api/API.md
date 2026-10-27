@@ -73,6 +73,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | 删除端口转发规则 |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | 启用或停用端口转发规则 |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | 调整端口转发规则排序 |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | 批量设置端口转发规则分组 |
 | GET | `/api/portforward/settings` | `portforward:read` | 读取端口转发全局设置 |
 | PUT | `/api/portforward/settings` | `portforward:write` | 保存端口转发全局设置 |
 
@@ -88,6 +89,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | 删除DDNS 任务 |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | 启用或停用DDNS 任务 |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | 调整DDNS 任务排序 |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | 批量设置DDNS 任务分组 |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | 查看密钥明文 |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | 立即同步一个 DDNS 任务 |
 | GET | `/api/ddns/providers` | `ddns:read` | 列出支持的 DNS 服务商及其所需参数 |
@@ -763,6 +765,13 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| 字段 | 类型 |
+| --- | --- |
+| `group` | string |
+| `keys` | 数组 of string |
+
 ### crud.orderRequest
 
 | 字段 | 类型 |
@@ -790,6 +799,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | 字段 | 类型 |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |

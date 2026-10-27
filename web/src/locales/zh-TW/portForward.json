@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "預設目標 PROXY",
   "routeMeta": "{domains} 個網域 · 累計 {hits}",
   "defaultHits": "累計 {hits}",
-  "defaultTargetNone": "未設定，未命中時斷開（已斷開 {rejected}）"
+  "defaultTargetNone": "未設定，未命中時斷開（已斷開 {rejected}）",
+  "filterPlaceholder": "搜尋名稱、分組、連接埠、目標或網域",
+  "groupCount": "{count} 條規則"
 }

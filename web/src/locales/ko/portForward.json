@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "기본 대상 PROXY",
   "routeMeta": "도메인 {domains}개 · 누적 {hits}",
   "defaultHits": "누적 {hits}",
-  "defaultTargetNone": "설정 안 됨, 일치하지 않으면 끊음 ({rejected}건 끊음)"
+  "defaultTargetNone": "설정 안 됨, 일치하지 않으면 끊음 ({rejected}건 끊음)",
+  "filterPlaceholder": "이름, 그룹, 포트, 대상 또는 도메인 검색",
+  "groupCount": "규칙 {count}개"
 }

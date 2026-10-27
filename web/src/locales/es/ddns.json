@@ -56,5 +56,7 @@
   "recordDeactivated": "Este registro está desactivado",
   "savedChecking": "Guardado; comprobando ahora",
   "triggered": "Activada",
-  "recordsCollapsed": "{count} registros ocultos, haz clic para expandir"
+  "recordsCollapsed": "{count} registros ocultos, haz clic para expandir",
+  "filterPlaceholder": "Buscar nombre, grupo, dominio o proveedor",
+  "groupCount": "{count} tareas"
 }

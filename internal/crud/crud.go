@@ -8,16 +8,19 @@
 //	DELETE /<path>/{key}         删除
 //	PUT    /<path>/{key}/enable  启停，body {"enable": bool}
 //	PUT    /<path>-order         排序，body {"keys": [...]}
+//	PUT    /<path>-group         批量设置分组，body {"keys": [...], "group": "..."}（仅在提供 Group 时注册）
 //	GET    /<path>/{key}/secrets 查看条目中被脱敏的密钥明文（仅在提供 Secrets 时注册）
 package crud
 
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"net/http"
 	"slices"
 	"strings"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/wangwanjie/gately/internal/httpx"
 	"github.com/wangwanjie/gately/internal/module"
@@ -52,6 +55,21 @@ type Collection[T any] struct {
 	// SecretsGuard 在查看密钥明文前调用（未持锁），返回 false 时已写入响应并拒绝，
 	// 例如 Web 终端要求先通过二次验证；可为 nil
 	SecretsGuard func(w http.ResponseWriter, r *http.Request) bool
+	// Group 返回条目的分组字段指针；提供时注册批量设置分组接口。分组只影响管理界面的展示，
+	// 修改分组不调用 Changed，不会重启运行实例；可为 nil
+	Group func(*T) *string
+}
+
+// MaxGroupLen 为分组名称的最大字符数。
+const MaxGroupLen = 64
+
+// NormalizeGroup 去掉分组名称首尾空白并校验长度，留空表示未分组。
+func NormalizeGroup(g *string) error {
+	*g = strings.TrimSpace(*g)
+	if utf8.RuneCountInString(*g) > MaxGroupLen {
+		return fmt.Errorf("分组名称不能超过 %d 个字符", MaxGroupLen)
+	}
+	return nil
 }
 
 // NewKey 生成随机 key。
@@ -98,6 +116,10 @@ func (c *Collection[T]) Register(r module.Router, path string) {
 	module.DocOf(r, "DELETE "+path+"/{key}", module.Doc{Summary: "删除"})
 	module.DocOf(r, "PUT "+path+"/{key}/enable", module.Doc{Summary: "启用或停用", Req: &enableRequest{}})
 	module.DocOf(r, "PUT "+path+"-order", module.Doc{Summary: "调整排序", Req: &orderRequest{}})
+	if c.Group != nil {
+		r.HandleFunc("PUT "+path+"-group", c.setGroup)
+		module.DocOf(r, "PUT "+path+"-group", module.Doc{Summary: "批量设置分组", Req: &groupRequest{}})
+	}
 	if c.Secrets != nil {
 		r.HandleFunc("GET "+path+"/{key}/secrets", c.secrets)
 		module.DocOf(r, "GET "+path+"/{key}/secrets", module.Doc{Summary: "查看密钥明文", Resp: map[string]string{}})
@@ -290,6 +312,50 @@ func (c *Collection[T]) order(w http.ResponseWriter, r *http.Request) {
 	}
 	old := *c.Items
 	*c.Items = reordered
+	if err := c.Save(); err != nil {
+		*c.Items = old
+		httpx.Error(w, http.StatusInternalServerError, "保存失败: %v", err)
+		return
+	}
+	httpx.OK(w, map[string]bool{"ok": true})
+}
+
+type groupRequest struct {
+	Keys []string `json:"keys"`
+	// Group 为目标分组名称，留空表示移出分组
+	Group string `json:"group"`
+}
+
+// setGroup 把多个条目移到同一分组，条目顺序不变
+func (c *Collection[T]) setGroup(w http.ResponseWriter, r *http.Request) {
+	var req groupRequest
+	if err := httpx.ReadJSON(r, &req); err != nil {
+		httpx.Error(w, http.StatusBadRequest, "%v", err)
+		return
+	}
+	if len(req.Keys) == 0 {
+		httpx.Error(w, http.StatusBadRequest, "请选择要设置分组的条目")
+		return
+	}
+	if err := NormalizeGroup(&req.Group); err != nil {
+		httpx.Error(w, http.StatusBadRequest, "%v", err)
+		return
+	}
+	c.Mu.Lock()
+	defer c.Mu.Unlock()
+	idx := make([]int, 0, len(req.Keys))
+	for _, k := range req.Keys {
+		i := c.index(k)
+		if i < 0 {
+			httpx.Error(w, http.StatusNotFound, "条目 %s 不存在", k)
+			return
+		}
+		idx = append(idx, i)
+	}
+	old := slices.Clone(*c.Items)
+	for _, i := range idx {
+		*c.Group(&(*c.Items)[i]) = req.Group
+	}
 	if err := c.Save(); err != nil {
 		*c.Items = old
 		httpx.Error(w, http.StatusInternalServerError, "保存失败: %v", err)

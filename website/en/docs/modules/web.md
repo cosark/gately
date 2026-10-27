@@ -14,6 +14,10 @@ Saving a change to a site or to the default site swaps the site list in place: t
 
 A site can have a "Group" (up to 64 characters; the default site cannot be grouped). Under each listener, the list shows groups as collapsible sections: groups appear in the order they first occur, ungrouped sites come after them, and the default site always comes last. The collapsed state of each group is kept in the browser. Click "Sort" to enter sort mode, where you can move sites up and down, drag them within their group, move whole groups and reorder listeners. Order only affects the list: domain matching follows the priority above regardless of site order, and saving the new order swaps the site list in place without dropping connections. The search box at the top of the page filters sites by domain, name, group, backend or remark.
 
+In sort mode you can also check several sites (the checkbox on a group header selects the whole group). Dragging any checked site moves all of them, and dropping onto a site or the header of another group moves them into that group. The toolbar moves the checked sites into a group in one step, or out of their group when the name is left empty; checked sites under different listeners are saved per listener.
+
+Hover over a group header and click the pencil button to rename the group: everything in it moves to the new name and keeps its position and order. Choosing a name that is already in use merges the two groups after a confirmation.
+
 ## Site types
 
 | Type | Description |

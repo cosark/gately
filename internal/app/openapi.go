@@ -156,14 +156,14 @@ func tagRank(tag string) int {
 func crudSummary(r routeInfo, verb string) string {
 	// 模块自定义的完整摘要原样使用，只有通用 CRUD 动作才拼接集合名称
 	switch verb {
-	case "列表", "新增", "修改", "删除", "调整排序", "启用或停用":
+	case "列表", "新增", "修改", "删除", "调整排序", "批量设置分组", "启用或停用":
 	default:
 		return verb
 	}
 	rest := strings.TrimPrefix(r.Path, "/api/"+r.Module)
 	coll := strings.TrimPrefix(rest, "/")
 	coll, _, _ = strings.Cut(coll, "/")
-	coll = strings.TrimSuffix(coll, "-order")
+	coll = strings.TrimSuffix(strings.TrimSuffix(coll, "-order"), "-group")
 	noun := crudNouns[r.Module+"/"+coll]
 	if noun == "" {
 		noun = "条目"
@@ -174,6 +174,8 @@ func crudSummary(r routeInfo, verb string) string {
 		return fmt.Sprintf("获取%s列表", noun)
 	case "调整排序":
 		return fmt.Sprintf("调整%s排序", noun)
+	case "批量设置分组":
+		return fmt.Sprintf("批量设置%s分组", noun)
 	case "启用或停用":
 		return fmt.Sprintf("启用或停用%s", noun)
 	case "新增":

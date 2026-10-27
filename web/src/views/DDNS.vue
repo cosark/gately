@@ -4,7 +4,19 @@
       <el-button v-if="tasks.length" :icon="allTasksCollapsed ? ChevronsUpDown : ChevronsDownUp" @click="setAll(tasks.map((tk) => tk.key), !allTasksCollapsed)">
         {{ allTasksCollapsed ? t('common.expandAll') : t('common.collapseAll') }}
       </el-button>
+      <el-input
+        v-if="tasks.length"
+        v-model="gl.filterText.value"
+        class="list-filter"
+        clearable
+        :disabled="gl.sortMode.value"
+        :prefix-icon="Search"
+        :placeholder="t('ddns.filterPlaceholder')"
+      />
       <CompactToggle v-model="compact" />
+      <el-button v-if="tasks.length > 1" :type="gl.sortMode.value ? 'primary' : 'default'" :icon="ArrowUpDown" @click="gl.toggleSortMode()">
+        {{ gl.sortMode.value ? t('groupSort.sortDone') : t('groupSort.sort') }}
+      </el-button>
       <div class="module-toggle">
         <span class="meta">{{ t('ddns.module') }}</span>
         <el-switch v-model="settings.enable" inline-prompt :active-text="t('ddns.switchOn')" :inactive-text="t('ddns.switchOff')" @change="saveSettings" />
@@ -14,61 +26,107 @@
 
     <ModuleBanner v-if="moduleOff" :title="t('ddns.moduleOffTitle')" :desc="t('ddns.moduleOffDesc')" :loading="enabling" @enable="enableModule" />
 
-    <div v-loading="loading" class="card-list" :class="{ 'is-compact': compact }">
+    <SortToolbar
+      v-if="gl.sortMode.value"
+      :selected-count="gl.selected.value.size"
+      :total="tasks.length"
+      :groups="gl.groupNames.value"
+      :busy="gl.busy.value"
+      @select-all="gl.selectAll()"
+      @clear="gl.clearSelection()"
+      @set-group="gl.setGroup"
+    />
+
+    <div v-loading="loading" class="card-list" :class="{ 'is-compact': compact || gl.sortMode.value, 'is-sorting': gl.sortMode.value }">
       <el-empty v-if="!loading && !tasks.length" :description="t('ddns.empty')" />
+      <el-empty v-else-if="!loading && !gl.items.value.length" :description="t('groupSort.noMatched')" :image-size="60" />
+      <template v-for="it in gl.items.value" :key="it.id">
+      <GroupHeader
+        v-if="it.kind === 'group'"
+        :name="it.name"
+        :count-text="t('ddns.groupCount', { count: it.count })"
+        :collapsed="it.collapsed"
+        :sorting="gl.sortMode.value"
+        :can-up="it.canUp"
+        :can-down="it.canDown"
+        :checked="it.checked"
+        :indeterminate="it.indeterminate"
+        :class="gl.dropClass(it.id)"
+        @toggle="gl.toggleGroup(it.name)"
+        @rename="gl.renameGroup(it.name)"
+        @up="gl.moveGroup(it.index, -1)"
+        @down="gl.moveGroup(it.index, 1)"
+        @check="(v: boolean) => gl.setSelected(it.ids, v)"
+        @dragover.prevent="gl.dragOver(it.id, $event, false)"
+        @dragleave="gl.dragLeave(it.id)"
+        @drop.prevent="gl.drop()"
+      />
       <EntityCard
-        :compact="compact"
-        v-for="tk in tasks"
-        :key="tk.key"
-        :off="!tk.enable || moduleOff"
-        collapsible
-        :collapsed="isCollapsed(tk.key)"
-        :collapsed-hint="t('ddns.recordsCollapsed', { count: tk.records.length })"
-        @update:collapsed="(v: boolean) => setCollapsed(tk.key, v)"
+        v-else
+        :compact="compact || gl.sortMode.value"
+        :off="!it.item.enable || moduleOff"
+        :collapsible="!gl.sortMode.value"
+        :collapsed="isCollapsed(it.item.key)"
+        :collapsed-hint="t('ddns.recordsCollapsed', { count: it.item.records.length })"
+        :class="[gl.dropClass(it.id), { 'is-grouped': it.grouped }]"
+        :draggable="gl.sortMode.value && !isMobile"
+        @update:collapsed="(v: boolean) => setCollapsed(it.item.key, v)"
+        @dragstart="gl.dragStart(it.id, $event)"
+        @dragover.prevent="gl.dragOver(it.id, $event)"
+        @dragleave="gl.dragLeave(it.id)"
+        @drop.prevent="gl.drop()"
+        @dragend="gl.resetDrag()"
       >
         <template #lead>
-          <el-switch :model-value="tk.enable" @change="(v: string | number | boolean) => toggle(tk, Boolean(v))" />
+          <el-checkbox v-if="gl.sortMode.value" :model-value="gl.isSelected(it.id)" @change="(v: string | number | boolean) => gl.setSelected([it.id], Boolean(v))" />
+          <el-switch v-else :model-value="it.item.enable" @change="(v: string | number | boolean) => toggle(it.item, Boolean(v))" />
         </template>
         <template #title>
-          <span>{{ tk.name || t('ddns.unnamedTask') }}</span>
-          <el-tag size="small" effect="plain">{{ providerTitle(tk.provider) }}</el-tag>
+          <span>{{ it.item.name || t('ddns.unnamedTask') }}</span>
+          <el-tag size="small" effect="plain">{{ providerTitle(it.item.provider) }}</el-tag>
         </template>
-        <template v-if="tk.remark" #sub>{{ tk.remark }}</template>
+        <template v-if="it.item.remark" #sub>{{ it.item.remark }}</template>
         <template #status>
-          <StatusBadge v-bind="taskStatus(tk)" />
+          <StatusBadge v-bind="taskStatus(it.item)" />
         </template>
-        <Field label="IPv4" mono>{{ tk.ipv4.enable ? tk.state.ipv4 || (taskActive(tk) ? t('ddns.fetching') : '-') : t('ddns.notEnabled') }}</Field>
-        <Field label="IPv6" mono>{{ tk.ipv6.enable ? tk.state.ipv6 || (taskActive(tk) ? t('ddns.fetching') : '-') : t('ddns.notEnabled') }}</Field>
-        <Field :label="t('ddns.lastCheck')">{{ tk.state.lastRun ? fmtTime(tk.state.lastRun) : '-' }}</Field>
-        <Field :label="t('ddns.nextCheck')">{{ taskActive(tk) && tk.state.nextRun ? fmtTime(tk.state.nextRun) : '-' }}</Field>
-        <template #extra>
-          <el-alert v-if="tk.state.ipError && taskActive(tk)" type="error" :title="tk.state.ipError" :closable="false" show-icon class="ip-error" />
+        <Field label="IPv4" mono>{{ it.item.ipv4.enable ? it.item.state.ipv4 || (taskActive(it.item) ? t('ddns.fetching') : '-') : t('ddns.notEnabled') }}</Field>
+        <Field label="IPv6" mono>{{ it.item.ipv6.enable ? it.item.state.ipv6 || (taskActive(it.item) ? t('ddns.fetching') : '-') : t('ddns.notEnabled') }}</Field>
+        <Field :label="t('ddns.lastCheck')">{{ it.item.state.lastRun ? fmtTime(it.item.state.lastRun) : '-' }}</Field>
+        <Field :label="t('ddns.nextCheck')">{{ taskActive(it.item) && it.item.state.nextRun ? fmtTime(it.item.state.nextRun) : '-' }}</Field>
+        <template v-if="!gl.sortMode.value" #extra>
+          <el-alert v-if="it.item.state.ipError && taskActive(it.item)" type="error" :title="it.item.state.ipError" :closable="false" show-icon class="ip-error" />
           <div class="records">
-            <div v-for="rec in tk.records" :key="rec.key" class="rec" :class="{ 'is-off': !rec.enable }">
+            <div v-for="rec in it.item.records" :key="rec.key" class="rec" :class="{ 'is-off': !rec.enable }">
               <div class="rec-name">
                 <span class="mono rec-domain">{{ fqdn(rec) }}</span>
                 <el-tag size="small" type="info" class="mono">{{ rec.type }}</el-tag>
               </div>
-              <div class="rec-value mono">{{ (rec.key && tk.state.records?.[rec.key]?.value) || '-' }}</div>
+              <div class="rec-value mono">{{ (rec.key && it.item.state.records?.[rec.key]?.value) || '-' }}</div>
               <div class="rec-status">
-                <StatusBadge v-bind="recordStatus(tk, rec)" />
-                <span v-if="recordSync(tk, rec)" class="meta">{{ recordSync(tk, rec) }}</span>
+                <StatusBadge v-bind="recordStatus(it.item, rec)" />
+                <span v-if="recordSync(it.item, rec)" class="meta">{{ recordSync(it.item, rec) }}</span>
               </div>
             </div>
-            <div v-if="!tk.records.length" class="meta">{{ t('ddns.noRecords') }}</div>
+            <div v-if="!it.item.records.length" class="meta">{{ t('ddns.noRecords') }}</div>
           </div>
         </template>
-        <template #actions>
-          <el-button text size="small" :icon="RefreshCw" :disabled="!taskActive(tk) || !tk.state.running" @click="sync(tk, false)">{{ t('ddns.check') }}</el-button>
-          <el-button text size="small" :icon="Zap" :disabled="!taskActive(tk) || !tk.state.running" @click="sync(tk, true)">{{ t('ddns.forceSync') }}</el-button>
-          <el-button text size="small" :icon="Pencil" @click="openEditor(tk)">{{ t('common.edit') }}</el-button>
-          <el-popconfirm :title="t('ddns.confirmDelete')" width="240" @confirm="remove(tk)">
+        <template v-if="gl.sortMode.value" #actions>
+          <GripVertical v-if="!isMobile" :size="16" class="grip" />
+          <el-button text size="small" :icon="ChevronUp" :disabled="!it.canUp" :aria-label="t('groupSort.moveUp')" :title="t('groupSort.moveUp')" @click="gl.moveItem(it.id, -1)" />
+          <el-button text size="small" :icon="ChevronDown" :disabled="!it.canDown" :aria-label="t('groupSort.moveDown')" :title="t('groupSort.moveDown')" @click="gl.moveItem(it.id, 1)" />
+        </template>
+        <template v-else #actions>
+          <el-button text size="small" :icon="RefreshCw" :disabled="!taskActive(it.item) || !it.item.state.running" @click="sync(it.item, false)">{{ t('ddns.check') }}</el-button>
+          <el-button text size="small" :icon="Zap" :disabled="!taskActive(it.item) || !it.item.state.running" @click="sync(it.item, true)">{{ t('ddns.forceSync') }}</el-button>
+          <el-button text size="small" :icon="Pencil" @click="openEditor(it.item)">{{ t('common.edit') }}</el-button>
+          <el-popconfirm :title="t('ddns.confirmDelete')" width="240" @confirm="remove(it.item)">
             <template #reference>
               <el-button text size="small" type="danger" :icon="Trash2">{{ t('common.delete') }}</el-button>
             </template>
           </el-popconfirm>
         </template>
       </EntityCard>
+      </template>
     </div>
 
     <LogCard url="/api/ddns/logs" clearable />
@@ -78,6 +136,16 @@
         <el-tabs v-model="tab">
           <el-tab-pane :label="t('ddns.tabBasic')" name="basic">
             <el-form-item :label="t('ddns.taskName')"><el-input v-model="editing.name" /></el-form-item>
+            <el-form-item :label="t('groupSort.group')">
+              <el-autocomplete
+                v-model="editing.group"
+                class="w-260"
+                clearable
+                :maxlength="64"
+                :fetch-suggestions="(q: string, cb: (v: { value: string }[]) => void) => cb(groupSuggestions(gl.groupNames.value, q))"
+                :placeholder="t('groupSort.groupPlaceholder')"
+              />
+            </el-form-item>
             <el-form-item :label="t('ddns.dnsProvider')">
               <el-select v-model="editing.provider" filterable class="w-260" @change="onProviderChange">
                 <el-option v-for="p in providers" :key="p.name" :label="p.title" :value="p.name" />
@@ -173,8 +241,12 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { ChevronsDownUp, ChevronsUpDown, Globe, Pencil, Plus, RefreshCw, Trash2, Zap } from 'lucide-vue-next'
+import { ArrowUpDown, ChevronDown, ChevronsDownUp, ChevronsUpDown, ChevronUp, Globe, GripVertical, Pencil, Plus, RefreshCw, Search, Trash2, Zap } from 'lucide-vue-next'
 import { api } from '../api'
+import GroupHeader from '../components/GroupHeader.vue'
+import SortToolbar from '../components/SortToolbar.vue'
+import { useGroupedList } from '../composables/useGroupSort'
+import { groupSuggestions } from '../groupSort'
 import SecretInput from '../components/SecretInput.vue'
 import { secretOf } from '../secrets'
 import PageHeader from '../components/PageHeader.vue'
@@ -217,6 +289,8 @@ interface Task {
   key?: string
   name: string
   enable: boolean
+  // group 为列表中的分组名称，只影响展示，留空为未分组
+  group?: string
   ipv4: IPSource
   ipv6: IPSource
   provider: string
@@ -273,6 +347,16 @@ const extra = ref<Record<string, string>>({})
 // 定时刷新，标签页在后台时暂停
 const polling = usePolling(load, 5000)
 
+// 列表的筛选、分组与排序；顺序与分组的修改不会重启任务
+const gl = useGroupedList<TaskView>({
+  storageKey: 'ddns.groups',
+  items: () => tasks.value,
+  base: '/api/ddns/tasks',
+  reload: load,
+  matches: (tk, q) =>
+    [tk.name, tk.group ?? '', tk.remark, providerTitle(tk.provider), ...tk.records.map(fqdn)].join('\n').toLowerCase().includes(q),
+})
+
 const currentProvider = computed(() => providers.value.find((p) => p.name === editing.value.provider))
 const moduleOff = computed(() => settingsLoaded.value && !settings.enable)
 
@@ -284,6 +368,7 @@ function emptyTask(): Task {
   return {
     name: '',
     enable: true,
+    group: '',
     ipv4: { ...emptySource(defaults.ipv4URLs), enable: true },
     ipv6: emptySource(defaults.ipv6URLs),
     provider: 'alidns',
@@ -522,6 +607,31 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.list-filter {
+  width: 220px;
+}
+.card-list > .group-header {
+  border-radius: var(--g-radius);
+}
+.card-list > .is-grouped {
+  margin-left: 16px;
+}
+.card-list.is-sorting > .entity[draggable='true'] {
+  cursor: grab;
+}
+.card-list > .entity.dragging {
+  opacity: 0.4;
+}
+.card-list > .drop-before {
+  box-shadow: 0 -3px 0 var(--el-color-primary);
+}
+.card-list > .drop-after {
+  box-shadow: 0 3px 0 var(--el-color-primary);
+}
+.grip {
+  color: var(--el-text-color-secondary);
+  cursor: grab;
+}
 .module-toggle {
   display: inline-flex;
   align-items: center;
@@ -615,6 +725,12 @@ onMounted(async () => {
   margin-top: 12px;
 }
 @media (max-width: 767.98px) {
+  .list-filter {
+    width: 160px;
+  }
+  .card-list > .is-grouped {
+    margin-left: 8px;
+  }
   .rec {
     grid-template-columns: 1fr;
     gap: 4px;

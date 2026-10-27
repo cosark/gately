@@ -14,6 +14,10 @@ Wird eine Site oder die Standard-Site gespeichert, wird die Site-Liste an Ort un
 
 Eine Site kann eine „Gruppe“ erhalten (bis zu 64 Zeichen; die Standard-Site lässt sich keiner Gruppe zuordnen). Unter jedem Listener zeigt die Liste die Gruppen als einklappbare Abschnitte: Gruppen erscheinen in der Reihenfolge ihres ersten Auftretens, Sites ohne Gruppe folgen danach, und die Standard-Site steht immer am Ende. Der Klappzustand jeder Gruppe wird im Browser gespeichert. Mit „Sortieren“ wechseln Sie in den Sortiermodus: Dort verschieben Sie Sites nach oben und unten, ziehen sie innerhalb ihrer Gruppe, verschieben ganze Gruppen und ändern die Reihenfolge der Listener. Die Reihenfolge wirkt sich nur auf die Liste aus; die Domain-Zuordnung folgt unabhängig davon der oben genannten Priorität, und auch das Speichern der Reihenfolge tauscht die Site-Liste an Ort und Stelle aus, ohne Verbindungen zu trennen. Das Suchfeld oben auf der Seite filtert Sites nach Domain, Name, Gruppe, Backend oder Bemerkung.
 
+Im Sortiermodus können Sie auch mehrere Sites markieren (das Kontrollkästchen im Gruppenkopf wählt die ganze Gruppe). Ziehen Sie eine markierte Site, werden alle verschoben; auf einer Site oder dem Kopf einer anderen Gruppe abgelegt, wechseln sie in diese Gruppe. Die Werkzeugleiste verschiebt die markierten Sites in einem Schritt in eine Gruppe oder entfernt sie aus ihrer Gruppe, wenn der Name leer bleibt; markierte Sites verschiedener Listener werden je Listener gespeichert.
+
+Fahren Sie über einen Gruppenkopf und klicken Sie auf den Stift, um die Gruppe umzubenennen: Alle Einträge erhalten den neuen Namen und behalten Position und Reihenfolge. Ein bereits verwendeter Name führt die beiden Gruppen nach einer Bestätigung zusammen.
+
 ## Site-Typen
 
 | Typ | Beschreibung |

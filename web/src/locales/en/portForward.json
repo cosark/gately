@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "Default target PROXY",
   "routeMeta": "{domains} domains · {hits} total",
   "defaultHits": "{hits} total",
-  "defaultTargetNone": "Not set, unmatched connections are dropped ({rejected} dropped)"
+  "defaultTargetNone": "Not set, unmatched connections are dropped ({rejected} dropped)",
+  "filterPlaceholder": "Search name, group, port, target or domain",
+  "groupCount": "{count} rules"
 }

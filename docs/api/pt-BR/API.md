@@ -73,6 +73,7 @@ Curingas: `*:read` significa somente leitura em todos os módulos; `*:write` ou 
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | Excluir Regra de encaminhamento de portas |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | Ativar ou desativar Regra de encaminhamento de portas |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | Reordenar Regra de encaminhamento de portas |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | Definir o grupo de vários itens: Regra de encaminhamento de portas |
 | GET | `/api/portforward/settings` | `portforward:read` | Ler configurações globais do encaminhamento de portas |
 | PUT | `/api/portforward/settings` | `portforward:write` | Salvar configurações globais do encaminhamento de portas |
 
@@ -88,6 +89,7 @@ Curingas: `*:read` significa somente leitura em todos os módulos; `*:write` ou 
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | Excluir Tarefa DDNS |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | Ativar ou desativar Tarefa DDNS |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | Reordenar Tarefa DDNS |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | Definir o grupo de vários itens: Tarefa DDNS |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | Ver segredos em texto puro |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | Sincronizar uma tarefa DDNS imediatamente |
 | GET | `/api/ddns/providers` | `ddns:read` | Listar provedores de DNS suportados e seus parâmetros necessários |
@@ -763,6 +765,13 @@ Curingas: `*:read` significa somente leitura em todos os módulos; `*:write` ou 
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| Campo | Tipo |
+| --- | --- |
+| `group` | string |
+| `keys` | Array de string |
+
 ### crud.orderRequest
 
 | Campo | Tipo |
@@ -790,6 +799,7 @@ Curingas: `*:read` significa somente leitura em todos os módulos; `*:write` ou 
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ Curingas: `*:read` significa somente leitura em todos os módulos; `*:write` ou 
 | Campo | Tipo |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |

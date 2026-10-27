@@ -73,6 +73,7 @@ Wildcards: `*:read` means read-only access to all modules; `*:write` or `*` mean
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | Delete Port forwarding rule |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | Enable or disable Port forwarding rule |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | Reorder Port forwarding rule |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | Set group in bulk: Port forwarding rule |
 | GET | `/api/portforward/settings` | `portforward:read` | Read port forwarding global settings |
 | PUT | `/api/portforward/settings` | `portforward:write` | Save port forwarding global settings |
 
@@ -88,6 +89,7 @@ Wildcards: `*:read` means read-only access to all modules; `*:write` or `*` mean
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | Delete DDNS task |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | Enable or disable DDNS task |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | Reorder DDNS task |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | Set group in bulk: DDNS task |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | View secrets in plain text |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | Sync a DDNS task immediately |
 | GET | `/api/ddns/providers` | `ddns:read` | List supported DNS providers and their required parameters |
@@ -763,6 +765,13 @@ Wildcards: `*:read` means read-only access to all modules; `*:write` or `*` mean
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| Field | Type |
+| --- | --- |
+| `group` | string |
+| `keys` | Array of string |
+
 ### crud.orderRequest
 
 | Field | Type |
@@ -790,6 +799,7 @@ Wildcards: `*:read` means read-only access to all modules; `*:write` or `*` mean
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ Wildcards: `*:read` means read-only access to all modules; `*:write` or `*` mean
 | Field | Type |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |

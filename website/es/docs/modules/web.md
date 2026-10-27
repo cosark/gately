@@ -14,6 +14,10 @@ Al guardar un cambio en un sitio o en el sitio por defecto, la lista de sitios s
 
 Un sitio puede tener un «Grupo» (hasta 64 caracteres; el sitio por defecto no se puede agrupar). Bajo cada listener, la lista muestra los grupos como secciones plegables: los grupos aparecen en el orden en que se encuentran por primera vez, los sitios sin grupo van a continuación y el sitio por defecto queda siempre al final. El estado plegado de cada grupo se guarda en el navegador. Pulsa «Ordenar» para entrar en el modo de ordenación, donde puedes subir y bajar sitios, arrastrarlos dentro de su grupo, mover grupos enteros y reordenar los listeners. El orden solo afecta a la lista: la coincidencia de dominios sigue la prioridad anterior sea cual sea el orden de los sitios, y al guardar el nuevo orden la lista de sitios se sustituye en caliente sin cortar conexiones. El cuadro de búsqueda de la parte superior de la página filtra los sitios por dominio, nombre, grupo, backend o nota.
 
+En el modo de orden también puede marcar varios sitios (la casilla del encabezado de un grupo selecciona el grupo entero). Al arrastrar cualquier sitio marcado se mueven todos, y al soltarlos sobre un sitio o el encabezado de otro grupo pasan a ese grupo. La barra de herramientas mueve de una vez los sitios marcados a un grupo, o los saca de su grupo si deja el nombre vacío; los sitios marcados de distintos listeners se guardan por listener.
+
+Pase el ratón por el encabezado de un grupo y pulse el lápiz para renombrarlo: todos sus elementos pasan al nuevo nombre y conservan su posición y orden. Si elige un nombre ya usado, tras confirmar se fusionan los dos grupos.
+
 ## Tipos de sitio
 
 | Tipo | Descripción |

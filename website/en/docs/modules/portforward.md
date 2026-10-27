@@ -83,3 +83,11 @@ Set the listen address to the server's public address so that it does not clash 
 ## Deployment tip
 
 Port forwarding listens on host ports directly. For Docker deployments, `--network host` is recommended.
+
+## Groups and sorting
+
+You can give rules a "Group" (up to 64 characters). The list shows groups as collapsible sections: groups appear in the order they first occur, ungrouped rules come last, and the collapsed state is kept in the browser. The search box at the top of the page filters by name, group, listen port, target or SNI domain.
+
+Click "Sort" to enter sort mode. Use the arrows to move rules up and down or to move whole groups. Check several rules and drag any one of them to move them together; dropping onto rules or the header of another group moves them into that group. The toolbar moves the checked rules into a group in one step, or out of their group when the name is left empty. Order and groups only affect the list, and changing them means forwarding is not restarted and open connections stay up.
+
+Hover over a group header and click the pencil button to rename the group: everything in it moves to the new name and keeps its position and order. Choosing a name that is already in use merges the two groups after a confirmation.

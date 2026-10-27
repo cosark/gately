@@ -33,3 +33,11 @@ A Webhook can be called when the IP changes or a sync fails.
 - Create a sub-account key limited to DNS record editing for your DNS provider. Avoid using the main account key;
 - After creating a task, click "Force sync" to confirm that the record has been updated;
 - The public-IP lookup address no longer depends on any service operated by the project, and you can change it in a task at any time.
+
+## Groups and sorting
+
+You can give tasks a "Group" (up to 64 characters). The list shows groups as collapsible sections: groups appear in the order they first occur, ungrouped tasks come last, and the collapsed state is kept in the browser. The search box at the top of the page filters by name, group, domain or provider.
+
+Click "Sort" to enter sort mode. Use the arrows to move tasks up and down or to move whole groups. Check several tasks and drag any one of them to move them together; dropping onto tasks or the header of another group moves them into that group. The toolbar moves the checked tasks into a group in one step, or out of their group when the name is left empty. Order and groups only affect the list, and changing them means tasks are not restarted.
+
+Hover over a group header and click the pencil button to rename the group: everything in it moves to the new name and keeps its position and order. Choosing a name that is already in use merges the two groups after a confirmation.

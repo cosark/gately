@@ -14,6 +14,10 @@ Enregistrer une modification d'un site ou du site par défaut remplace la liste 
 
 Un site peut recevoir un « Groupe » (64 caractères au maximum ; le site par défaut ne peut pas être groupé). Sous chaque écouteur, la liste affiche les groupes sous forme de sections repliables : les groupes apparaissent dans l'ordre de leur première occurrence, les sites sans groupe viennent ensuite et le site par défaut reste toujours en dernier. L'état replié de chaque groupe est conservé dans le navigateur. Cliquez sur « Trier » pour passer en mode tri : vous pouvez monter et descendre les sites, les faire glisser au sein de leur groupe, déplacer des groupes entiers et réordonner les écouteurs. L'ordre concerne uniquement l'affichage de la liste : la correspondance des domaines suit la priorité ci-dessus quel que soit l'ordre des sites, et l'enregistrement du nouvel ordre remplace la liste des sites sur place sans couper les connexions. Le champ de recherche en haut de la page filtre les sites par domaine, nom, groupe, backend ou remarque.
 
+En mode tri, vous pouvez aussi cocher plusieurs sites (la case de l’en-tête d’un groupe sélectionne tout le groupe). Faire glisser l’un des sites cochés les déplace tous, et les déposer sur un site ou l’en-tête d’un autre groupe les place dans ce groupe. La barre d’outils place d’un coup les sites cochés dans un groupe, ou les retire de leur groupe si le nom est laissé vide ; les sites cochés sous différents listeners sont enregistrés par listener.
+
+Survolez l’en-tête d’un groupe et cliquez sur le crayon pour le renommer : tous ses éléments passent sous le nouveau nom et gardent leur position et leur ordre. Un nom déjà utilisé fusionne les deux groupes après confirmation.
+
 ## Types de sites
 
 | Type | Description |

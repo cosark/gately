@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net"
 	"strings"
+
+	"github.com/wangwanjie/gately/internal/crud"
 )
 
 // 支持的协议，语义与 Go 网络类型一致：tcp/udp 为双栈，tcp4/udp4 仅 IPv4，tcp6/udp6 仅 IPv6。
@@ -14,9 +16,11 @@ var validProtocols = map[string]bool{
 
 // Rule 是一条端口转发规则。
 type Rule struct {
-	Key             string   `json:"key"`
-	Name            string   `json:"name"`
-	Enable          bool     `json:"enable"`
+	Key    string `json:"key"`
+	Name   string `json:"name"`
+	Enable bool   `json:"enable"`
+	// Group 为列表中的分组名称，只影响管理界面的展示，留空为未分组
+	Group           string   `json:"group"`
 	Protocols       []string `json:"protocols"`
 	ListenAddress   string   `json:"listenAddress"`
 	ListenPorts     string   `json:"listenPorts"`
@@ -97,6 +101,9 @@ func (s *Settings) normalize() {
 // Validate 校验规则并清理输入中的空白。
 func (r *Rule) Validate() error {
 	r.Name = strings.TrimSpace(r.Name)
+	if err := crud.NormalizeGroup(&r.Group); err != nil {
+		return err
+	}
 	r.ListenAddress = strings.Trim(strings.TrimSpace(r.ListenAddress), "[]")
 	if len(r.Protocols) == 0 {
 		return fmt.Errorf("至少选择一种协议")

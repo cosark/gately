@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "デフォルトの PROXY",
   "routeMeta": "ドメイン {domains} 件 · 累計 {hits}",
   "defaultHits": "累計 {hits}",
-  "defaultTargetNone": "未設定のため一致しない接続は切断（切断済み {rejected}）"
+  "defaultTargetNone": "未設定のため一致しない接続は切断（切断済み {rejected}）",
+  "filterPlaceholder": "名前・グループ・ポート・転送先・ドメインで検索",
+  "groupCount": "{count} 件のルール"
 }

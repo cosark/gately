@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/wangwanjie/gately/internal/crud"
 	"github.com/wangwanjie/gately/internal/dnsprovider"
 	"github.com/wangwanjie/gately/internal/ipsource"
 	"github.com/wangwanjie/gately/internal/webhook"
@@ -45,9 +46,11 @@ type Record struct {
 
 // Task 是一个 DDNS 任务：一组记录共用 IP 来源与服务商凭据。
 type Task struct {
-	Key         string                  `json:"key"`
-	Name        string                  `json:"name"`
-	Enable      bool                    `json:"enable"`
+	Key    string `json:"key"`
+	Name   string `json:"name"`
+	Enable bool   `json:"enable"`
+	// Group 为列表中的分组名称，只影响管理界面的展示，留空为未分组
+	Group       string                  `json:"group"`
 	IPv4        ipsource.Source         `json:"ipv4"`
 	IPv6        ipsource.Source         `json:"ipv6"`
 	Provider    string                  `json:"provider"`
@@ -98,6 +101,9 @@ func (t *Task) needs() (v4, v6 bool) {
 // Validate 校验并补全默认值。
 func (t *Task) Validate() error {
 	t.Name = strings.TrimSpace(t.Name)
+	if err := crud.NormalizeGroup(&t.Group); err != nil {
+		return err
+	}
 	if _, ok := dnsprovider.Lookup(t.Provider); !ok {
 		return fmt.Errorf("不支持的 DNS 服务商 %q", t.Provider)
 	}

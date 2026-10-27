@@ -83,3 +83,11 @@ Réglez l'adresse d'écoute sur l'adresse publique du serveur afin d'éviter tou
 ## Conseil de déploiement
 
 La redirection de ports écoute directement sur les ports de l'hôte. Pour un déploiement Docker, `--network host` est recommandé.
+
+## Groupes et tri
+
+Vous pouvez attribuer un « Groupe » (64 caractères au plus) à les règles. La liste affiche les groupes sous forme de sections repliables : les groupes apparaissent dans l’ordre de leur première occurrence, les règles sans groupe viennent en dernier, et l’état replié est conservé dans le navigateur. La zone de recherche en haut de la page filtre par nom, groupe, port d’écoute, cible ou domaine SNI.
+
+Cliquez sur « Trier » pour passer en mode tri. Les flèches déplacent les règles vers le haut ou le bas, ou des groupes entiers. Cochez-en plusieurs et faites glisser l’un d’eux pour les déplacer ensemble ; déposés sur un élément ou l’en-tête d’un autre groupe, ils rejoignent ce groupe. La barre d’outils place d’un coup les éléments cochés dans un groupe, ou les retire de leur groupe si le nom est laissé vide. L’ordre et les groupes n’affectent que la liste, et les modifier signifie que le transfert n’est pas redémarré et les connexions ouvertes sont conservées.
+
+Survolez l’en-tête d’un groupe et cliquez sur le crayon pour le renommer : tous ses éléments passent sous le nouveau nom et gardent leur position et leur ordre. Un nom déjà utilisé fusionne les deux groupes après confirmation.

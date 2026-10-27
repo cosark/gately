@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "PROXY цели по умолчанию",
   "routeMeta": "доменов: {domains} · всего {hits}",
   "defaultHits": "всего {hits}",
-  "defaultTargetNone": "Не задана, неподходящие соединения разрываются (разорвано {rejected})"
+  "defaultTargetNone": "Не задана, неподходящие соединения разрываются (разорвано {rejected})",
+  "filterPlaceholder": "Поиск по имени, группе, порту, цели или домену",
+  "groupCount": "Правил: {count}"
 }

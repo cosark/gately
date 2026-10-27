@@ -56,5 +56,7 @@
   "recordDeactivated": "Cet enregistrement est désactivé",
   "savedChecking": "Enregistré ; vérification en cours",
   "triggered": "Déclenchée",
-  "recordsCollapsed": "{count} enregistrements masqués, cliquez pour développer"
+  "recordsCollapsed": "{count} enregistrements masqués, cliquez pour développer",
+  "filterPlaceholder": "Rechercher nom, groupe, domaine ou fournisseur",
+  "groupCount": "{count} tâche(s)"
 }

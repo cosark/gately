@@ -141,6 +141,19 @@ func TestValidate(t *testing.T) {
 	}
 }
 
+// 分组名称去掉首尾空白，超过 64 个字符时拒绝保存。
+func TestValidateGroup(t *testing.T) {
+	task := sampleTask()
+	task.Group = "  阿里云  "
+	if err := task.Validate(); err != nil || task.Group != "阿里云" {
+		t.Fatalf("分组应去掉首尾空白: %q %v", task.Group, err)
+	}
+	task.Group = strings.Repeat("组", crud.MaxGroupLen+1)
+	if task.Validate() == nil {
+		t.Fatal("超长分组名应被拒绝")
+	}
+}
+
 func TestSyncFlow(t *testing.T) {
 	fp, ips := setupFakes(t)
 	var hookBodies []string

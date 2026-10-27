@@ -73,6 +73,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | 포트 포워딩 규칙 삭제 |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | 포트 포워딩 규칙 사용 설정/해제 |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | 포트 포워딩 규칙 순서 변경 |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | 포트 포워딩 규칙 그룹 일괄 설정 |
 | GET | `/api/portforward/settings` | `portforward:read` | 포트 포워딩 전역 설정 읽기 |
 | PUT | `/api/portforward/settings` | `portforward:write` | 포트 포워딩 전역 설정 저장 |
 
@@ -88,6 +89,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | DDNS 작업 삭제 |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | DDNS 작업 사용 설정/해제 |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | DDNS 작업 순서 변경 |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | DDNS 작업 그룹 일괄 설정 |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | 비밀 값 평문 보기 |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | DDNS 작업 즉시 동기화 |
 | GET | `/api/ddns/providers` | `ddns:read` | 지원되는 DNS 서비스 제공자와 필요한 매개변수 목록 조회 |
@@ -763,6 +765,13 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| 필드 | 타입 |
+| --- | --- |
+| `group` | string |
+| `keys` | Array of string |
+
 ### crud.orderRequest
 
 | 필드 | 타입 |
@@ -790,6 +799,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | 필드 | 타입 |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |

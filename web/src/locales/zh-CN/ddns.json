@@ -56,5 +56,7 @@
   "recordDeactivated": "该记录已停用",
   "savedChecking": "已保存，正在检查",
   "triggered": "已触发",
-  "recordsCollapsed": "已收起 {count} 条解析记录，点击展开"
+  "recordsCollapsed": "已收起 {count} 条解析记录，点击展开",
+  "filterPlaceholder": "搜索名称、分组、域名或服务商",
+  "groupCount": "{count} 个任务"
 }

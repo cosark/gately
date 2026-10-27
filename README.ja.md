@@ -41,9 +41,9 @@ Gately は完全なオープンソースで、ユーザーとコミュニティ�
 
 | モジュール | 機能 |
 | --- | --- |
-| ダイナミック DNS | Alibaba Cloud、Cloudflare、Tencent Cloud、DNSPod、Huawei Cloud、GoDaddy、Porkbun、dynv6、DuckDNS、Amazon Route 53、OVHcloud、Gandi、NS1、Bunny DNS、Namecheap、DynDNS2（No-IP、Dynu など）、カスタムコールバック。URL／ネットワークインターフェース／コマンドによる IP 取得、IPv4/IPv6、Webhook |
+| ダイナミック DNS | Alibaba Cloud、Cloudflare、Tencent Cloud、DNSPod、Huawei Cloud、GoDaddy、Porkbun、dynv6、DuckDNS、Amazon Route 53、OVHcloud、Gandi、NS1、Bunny DNS、Namecheap、DynDNS2（No-IP、Dynu など）、カスタムコールバック。URL／ネットワークインターフェース／コマンドによる IP 取得、IPv4/IPv6、Webhook；グループ分け・並べ替え・検索 |
 | STUN 穿孔 | TCP/UDP、キープアライブ、UPnP/NAT-PMP、内蔵フォワーディング、アドレス変更時の Webhook・スクリプト実行 |
-| ポート転送 | TCP/UDP、IPv4/IPv6、ポート範囲、複数ターゲットのフェイルオーバー、接続数制限、トラフィック統計、PROXY プロトコル（v1/v2）、SNI 振り分けで 443 などの 1 つのポートを複数のサービスで共用（ドメインごとの TLS パススルー、デフォルトターゲット、ルートごとの PROXY プロトコル設定） |
+| ポート転送 | TCP/UDP、IPv4/IPv6、ポート範囲、複数ターゲットのフェイルオーバー、接続数制限、トラフィック統計、PROXY プロトコル（v1/v2）、SNI 振り分けで 443 などの 1 つのポートを複数のサービスで共用（ドメインごとの TLS パススルー、デフォルトターゲット、ルートごとの PROXY プロトコル設定）；グループ分け・並べ替え・検索 |
 | SSL 証明書 | ACME による自動発行・更新（DNS-01 はワイルドカード対応で、委任されたサブドメインの DNS ゾーンを SOA で自動判別、HTTP-01 は DNS プロバイダー不要）、短期証明書とグローバル IP アドレス証明書（Let's Encrypt の shortlived プロファイル）、EAB、アップロード、ファイル読み込み、ディレクトリへのマッピングとスクリプト実行、証明書の更新後に SSH で他のホストへ送ってコマンドを実行、または証明書を使う Docker コンテナを再起動 |
 | Tailscale | tailscaled の管理（ユーザー空間ネットワーク、コンテナ対応）またはシステム既存のデーモンへの接続。認証キー／ログインリンク、Headscale、サブネットルート、出口ノード、ノード一覧と SOCKS5 プロキシ、固定ポート、tailscaled の追加引数と環境変数。Linux ではオンラインでインストール・更新・ロールバック・アンインストール。デフォルト設定に戻すことも可能 |
 | frp | 複数の frpc / frps インスタンスを個別に実行。frpc クライアント（tcp/udp/http/https/stcp/xtcp プロキシ、追加・削除は即時反映）と frps サーバー（ポート許可リスト、サブドメイン、ダッシュボード）。旧形式の ini／新形式の toml 設定をワンクリックでインポート。オンラインでインストール・更新・ロールバック・アンインストール。デフォルト設定に戻すことも可能 |

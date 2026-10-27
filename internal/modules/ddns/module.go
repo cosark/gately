@@ -157,6 +157,7 @@ func (m *Module) Routes(r module.Router) {
 		Save:     m.saveLocked,
 		Key:      func(t *Task) *string { return &t.Key },
 		Enabled:  func(t *Task) *bool { return &t.Enable },
+		Group:    func(t *Task) *string { return &t.Group },
 		Validate: func(t *Task) error { return t.Validate() },
 		Merge: func(old, updated *Task) {
 			crud.KeepSecret(old.Credentials.Secret, &updated.Credentials.Secret)

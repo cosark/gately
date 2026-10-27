@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "PROXY de la cible par défaut",
   "routeMeta": "{domains} domaines · {hits} au total",
   "defaultHits": "{hits} au total",
-  "defaultTargetNone": "Non définie, les connexions sans correspondance sont coupées ({rejected} coupées)"
+  "defaultTargetNone": "Non définie, les connexions sans correspondance sont coupées ({rejected} coupées)",
+  "filterPlaceholder": "Rechercher nom, groupe, port, cible ou domaine",
+  "groupCount": "{count} règle(s)"
 }

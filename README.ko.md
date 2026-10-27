@@ -41,9 +41,9 @@ Gately는 완전한 오픈소스로, 사용자와 커뮤니티가 소스 코드�
 
 | 모듈 | 기능 |
 | --- | --- |
-| 동적 도메인 | Alibaba Cloud, Cloudflare, Tencent Cloud, DNSPod, Huawei Cloud, GoDaddy, Porkbun, dynv6, DuckDNS, Amazon Route 53, OVHcloud, Gandi, NS1, Bunny DNS, Namecheap, DynDNS2(No-IP, Dynu 등), 사용자 지정 콜백. URL/네트워크 카드/명령으로 IP 조회. IPv4/IPv6. Webhook |
+| 동적 도메인 | Alibaba Cloud, Cloudflare, Tencent Cloud, DNSPod, Huawei Cloud, GoDaddy, Porkbun, dynv6, DuckDNS, Amazon Route 53, OVHcloud, Gandi, NS1, Bunny DNS, Namecheap, DynDNS2(No-IP, Dynu 등), 사용자 지정 콜백. URL/네트워크 카드/명령으로 IP 조회. IPv4/IPv6. Webhook; 그룹, 정렬, 검색 |
 | STUN 터널링 | TCP/UDP, keep-alive, UPnP/NAT-PMP, 내장 포워딩, 주소 변경 시 Webhook 및 스크립트 실행 |
-| 포트 포워딩 | TCP/UDP, IPv4/IPv6, 포트 범위, 다중 대상 장애 조치, 연결 수 제한, 트래픽 통계, PROXY 프로토콜(v1/v2). SNI 라우팅으로 여러 서비스가 443 같은 포트 하나를 함께 사용(도메인별 TLS 패스스루, 기본 대상, 라우트별 PROXY 프로토콜 설정) |
+| 포트 포워딩 | TCP/UDP, IPv4/IPv6, 포트 범위, 다중 대상 장애 조치, 연결 수 제한, 트래픽 통계, PROXY 프로토콜(v1/v2). SNI 라우팅으로 여러 서비스가 443 같은 포트 하나를 함께 사용(도메인별 TLS 패스스루, 기본 대상, 라우트별 PROXY 프로토콜 설정); 그룹, 정렬, 검색 |
 | SSL 인증서 | DNS-01(와일드카드, 위임된 서브도메인의 DNS 영역은 SOA로 자동 인식) 또는 HTTP-01(DNS 제공업체 불필요) 방식의 ACME 자동 발급 및 갱신, 단기 인증서와 공인 IP 주소 인증서(Let's Encrypt shortlived 프로필), EAB, 업로드, 파일 읽기, 디렉터리 매핑 및 스크립트 실행. 인증서가 갱신되면 SSH로 다른 호스트에 업로드하고 명령 실행, 또는 인증서를 쓰는 Docker 컨테이너 재시작 |
 | Tailscale | tailscaled 관리(유저스페이스 네트워킹, 컨테이너 친화적) 또는 시스템에 이미 있는 데몬에 연결. 인증 키/로그인 링크, Headscale, 서브넷 라우트, 출구 노드, 노드 목록과 SOCKS5 프록시, 고정 포트, tailscaled 추가 인수 및 환경 변수. Linux에서 온라인 설치, 업데이트, 롤백, 제거. 기본 설정 복원 지원 |
 | frp | 여러 frpc / frps 인스턴스를 각각 실행. frpc 클라이언트(tcp/udp/http/https/stcp/xtcp 프록시, 추가·삭제 즉시 적용)와 frps 서버(포트 허용 목록, 서브도메인, 대시보드). 기존 ini / 신규 toml 설정을 한 번에 가져올 수 있음. 온라인 설치, 업데이트, 롤백, 제거. 기본 설정 복원 지원 |

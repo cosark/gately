@@ -1,71 +1,134 @@
 <template>
   <div>
     <PageHeader :title="t('portForward.title')" :desc="t('portForward.desc')" :icon="ArrowLeftRight">
+      <el-input
+        v-if="rules.length"
+        v-model="gl.filterText.value"
+        class="list-filter"
+        clearable
+        :disabled="gl.sortMode.value"
+        :prefix-icon="Search"
+        :placeholder="t('portForward.filterPlaceholder')"
+      />
       <CompactToggle v-model="compact" />
+      <el-button v-if="rules.length > 1" :type="gl.sortMode.value ? 'primary' : 'default'" :icon="ArrowUpDown" @click="gl.toggleSortMode()">
+        {{ gl.sortMode.value ? t('groupSort.sortDone') : t('groupSort.sort') }}
+      </el-button>
       <el-button :icon="SlidersHorizontal" @click="openSettings">{{ t('portForward.globalSettings') }}</el-button>
       <el-button type="primary" :icon="Plus" @click="openEditor()">{{ t('portForward.addRule') }}</el-button>
     </PageHeader>
 
     <ModuleBanner v-if="settings && !settings.enable" :title="t('portForward.moduleOffTitle')" :loading="enabling" @enable="enableModule" />
 
-    <div v-loading="loading" class="card-list" :class="{ 'is-compact': compact }">
+    <SortToolbar
+      v-if="gl.sortMode.value"
+      :selected-count="gl.selected.value.size"
+      :total="rules.length"
+      :groups="gl.groupNames.value"
+      :busy="gl.busy.value"
+      @select-all="gl.selectAll()"
+      @clear="gl.clearSelection()"
+      @set-group="gl.setGroup"
+    />
+
+    <div v-loading="loading" class="card-list" :class="{ 'is-compact': compact || gl.sortMode.value, 'is-sorting': gl.sortMode.value }">
       <el-empty v-if="!loading && !rules.length" :description="t('portForward.empty')" />
-      <EntityCard :compact="compact" v-for="r in rules" :key="r.key" :off="!r.enable || moduleOff">
+      <el-empty v-else-if="!loading && !gl.items.value.length" :description="t('groupSort.noMatched')" :image-size="60" />
+      <template v-for="it in gl.items.value" :key="it.id">
+      <GroupHeader
+        v-if="it.kind === 'group'"
+        :name="it.name"
+        :count-text="t('portForward.groupCount', { count: it.count })"
+        :collapsed="it.collapsed"
+        :sorting="gl.sortMode.value"
+        :can-up="it.canUp"
+        :can-down="it.canDown"
+        :checked="it.checked"
+        :indeterminate="it.indeterminate"
+        :class="gl.dropClass(it.id)"
+        @toggle="gl.toggleGroup(it.name)"
+        @rename="gl.renameGroup(it.name)"
+        @up="gl.moveGroup(it.index, -1)"
+        @down="gl.moveGroup(it.index, 1)"
+        @check="(v: boolean) => gl.setSelected(it.ids, v)"
+        @dragover.prevent="gl.dragOver(it.id, $event, false)"
+        @dragleave="gl.dragLeave(it.id)"
+        @drop.prevent="gl.drop()"
+      />
+      <EntityCard
+        v-else
+        :compact="compact || gl.sortMode.value"
+        :off="!it.item.enable || moduleOff"
+        :class="[gl.dropClass(it.id), { 'is-grouped': it.grouped }]"
+        :draggable="gl.sortMode.value && !isMobile"
+        @dragstart="gl.dragStart(it.id, $event)"
+        @dragover.prevent="gl.dragOver(it.id, $event)"
+        @dragleave="gl.dragLeave(it.id)"
+        @drop.prevent="gl.drop()"
+        @dragend="gl.resetDrag()"
+      >
         <template #lead>
-          <el-switch :model-value="r.enable" @change="(v: string | number | boolean) => toggle(r, Boolean(v))" />
+          <el-checkbox v-if="gl.sortMode.value" :model-value="gl.isSelected(it.id)" @change="(v: string | number | boolean) => gl.setSelected([it.id], Boolean(v))" />
+          <el-switch v-else :model-value="it.item.enable" @change="(v: string | number | boolean) => toggle(it.item, Boolean(v))" />
         </template>
         <template #title>
-          <span>{{ r.name || t('portForward.unnamed') }}</span>
+          <span>{{ it.item.name || t('portForward.unnamed') }}</span>
           <span class="tags">
-            <el-tag v-if="r.mode === 'sni'" size="small" type="success" effect="plain">{{ t('portForward.modeSni') }}</el-tag>
-            <el-tag v-for="p in r.protocols" :key="p" size="small" effect="plain" class="mono">{{ p.toUpperCase() }}</el-tag>
+            <el-tag v-if="it.item.mode === 'sni'" size="small" type="success" effect="plain">{{ t('portForward.modeSni') }}</el-tag>
+            <el-tag v-for="p in it.item.protocols" :key="p" size="small" effect="plain" class="mono">{{ p.toUpperCase() }}</el-tag>
           </span>
         </template>
-        <template v-if="r.remark" #sub>{{ r.remark }}</template>
+        <template v-if="it.item.remark" #sub>{{ it.item.remark }}</template>
         <template #status>
-          <el-tooltip v-if="r.details?.length && r.enable" placement="top">
+          <el-tooltip v-if="it.item.details?.length && it.item.enable" placement="top">
             <template #content>
-              <div v-for="d in r.details" :key="d">{{ d }}</div>
+              <div v-for="d in it.item.details" :key="d">{{ d }}</div>
             </template>
             <TriangleAlert :size="16" class="detail" />
           </el-tooltip>
-          <StatusBadge v-bind="ruleStatus(r)" />
+          <StatusBadge v-bind="ruleStatus(it.item)" />
         </template>
-        <Field :label="t('portForward.listen')" mono>{{ listenText(r) }}</Field>
-        <template v-if="r.mode === 'sni'">
+        <Field :label="t('portForward.listen')" mono>{{ listenText(it.item) }}</Field>
+        <template v-if="it.item.mode === 'sni'">
           <Field :label="t('portForward.sniRoutes')">
-            <div v-for="(rt, i) in r.sniRoutes" :key="i" class="route-line">
+            <div v-for="(rt, i) in it.item.sniRoutes" :key="i" class="route-line">
               <span class="route-name">{{ rt.name || rt.domains[0] }}</span>
-              <span class="mono">→ {{ routeTargetText(r, rt) }}</span>
+              <span class="mono">→ {{ routeTargetText(it.item, rt) }}</span>
               <el-tag v-if="rt.proxyProtocol" size="small" effect="plain">{{ rt.proxyProtocol }}</el-tag>
-              <span class="route-meta">{{ t('portForward.routeMeta', { domains: rt.domains.length, hits: r.stats.routeConns?.[i] ?? 0 }) }}</span>
+              <span class="route-meta">{{ t('portForward.routeMeta', { domains: rt.domains.length, hits: it.item.stats.routeConns?.[i] ?? 0 }) }}</span>
             </div>
           </Field>
           <Field :label="t('portForward.defaultTarget')" mono>
-            <template v-if="r.targetAddresses?.length">
-              <div v-for="addr in r.targetAddresses" :key="addr">
-                {{ addr }}:{{ r.targetPorts || r.listenPorts }}
-                <el-tag v-if="r.proxyProtocol" size="small" effect="plain">{{ r.proxyProtocol }}</el-tag>
+            <template v-if="it.item.targetAddresses?.length">
+              <div v-for="addr in it.item.targetAddresses" :key="addr">
+                {{ addr }}:{{ it.item.targetPorts || it.item.listenPorts }}
+                <el-tag v-if="it.item.proxyProtocol" size="small" effect="plain">{{ it.item.proxyProtocol }}</el-tag>
               </div>
-              <span class="route-meta">{{ t('portForward.defaultHits', { hits: r.stats.defaultConns ?? 0 }) }}</span>
+              <span class="route-meta">{{ t('portForward.defaultHits', { hits: it.item.stats.defaultConns ?? 0 }) }}</span>
             </template>
-            <span v-else class="route-meta">{{ t('portForward.defaultTargetNone', { rejected: r.stats.sniRejected ?? 0 }) }}</span>
+            <span v-else class="route-meta">{{ t('portForward.defaultTargetNone', { rejected: it.item.stats.sniRejected ?? 0 }) }}</span>
           </Field>
         </template>
         <Field v-else :label="t('portForward.target')" mono>
-          <div v-for="addr in r.targetAddresses" :key="addr">{{ addr }}:{{ r.targetPorts || r.listenPorts }}</div>
+          <div v-for="addr in it.item.targetAddresses" :key="addr">{{ addr }}:{{ it.item.targetPorts || it.item.listenPorts }}</div>
         </Field>
-        <Field :label="t('portForward.connections')">{{ t('portForward.connectionsValue', { active: r.stats.activeConns, total: r.stats.totalConns }) }}</Field>
-        <Field :label="t('portForward.traffic')">↑ {{ formatBytes(r.stats.bytesIn) }} · ↓ {{ formatBytes(r.stats.bytesOut) }}</Field>
-        <template #actions>
-          <el-button text size="small" :icon="Pencil" @click="openEditor(r)">{{ t('common.edit') }}</el-button>
-          <el-popconfirm :title="t('portForward.deleteConfirm')" @confirm="remove(r)">
+        <Field :label="t('portForward.connections')">{{ t('portForward.connectionsValue', { active: it.item.stats.activeConns, total: it.item.stats.totalConns }) }}</Field>
+        <Field :label="t('portForward.traffic')">↑ {{ formatBytes(it.item.stats.bytesIn) }} · ↓ {{ formatBytes(it.item.stats.bytesOut) }}</Field>
+        <template v-if="gl.sortMode.value" #actions>
+          <GripVertical v-if="!isMobile" :size="16" class="grip" />
+          <el-button text size="small" :icon="ChevronUp" :disabled="!it.canUp" :aria-label="t('groupSort.moveUp')" :title="t('groupSort.moveUp')" @click="gl.moveItem(it.id, -1)" />
+          <el-button text size="small" :icon="ChevronDown" :disabled="!it.canDown" :aria-label="t('groupSort.moveDown')" :title="t('groupSort.moveDown')" @click="gl.moveItem(it.id, 1)" />
+        </template>
+        <template v-else #actions>
+          <el-button text size="small" :icon="Pencil" @click="openEditor(it.item)">{{ t('common.edit') }}</el-button>
+          <el-popconfirm :title="t('portForward.deleteConfirm')" @confirm="remove(it.item)">
             <template #reference>
               <el-button text size="small" type="danger" :icon="Trash2">{{ t('common.delete') }}</el-button>
             </template>
           </el-popconfirm>
         </template>
       </EntityCard>
+      </template>
     </div>
 
     <LogCard url="/api/portforward/logs" clearable />
@@ -74,6 +137,16 @@
       <el-form :model="editing" label-width="110px" :label-position="labelPosition">
         <el-form-item :label="t('common.name')">
           <el-input v-model="editing.name" :placeholder="t('portForward.namePlaceholder')" />
+        </el-form-item>
+        <el-form-item :label="t('groupSort.group')">
+          <el-autocomplete
+            v-model="editing.group"
+            class="w-260"
+            clearable
+            :maxlength="64"
+            :fetch-suggestions="(q: string, cb: (v: { value: string }[]) => void) => cb(groupSuggestions(gl.groupNames.value, q))"
+            :placeholder="t('groupSort.groupPlaceholder')"
+          />
         </el-form-item>
         <el-form-item :label="t('portForward.mode')">
           <el-radio-group v-model="editing.mode" @change="onModeChange">
@@ -183,8 +256,26 @@
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
-import { ArrowDown, ArrowLeftRight, ArrowUp, Pencil, Plus, SlidersHorizontal, Trash2, TriangleAlert } from 'lucide-vue-next'
+import {
+  ArrowDown,
+  ArrowLeftRight,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronDown,
+  ChevronUp,
+  GripVertical,
+  Pencil,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  Trash2,
+  TriangleAlert,
+} from 'lucide-vue-next'
 import { api, formatBytes } from '../api'
+import GroupHeader from '../components/GroupHeader.vue'
+import SortToolbar from '../components/SortToolbar.vue'
+import { useGroupedList } from '../composables/useGroupSort'
+import { groupSuggestions } from '../groupSort'
 import PageHeader from '../components/PageHeader.vue'
 import ModuleBanner from '../components/ModuleBanner.vue'
 import CompactToggle from '../components/CompactToggle.vue'
@@ -200,6 +291,8 @@ interface Rule {
   key?: string
   name: string
   enable: boolean
+  // group 为列表中的分组名称，只影响展示，留空为未分组
+  group?: string
   protocols: string[]
   listenAddress: string
   listenPorts: string
@@ -286,6 +379,18 @@ const enabling = ref(false)
 const polling = usePolling(load, 3000)
 
 const moduleOff = computed(() => settings.value?.enable === false)
+// 列表的筛选、分组与排序；顺序与分组的修改不会重启转发
+const gl = useGroupedList<RuleView>({
+  storageKey: 'portforward.groups',
+  items: () => rules.value,
+  base: '/api/portforward/rules',
+  reload: load,
+  matches: (r, q) =>
+    [r.name, r.group ?? '', r.remark, listenText(r), ...(r.targetAddresses ?? []), ...(r.sniRoutes ?? []).flatMap((rt) => [rt.name, ...rt.domains])]
+      .join('\n')
+      .toLowerCase()
+      .includes(q),
+})
 // SNI 分流只处理 TCP
 const availableProtocols = computed(() => (editing.value.mode === 'sni' ? protocols.filter((p) => p.value.startsWith('tcp')) : protocols))
 
@@ -293,6 +398,7 @@ function emptyRule(): Rule {
   return {
     name: '',
     enable: true,
+    group: '',
     protocols: ['tcp'],
     listenAddress: '',
     listenPorts: '',
@@ -495,6 +601,45 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.list-filter {
+  width: 220px;
+}
+.card-list > .group-header {
+  border-radius: var(--g-radius);
+}
+.card-list > .is-grouped {
+  margin-left: 16px;
+}
+.card-list.is-sorting > .entity[draggable='true'] {
+  cursor: grab;
+}
+.card-list > .entity.dragging {
+  opacity: 0.4;
+}
+.card-list > .drop-before {
+  box-shadow: 0 -3px 0 var(--el-color-primary);
+}
+.card-list > .drop-after {
+  box-shadow: 0 3px 0 var(--el-color-primary);
+}
+.grip {
+  color: var(--el-text-color-secondary);
+  cursor: grab;
+}
+.w-260 {
+  width: 260px;
+}
+@media (max-width: 767.98px) {
+  .list-filter {
+    width: 160px;
+  }
+  .card-list > .is-grouped {
+    margin-left: 8px;
+  }
+  .w-260 {
+    width: 100%;
+  }
+}
 .detail {
   color: var(--el-color-warning);
 }

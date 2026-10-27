@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "默认目标 PROXY",
   "routeMeta": "{domains} 个域名 · 累计 {hits}",
   "defaultHits": "累计 {hits}",
-  "defaultTargetNone": "未设置，未命中时断开（已断开 {rejected}）"
+  "defaultTargetNone": "未设置，未命中时断开（已断开 {rejected}）",
+  "filterPlaceholder": "搜索名称、分组、端口、目标或域名",
+  "groupCount": "{count} 条规则"
 }

@@ -73,6 +73,7 @@ Comodines: `*:read` equivale a solo lectura en todos los módulos; `*:write` o `
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | Eliminar Regla de reenvío de puertos |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | Activar o desactivar Regla de reenvío de puertos |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | Reordenar Regla de reenvío de puertos |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | Asignar grupo a varios elementos: Regla de reenvío de puertos |
 | GET | `/api/portforward/settings` | `portforward:read` | Leer los ajustes globales de reenvío de puertos |
 | PUT | `/api/portforward/settings` | `portforward:write` | Guardar los ajustes globales de reenvío de puertos |
 
@@ -88,6 +89,7 @@ Comodines: `*:read` equivale a solo lectura en todos los módulos; `*:write` o `
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | Eliminar Tarea DDNS |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | Activar o desactivar Tarea DDNS |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | Reordenar Tarea DDNS |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | Asignar grupo a varios elementos: Tarea DDNS |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | Ver secretos en texto plano |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | Sincronizar ahora una tarea DDNS |
 | GET | `/api/ddns/providers` | `ddns:read` | Listar los proveedores DNS compatibles y los parámetros que requieren |
@@ -763,6 +765,13 @@ Comodines: `*:read` equivale a solo lectura en todos los módulos; `*:write` o `
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| Campo | Tipo |
+| --- | --- |
+| `group` | string |
+| `keys` | Lista de string |
+
 ### crud.orderRequest
 
 | Campo | Tipo |
@@ -790,6 +799,7 @@ Comodines: `*:read` equivale a solo lectura en todos los módulos; `*:write` o `
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ Comodines: `*:read` equivale a solo lectura en todos los módulos; `*:write` o `
 | Campo | Tipo |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |

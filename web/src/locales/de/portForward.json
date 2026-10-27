@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "PROXY des Standardziels",
   "routeMeta": "{domains} Domains · {hits} gesamt",
   "defaultHits": "{hits} gesamt",
-  "defaultTargetNone": "Nicht gesetzt, nicht passende Verbindungen werden getrennt ({rejected} getrennt)"
+  "defaultTargetNone": "Nicht gesetzt, nicht passende Verbindungen werden getrennt ({rejected} getrennt)",
+  "filterPlaceholder": "Name, Gruppe, Port, Ziel oder Domain suchen",
+  "groupCount": "{count} Regeln"
 }

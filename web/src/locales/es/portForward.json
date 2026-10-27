@@ -58,5 +58,7 @@
   "defaultProxyProtocol": "PROXY del destino predeterminado",
   "routeMeta": "{domains} dominios · {hits} en total",
   "defaultHits": "{hits} en total",
-  "defaultTargetNone": "Sin definir, las conexiones sin coincidencia se cierran ({rejected} cerradas)"
+  "defaultTargetNone": "Sin definir, las conexiones sin coincidencia se cierran ({rejected} cerradas)",
+  "filterPlaceholder": "Buscar nombre, grupo, puerto, destino o dominio",
+  "groupCount": "{count} reglas"
 }

@@ -56,5 +56,7 @@
   "recordDeactivated": "該記錄已停用",
   "savedChecking": "已儲存，正在檢查",
   "triggered": "已觸發",
-  "recordsCollapsed": "已收合 {count} 筆解析記錄，點擊展開"
+  "recordsCollapsed": "已收合 {count} 筆解析記錄，點擊展開",
+  "filterPlaceholder": "搜尋名稱、分組、網域或服務商",
+  "groupCount": "{count} 個任務"
 }

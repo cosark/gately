@@ -14,6 +14,10 @@ Ao salvar uma alteração em um site ou no site padrão, a lista de sites é tro
 
 Um site pode ter um "Grupo" (até 64 caracteres; o site padrão não pode ser agrupado). Em cada listener, a lista mostra os grupos como seções recolhíveis: os grupos aparecem na ordem em que surgem pela primeira vez, os sites sem grupo vêm depois deles e o site padrão fica sempre por último. O estado recolhido de cada grupo fica guardado no navegador. Clique em "Ordenar" para entrar no modo de ordenação, em que é possível mover sites para cima e para baixo, arrastá-los dentro do grupo, mover grupos inteiros e reordenar os listeners. A ordem afeta apenas a lista: a correspondência de domínios segue a prioridade acima, independentemente da ordem dos sites, e salvar a nova ordem troca a lista de sites em tempo real, sem derrubar conexões. A caixa de busca no topo da página filtra os sites por domínio, nome, grupo, backend ou observação.
 
+No modo de ordenação você também pode marcar vários sites (a caixa no cabeçalho de um grupo seleciona o grupo inteiro). Arrastar qualquer site marcado move todos, e soltá-los sobre um site ou o cabeçalho de outro grupo os coloca nesse grupo. A barra de ferramentas move de uma vez os sites marcados para um grupo, ou os tira do grupo quando o nome fica vazio; sites marcados de listeners diferentes são salvos por listener.
+
+Passe o mouse sobre o cabeçalho de um grupo e clique no lápis para renomeá-lo: todos os itens passam para o novo nome e mantêm posição e ordem. Escolher um nome já usado junta os dois grupos após uma confirmação.
+
 ## Tipos de site
 
 | Tipo | Descrição |

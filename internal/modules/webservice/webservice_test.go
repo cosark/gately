@@ -31,6 +31,7 @@ import (
 	"github.com/quic-go/quic-go/http3"
 
 	"github.com/wangwanjie/gately/internal/config"
+	"github.com/wangwanjie/gately/internal/crud"
 	"github.com/wangwanjie/gately/internal/logbuf"
 	"github.com/wangwanjie/gately/internal/luckyimport"
 	"github.com/wangwanjie/gately/internal/module"
@@ -817,7 +818,7 @@ func TestSiteGroup(t *testing.T) {
 	if l.Sites[0].Group != "家庭" || l.Default.Group != "" {
 		t.Fatalf("分组整理错误: %q / %q", l.Sites[0].Group, l.Default.Group)
 	}
-	l.Sites[0].Group = strings.Repeat("组", maxGroupLen+1)
+	l.Sites[0].Group = strings.Repeat("组", crud.MaxGroupLen+1)
 	if err := l.Validate(); err == nil {
 		t.Fatal("超长分组名称应报错")
 	}

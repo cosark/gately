@@ -73,6 +73,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | Удалить: Правило проброса портов |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | Включить или отключить: Правило проброса портов |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | Изменить порядок: Правило проброса портов |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | Задать группу сразу для нескольких: Правило проброса портов |
 | GET | `/api/portforward/settings` | `portforward:read` | Чтение глобальных настроек проброса портов |
 | PUT | `/api/portforward/settings` | `portforward:write` | Сохранить глобальные настройки проброса портов |
 
@@ -88,6 +89,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | Удалить: Задача DDNS |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | Включить или отключить: Задача DDNS |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | Изменить порядок: Задача DDNS |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | Задать группу сразу для нескольких: Задача DDNS |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | Показать секреты открытым текстом |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | Немедленно синхронизировать задачу DDNS |
 | GET | `/api/ddns/providers` | `ddns:read` | Список поддерживаемых DNS-провайдеров и необходимых им параметров |
@@ -763,6 +765,13 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| Поле | Тип |
+| --- | --- |
+| `group` | string |
+| `keys` | Массив из string |
+
 ### crud.orderRequest
 
 | Поле | Тип |
@@ -790,6 +799,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ curl -X POST -H "Authorization: Bearer gtl_xxxx" http://localhost:16680/api/ddns
 | Поле | Тип |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |

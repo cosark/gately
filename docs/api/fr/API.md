@@ -73,6 +73,7 @@ Syntaxe générique : `*:read` désigne la lecture seule sur tous les modules, `
 | DELETE | `/api/portforward/rules/{key}` | `portforward:write` | Supprimer Règle de redirection de ports |
 | PUT | `/api/portforward/rules/{key}/enable` | `portforward:write` | Activer ou désactiver Règle de redirection de ports |
 | PUT | `/api/portforward/rules-order` | `portforward:write` | Réordonner Règle de redirection de ports |
+| PUT | `/api/portforward/rules-group` | `portforward:write` | Définir le groupe de plusieurs éléments : Règle de redirection de ports |
 | GET | `/api/portforward/settings` | `portforward:read` | Lire les paramètres globaux de redirection de ports |
 | PUT | `/api/portforward/settings` | `portforward:write` | Enregistrer les paramètres globaux de redirection de ports |
 
@@ -88,6 +89,7 @@ Syntaxe générique : `*:read` désigne la lecture seule sur tous les modules, `
 | DELETE | `/api/ddns/tasks/{key}` | `ddns:write` | Supprimer Tâche DDNS |
 | PUT | `/api/ddns/tasks/{key}/enable` | `ddns:write` | Activer ou désactiver Tâche DDNS |
 | PUT | `/api/ddns/tasks-order` | `ddns:write` | Réordonner Tâche DDNS |
+| PUT | `/api/ddns/tasks-group` | `ddns:write` | Définir le groupe de plusieurs éléments : Tâche DDNS |
 | GET | `/api/ddns/tasks/{key}/secrets` | `ddns:write` | Afficher les secrets en clair |
 | POST | `/api/ddns/tasks/{key}/sync` | `ddns:write` | Synchroniser immédiatement une tâche DDNS |
 | GET | `/api/ddns/providers` | `ddns:read` | Lister les fournisseurs DNS pris en charge et leurs paramètres requis |
@@ -763,6 +765,13 @@ Syntaxe générique : `*:read` désigne la lecture seule sur tous les modules, `
 | --- | --- |
 | `enable` | boolean |
 
+### crud.groupRequest
+
+| Champ | Type |
+| --- | --- |
+| `group` | string |
+| `keys` | Tableau de string |
+
 ### crud.orderRequest
 
 | Champ | Type |
@@ -790,6 +799,7 @@ Syntaxe générique : `*:read` désigne la lecture seule sur tous les modules, `
 | `credentials` | `dnsprovider.Credentials` |
 | `enable` | boolean |
 | `forceInterval` | integer |
+| `group` | string |
 | `httpTimeout` | integer |
 | `interval` | integer |
 | `ipv4` | `ipsource.Source` |
@@ -1193,6 +1203,7 @@ Syntaxe générique : `*:read` désigne la lecture seule sur tous les modules, `
 | Champ | Type |
 | --- | --- |
 | `enable` | boolean |
+| `group` | string |
 | `key` | string |
 | `listenAddress` | string |
 | `listenPorts` | string |
