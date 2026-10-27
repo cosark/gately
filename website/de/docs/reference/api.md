@@ -141,6 +141,10 @@ curl -H "Authorization: Bearer gtl_xxxx" "http://localhost:16680/api/ddns/logs?l
 curl -H "Authorization: Bearer gtl_xxxx" "http://localhost:16680/api/ddns/logs?before=1200&limit=200"
 ```
 
+## Sprache der Antworten
+
+Antworten folgen der Sprache im Header `Accept-Language`, ohne diesen Header der Serversprache (Oberflächensprache in den Einstellungen). Übersetzt wird nur von Gately erzeugter Text: Fehlerantworten, Status und Protokolle, Beschreibungen von Anbietern und Berechtigungen sowie Meldungsfelder in Konfigurationsdaten wie `error`, `lastError`, `details`, `warnings`, `message` und `title`. Namen, Bemerkungen, Gruppen, Befehle, Domains, Eintragswerte und andere eingegebene Inhalte kommen immer so zurück, wie sie gespeichert sind; Lesen und erneutes Speichern verändert sie daher nie. Fügen Sie `-H "Accept-Language: zh-CN"` hinzu, wenn ein Skript die Meldungen auf Chinesisch braucht.
+
 ## Vollständige API-Referenz
 
 Alle Endpunkte, Parameter und erforderlichen Berechtigungen finden Sie in der [API-Referenz](/en/docs/reference/api-reference).

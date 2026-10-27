@@ -141,6 +141,10 @@ curl -H "Authorization: Bearer gtl_xxxx" "http://localhost:16680/api/ddns/logs?l
 curl -H "Authorization: Bearer gtl_xxxx" "http://localhost:16680/api/ddns/logs?before=1200&limit=200"
 ```
 
+## Idioma de las respuestas
+
+Las respuestas siguen el idioma de la cabecera `Accept-Language`, o el idioma del servidor (el idioma de la interfaz en Ajustes) si falta. Solo se traduce el texto generado por Gately: respuestas de error, estado y registros, descripciones de proveedores y permisos, y los campos de mensaje de los datos de configuración como `error`, `lastError`, `details`, `warnings`, `message` y `title`. Los nombres, notas, grupos, comandos, dominios, valores de registro y demás contenido que haya introducido se devuelven siempre tal como se guardaron, así que leerlos y volver a guardarlos nunca los reescribe. Añada `-H "Accept-Language: zh-CN"` si un script necesita los mensajes en chino.
+
 ## Referencia completa de la API
 
 Consulta la [Referencia de la API](/en/docs/reference/api-reference) para ver todos los endpoints, parámetros y permisos necesarios.

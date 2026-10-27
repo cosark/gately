@@ -141,6 +141,10 @@ curl -H "Authorization: Bearer gtl_xxxx" "http://localhost:16680/api/ddns/logs?l
 curl -H "Authorization: Bearer gtl_xxxx" "http://localhost:16680/api/ddns/logs?before=1200&limit=200"
 ```
 
+## 响应语言
+
+接口按请求头 `Accept-Language` 的语言返回，没有该请求头时使用服务端语言（系统设置中的界面语言）。翻译只作用于程序生成的文字：错误响应、状态与日志、服务商与权限说明，以及配置数据中的 `error`、`lastError`、`details`、`warnings`、`message`、`title` 等说明字段。名称、备注、分组、命令、域名、记录值等用户填写的内容总是原样返回，读出后原样保存不会被改写。脚本需要中文提示时可加 `-H "Accept-Language: zh-CN"`。
+
 ## 完整接口清单
 
 全部接口、参数与所需权限见 [API 接口清单](/docs/reference/api-reference)。

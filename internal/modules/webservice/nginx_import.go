@@ -1341,7 +1341,8 @@ func (m *Module) handleImportNginx(w http.ResponseWriter, r *http.Request) {
 		}
 		rep.Applied = true
 	}
-	httpx.OK(w, i18n.Localize(r, rep))
+	// 站点的简述与跳过原因由程序生成，一并翻译；站点名称、已有监听名称保持原样
+	httpx.OK(w, i18n.Localize(r, rep, "summary", "skipped"))
 }
 
 // applyNginxLocked 按计划写入配置：合并到已有监听或新建监听，保存后重启受影响的监听。
