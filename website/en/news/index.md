@@ -7,6 +7,10 @@ description: Release announcements and notes for each Gately version.
 
 Announcements for major releases are listed below. See [GitHub Releases](https://github.com/wangwanjie/gately/releases) for the full changes and downloads of every version.
 
+## [v0.6.0.1](/en/news/v0.6.0.1)
+
+October 27, 2026 · Dynamic DNS and port forwarding get groups, sorting and search; the Web Service, Dynamic DNS and port forwarding pages can set the group of many items at once, drag several checked items together and rename groups.
+
 ## [v0.6.0](/en/news/v0.6.0)
 
 October 27, 2026 · Several frpc and frps instances; the Web Service routes signed-in users to their own backends, groups, sorts and searches sites, and can forward Gately sign-in cookies; certificates detect the DNS zone of delegated subdomains; saved passwords and keys can be shown on request.

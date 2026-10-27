@@ -7,6 +7,10 @@ description: Gately 各版本的發布公告與更新說明。
 
 重要版本的發布公告如下，每個版本的完整變更與下載檔案見 [GitHub Releases](https://github.com/wangwanjie/gately/releases)。
 
+## [v0.6.0.1](/zh-TW/news/v0.6.0.1)
+
+2026 年 10 月 27 日 · 動態網域與連接埠轉發支援分組、排序與搜尋；Web 服務、動態網域、連接埠轉發都可批次設定分組、勾選多項一起拖動，並能重新命名分組。
+
 ## [v0.6.0](/zh-TW/news/v0.6.0)
 
 2026 年 10 月 27 日 · frp 可執行多個 frpc 與 frps 實例；Web 服務依登入使用者分流到不同後端、站點分組排序與搜尋、轉發 Gately 登入 Cookie；憑證自動識別委派子網域的 DNS 區域；已儲存的密碼與金鑰可按需顯示。

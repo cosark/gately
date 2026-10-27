@@ -7,6 +7,10 @@ description: Anuncios y notas de cada versión de Gately.
 
 A continuación se listan los anuncios de las versiones principales. Consulta [GitHub Releases](https://github.com/wangwanjie/gately/releases) para ver todos los cambios y las descargas de cada versión.
 
+## [v0.6.0.1](/es/news/v0.6.0.1)
+
+27 de octubre de 2026 · El DNS dinámico y el reenvío de puertos admiten grupos, orden y búsqueda; las páginas del Servicio web, DNS dinámico y reenvío de puertos permiten asignar grupo en lote, arrastrar varios elementos marcados a la vez y renombrar grupos.
+
 ## [v0.6.0](/es/news/v0.6.0)
 
 27 de octubre de 2026 · Varias instancias de frpc y frps; el Servicio web envía a los usuarios con sesión iniciada a sus propios backends, agrupa, ordena y busca sitios, y puede reenviar las cookies de inicio de sesión de Gately; los certificados detectan la zona DNS de los subdominios delegados; las contraseñas y claves guardadas pueden mostrarse a petición.

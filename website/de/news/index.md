@@ -7,6 +7,10 @@ description: Release-Ankündigungen und Versionshinweise zu jeder Gately-Version
 
 Unten stehen die Ankündigungen zu wichtigen Releases. Alle Änderungen und Downloads jeder Version finden Sie unter [GitHub Releases](https://github.com/wangwanjie/gately/releases).
 
+## [v0.6.0.1](/de/news/v0.6.0.1)
+
+27. Oktober 2026 · Dynamisches DNS und Portweiterleitung erhalten Gruppen, Sortierung und Suche; auf den Seiten Webdienst, Dynamisches DNS und Portweiterleitung lassen sich Gruppen für mehrere Einträge setzen, mehrere markierte Einträge zusammen ziehen und Gruppen umbenennen.
+
 ## [v0.6.0](/de/news/v0.6.0)
 
 27. Oktober 2026 · Mehrere frpc- und frps-Instanzen; der Webdienst leitet angemeldete Benutzer an eigene Backends weiter, gruppiert, sortiert und durchsucht Sites und kann Gately-Anmelde-Cookies weiterreichen; Zertifikate erkennen die DNS-Zone delegierter Subdomains; gespeicherte Passwörter und Schlüssel lassen sich bei Bedarf anzeigen.
