@@ -8,7 +8,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"net"
 	"net/http"
 	"os"
@@ -230,17 +229,18 @@ func (w *statusWriter) Write(b []byte) (int, error) {
 	return w.ResponseWriter.Write(b)
 }
 
-// Hijack 转发给底层连接，WebSocket 升级依赖它。
+// Hijack 转发给底层连接，WebSocket 升级依赖它。经 ResponseController 沿 Unwrap 链查找，
+// 内层是只实现 Unwrap 的包装（如统一网关的 gatewayWriter）时也能接管连接。
 func (w *statusWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	h, ok := w.ResponseWriter.(http.Hijacker)
-	if !ok {
-		return nil, nil, errors.New("底层连接不支持 Hijack")
+	conn, rw, err := http.NewResponseController(w.ResponseWriter).Hijack()
+	if err != nil {
+		return nil, nil, err
 	}
 	// 升级成功后不会再写响应头，按 101 记录
 	if w.status == 0 {
 		w.status = http.StatusSwitchingProtocols
 	}
-	return h.Hijack()
+	return conn, rw, nil
 }
 
 // Flush 转发给底层写入器，保证流式响应及时发送。

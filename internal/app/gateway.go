@@ -6,6 +6,7 @@ package app
 // 仅在启动参数指定 Socket 时启用（fpk 包的 cmd/main 传入），其他部署方式的行为不变。
 
 import (
+	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -200,6 +201,12 @@ func (g *gatewayWriter) Write(b []byte) (int, error) {
 func (g *gatewayWriter) Flush() {
 	g.fixHeader()
 	_ = http.NewResponseController(g.ResponseWriter).Flush()
+}
+
+// Hijack 让 WebSocket 升级能接管底层连接。外层中间件中有的只对内层做 http.Hijacker 类型断言，
+// 不会沿 Unwrap 查找，这里显式实现，避免写出 101 后接管失败（issue #31）。
+func (g *gatewayWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	return http.NewResponseController(g.ResponseWriter).Hijack()
 }
 
 // Unwrap 供 http.ResponseController 与 WebSocket 库取得底层连接（Hijack）。

@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"io"
 	"net"
 	"net/http"
@@ -168,11 +167,10 @@ func (t *transWriter) Flush() {
 	}
 }
 
+// Hijack 经 ResponseController 沿 Unwrap 链找到底层连接：内层可能是只实现 Unwrap 的包装（如统一网关的 gatewayWriter），
+// 直接做 http.Hijacker 类型断言会失败，WebSocket 在写出 101 后无法接管连接
 func (t *transWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	if h, ok := t.ResponseWriter.(http.Hijacker); ok {
-		return h.Hijack()
-	}
-	return nil, nil, errors.New("hijack not supported")
+	return http.NewResponseController(t.ResponseWriter).Hijack()
 }
 
 func (t *transWriter) Unwrap() http.ResponseWriter { return t.ResponseWriter }

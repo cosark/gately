@@ -2,14 +2,17 @@ package app
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"log"
 	"net"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -21,6 +24,7 @@ import (
 	"github.com/wangwanjie/gately/internal/logbuf"
 	"github.com/wangwanjie/gately/internal/module"
 	"github.com/wangwanjie/gately/internal/modules/portforward"
+	"github.com/wangwanjie/gately/internal/modules/webterminal"
 )
 
 func TestPrefixCookiePath(t *testing.T) {
@@ -411,5 +415,114 @@ func TestGatewayAutoLogin(t *testing.T) {
 	a.settingsMu.Unlock()
 	if resp = fnosRequest(t, newClient(), "GET", gw.URL+"/app/gately/", true); !strings.Contains(resp.Header.Get("Set-Cookie"), "gately_token=") {
 		t.Fatal("开启仅内网访问时经网关仍应自动登录")
+	}
+}
+
+// TestGatewayTerminalWebSocket 经统一网关的 Unix Socket 打开本机 Shell（issue #31）：
+// 请求要经过 a.Handler() 的全部中间件（审计、翻译等），各层包装都要能把 Hijack 传到底层连接，
+// 否则写出 101 后接管失败，浏览器一直停在“连接中”。简体中文与其他语言的中间件链不同，两种都要覆盖。
+func TestGatewayTerminalWebSocket(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("本机 Shell 需要 Unix 伪终端")
+	}
+	a, err := New(Options{ConfigDir: t.TempDir(), Modules: []module.Module{webterminal.New()}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	a.logger = log.New(io.Discard, "", 0)
+	if err := a.auth.ChangeCredentials(mustInitialPassword(t, a), "admin", "test-password"); err != nil {
+		t.Fatal(err)
+	}
+	handler := a.Handler()
+	direct := httptest.NewServer(handler)
+	t.Cleanup(direct.Close)
+
+	// 与 fpk 部署一致：网关处理器监听在真实的 Unix Socket 上（路径过长会超出 Socket 地址上限，放在系统临时目录）
+	dir, err := os.MkdirTemp("", "gw")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { os.RemoveAll(dir) })
+	sockPath := filepath.Join(dir, "g.sock")
+	ln, err := listenUnix(sockPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gwSrv := &http.Server{Handler: a.gatewayHandler("/app/gately", handler)}
+	go func() { _ = gwSrv.Serve(ln) }()
+	t.Cleanup(func() { _ = gwSrv.Close() })
+
+	// 通过直接访问登录并准备一个本机 Shell 连接
+	jar, _ := cookiejar.New(nil)
+	c := &http.Client{Jar: jar}
+	if code, body := doJSON(t, c, "POST", direct.URL+"/api/login", map[string]string{"username": "admin", "password": "test-password"}); code != 200 {
+		t.Fatalf("登录失败 %d %s", code, body)
+	}
+	if code, body := doJSON(t, c, "POST", direct.URL+"/api/webterminal/security/agreement", nil); code != 200 {
+		t.Fatalf("接受协议失败 %d %s", code, body)
+	}
+	if code, body := doJSON(t, c, "PUT", direct.URL+"/api/webterminal/settings", map[string]any{"allowLocalShell": true, "bufferSize": 64, "heartbeatInterval": 30, "maxSessions": 5}); code != 200 {
+		t.Fatalf("开启本机 Shell 失败 %d %s", code, body)
+	}
+	code, body := doJSON(t, c, "POST", direct.URL+"/api/webterminal/connections", map[string]any{"name": "local", "type": "local", "enable": true, "local": map[string]any{"shell": "/bin/sh"}})
+	if code != 200 && code != 201 {
+		t.Fatalf("创建本机连接失败 %d %s", code, body)
+	}
+	var created struct {
+		Key string `json:"key"`
+	}
+	if err := json.Unmarshal(body, &created); err != nil || created.Key == "" {
+		t.Fatalf("创建连接的响应缺少 key: %s", body)
+	}
+	u, _ := url.Parse(direct.URL)
+	var token string
+	for _, ck := range jar.Cookies(u) {
+		if ck.Name == "gately_token" {
+			token = ck.Value
+		}
+	}
+	if token == "" {
+		t.Fatal("登录后没有拿到会话 Cookie")
+	}
+
+	// 客户端经 Unix Socket 连接，模拟 fnOS 网关转发：Host 不带端口，Origin 带端口
+	unixClient := &http.Client{Transport: &http.Transport{
+		DialContext: func(ctx context.Context, _, _ string) (net.Conn, error) {
+			var d net.Dialer
+			return d.DialContext(ctx, "unix", sockPath)
+		},
+	}}
+	for _, lang := range []string{"zh-CN", "en"} {
+		t.Run(lang, func(t *testing.T) {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			h := http.Header{}
+			h.Set("Cookie", "gately_token="+token)
+			h.Set("Origin", "https://nas.example.com:4433")
+			h.Set("Accept-Language", lang)
+			ws, _, err := websocket.Dial(ctx, "ws://nas.example.com/app/gately/api/webterminal/connections/"+created.Key+"/ws?cols=80&rows=24",
+				&websocket.DialOptions{HTTPClient: unixClient, HTTPHeader: h, Host: "nas.example.com"})
+			if err != nil {
+				t.Fatalf("经网关建立终端 WebSocket 失败: %v", err)
+			}
+			defer ws.CloseNow()
+			// 服务端先发会话 ID（文本帧），再转发 Shell 输出（二进制帧）
+			if typ, msg, err := ws.Read(ctx); err != nil || typ != websocket.MessageText || !strings.Contains(string(msg), `"t":"s"`) {
+				t.Fatalf("应先收到会话 ID，实际 %v %q %v", typ, msg, err)
+			}
+			if err := ws.Write(ctx, websocket.MessageText, []byte(`{"t":"i","d":"echo gately-$((6*7))\n"}`)); err != nil {
+				t.Fatal(err)
+			}
+			var out strings.Builder
+			for !strings.Contains(out.String(), "gately-42") {
+				typ, msg, err := ws.Read(ctx)
+				if err != nil {
+					t.Fatalf("没有收到 Shell 输出: %v，已收到 %q", err, out.String())
+				}
+				if typ == websocket.MessageBinary {
+					out.Write(msg)
+				}
+			}
+		})
 	}
 }
