@@ -7,6 +7,10 @@ description: Release-Ankündigungen und Versionshinweise zu jeder Gately-Version
 
 Unten stehen die Ankündigungen zu wichtigen Releases. Alle Änderungen und Downloads jeder Version finden Sie unter [GitHub Releases](https://github.com/wangwanjie/gately/releases).
 
+## [v0.6.0.3](/de/news/v0.6.0.3)
+
+28. Oktober 2026 · Behebt, dass ein Gately im LAN, das Klartext-HTTP über eine vertrauenswürdige PROXY-Quelle erhält, die HTTPS-Nutzung der Besucher nicht erkannte – mit fehlschlagender OIDC-Anmeldung bei https-Aussteller, Cookies ohne Secure und Weiterleitungsschleifen.
+
 ## [v0.6.0.2](/de/news/v0.6.0.2)
 
 28. Oktober 2026 · Behebt, dass das Web-Terminal beim Öffnen über den fnOS-Desktop bei „Verbinden“ hängen blieb, dass File Browser mit einem relativen Konfigurationsverzeichnis nicht startete und dass API-Antworten in anderen Sprachen als vereinfachtem Chinesisch von Nutzern eingegebenen chinesischen Text teilweise übersetzten.

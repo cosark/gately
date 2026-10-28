@@ -7,6 +7,10 @@ description: Gately 各版本的發布公告與更新說明。
 
 重要版本的發布公告如下，每個版本的完整變更與下載檔案見 [GitHub Releases](https://github.com/wangwanjie/gately/releases)。
 
+## [v0.6.0.3](/zh-TW/news/v0.6.0.3)
+
+2026 年 10 月 28 日 · 修復內網 Gately 經可信 PROXY 來源接收明文轉發時，無法辨識訪客使用 HTTPS，導致 https 簽發者的 OIDC 登入失敗、Cookie 缺少 Secure 與明文跳轉循環。
+
 ## [v0.6.0.2](/zh-TW/news/v0.6.0.2)
 
 2026 年 10 月 28 日 · 修復從飛牛桌面入口開啟時 Web 終端停在「連線中」、以相對設定目錄啟動時 File Browser 無法啟動，以及非簡體中文介面讀取設定時使用者填寫的中文內容被部分翻譯。

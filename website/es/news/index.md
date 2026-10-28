@@ -7,6 +7,10 @@ description: Anuncios y notas de cada versión de Gately.
 
 A continuación se listan los anuncios de las versiones principales. Consulta [GitHub Releases](https://github.com/wangwanjie/gately/releases) para ver todos los cambios y las descargas de cada versión.
 
+## [v0.6.0.3](/es/news/v0.6.0.3)
+
+28 de octubre de 2026 · Corrige que un Gately de la LAN que recibe HTTP en claro desde un origen PROXY de confianza no reconociera que el visitante usaba HTTPS, lo que hacía fallar el inicio de sesión OIDC con emisor https, dejaba cookies sin Secure y provocaba bucles de redirección.
+
 ## [v0.6.0.2](/es/news/v0.6.0.2)
 
 28 de octubre de 2026 · Corrige que el terminal web se quedara en «Conectando» al abrirlo desde el escritorio de fnOS, que File Browser no arrancara con un directorio de configuración relativo y que las respuestas de la API en idiomas distintos del chino simplificado tradujeran en parte el texto chino introducido por los usuarios.
