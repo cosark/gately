@@ -45,6 +45,12 @@ var messageKeys = map[string]bool{
 	"mappingNote": true, "hint": true, "title": true, "label": true, "issues": true,
 }
 
+// stringMessageKeys 只在值为字符串时按说明字段翻译：同名字段在别处是用户配置对象，
+// 如 STUN 状态的 mapping 是端口映射结果说明，证书的 mapping 却是用户填写的目录与脚本。
+var stringMessageKeys = map[string]bool{
+	"mapping": true, "unsupported": true,
+}
+
 // TrFields 递归翻译 JSON 值中 keys 字段（及 messageKeys）下的字符串，其他字段原样保留。
 func TrFields(lang string, v any, keys ...string) any {
 	extra := map[string]bool{}
@@ -64,6 +70,8 @@ func trFields(lang string, v any, extra map[string]bool) any {
 		for k, e := range x {
 			if messageKeys[k] || extra[k] {
 				x[k] = TrDeep(lang, e)
+			} else if str, ok := e.(string); ok && stringMessageKeys[k] {
+				x[k] = Tr(lang, str)
 			} else {
 				x[k] = trFields(lang, e, extra)
 			}

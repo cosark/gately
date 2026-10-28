@@ -84,3 +84,21 @@ func TestLocalizeKeepsUserContent(t *testing.T) {
 		t.Errorf("Localize 不应翻译名称: %v", got)
 	}
 }
+
+// mapping、unsupported 为字符串时是程序生成的说明（STUN 端口映射结果、托管程序不支持当前平台），要翻译；
+// 证书的 mapping 是用户填写的目录与脚本对象，保持原样。
+func TestMiddlewareStringMessageKeys(t *testing.T) {
+	testCatalog(map[string]string{"端口转发": "Port forwarding", "失败": "failed", "映射失败": "mapping failed"})
+	out := serveJSON(t, "/api/stun/rules", `{"state":{"mapping":"UPnP 映射失败"},"unsupported":"失败",`+
+		`"cert":{"mapping":{"dir":"端口转发","script":"echo 失败"}}}`)
+	if got := out["state"].(map[string]any)["mapping"]; got != "UPnP mapping failed" {
+		t.Errorf("STUN 映射说明未翻译: %v", got)
+	}
+	if out["unsupported"] != "failed" {
+		t.Errorf("unsupported 未翻译: %v", out["unsupported"])
+	}
+	m := out["cert"].(map[string]any)["mapping"].(map[string]any)
+	if m["dir"] != "端口转发" || m["script"] != "echo 失败" {
+		t.Errorf("证书目录映射配置被翻译: %v", m)
+	}
+}
