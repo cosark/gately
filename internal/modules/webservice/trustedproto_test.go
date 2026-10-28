@@ -153,3 +153,60 @@ func TestOIDCViaTrustedProxy(t *testing.T) {
 		t.Fatalf("经可信 PROXY 来源登录应成功并写出 Secure Cookie: %d %v", resp.StatusCode, resp.Cookies())
 	}
 }
+
+// 明文请求跳转 HTTPS 的端口：经可信 PROXY 来源以 https 转来的请求直接处理，未带标记的仍跳转，避免循环跳转。
+func TestTrustedProxyNoHTTPSRedirectLoop(t *testing.T) {
+	l := plainHTTPListener(PlainHTTPRedirect)
+	l.AcceptProxyProtocol = true
+	addr, _ := startRunner(t, l, fakeCerts{selfSigned(t, "secure.test")}, []string{"127.0.0.1"})
+	get := func(xfp string) *http.Response {
+		req, _ := http.NewRequest("GET", "http://secure.test/", nil)
+		if xfp != "" {
+			req.Header.Set("X-Forwarded-Proto", xfp)
+		}
+		return sendViaProxy(t, addr, "203.0.113.5", false, req)
+	}
+	if resp := get("https"); resp.StatusCode != http.StatusOK {
+		t.Fatalf("可信来源以 https 转发时不应跳转: %d", resp.StatusCode)
+	}
+	if resp := get(""); resp.StatusCode != http.StatusMovedPermanently {
+		t.Fatalf("未带 https 标记的明文请求应跳转: %d", resp.StatusCode)
+	}
+}
+
+// 开启「添加 X-Forwarded-*」的反代站点：访客经可信 PROXY 来源以 HTTPS 访问时，向后端写 X-Forwarded-Proto: https；
+// 未带标记时按本连接写 http。
+func TestTrustedProxyForwardsProtoToBackend(t *testing.T) {
+	got := make(chan string, 4)
+	b := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got <- r.Header.Get("X-Forwarded-Proto")
+	}))
+	t.Cleanup(b.Close)
+	site := Site{Enable: true, Key: "p", Domains: []string{"app.test"}, Type: TypeProxy, Targets: []string{b.URL}, ForwardedHeaders: true}
+	addr, _ := startRunner(t, Listener{AcceptProxyProtocol: true, Sites: []Site{site}}, nil, []string{"127.0.0.1"})
+	for _, tc := range []struct{ xfp, want string }{{"https", "https"}, {"", "http"}} {
+		req, _ := http.NewRequest("GET", "http://app.test/", nil)
+		if tc.xfp != "" {
+			req.Header.Set("X-Forwarded-Proto", tc.xfp)
+		}
+		if resp := sendViaProxy(t, addr, "203.0.113.5", false, req); resp.StatusCode != http.StatusOK {
+			t.Fatalf("反代应成功: %d", resp.StatusCode)
+		}
+		if v := <-got; v != tc.want {
+			t.Fatalf("带 %q 时后端收到的 X-Forwarded-Proto 应为 %q，实际 %q", tc.xfp, tc.want, v)
+		}
+	}
+	// 本机的反向代理不经 PROXY 头直连、带 https 标记转来时，同样向后端写 https
+	addr2, _ := startRunner(t, Listener{Sites: []Site{site}}, nil, nil)
+	req, _ := http.NewRequest("GET", "http://"+addr2+"/", nil)
+	req.Host = "app.test"
+	req.Header.Set("X-Forwarded-Proto", "https")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if v := <-got; v != "https" {
+		t.Fatalf("本机反向代理转来的 https 标记应传给后端，实际 %q", v)
+	}
+}

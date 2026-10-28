@@ -79,7 +79,7 @@
 - 同端口 HTTP：开启 HTTPS 的监听可同时接受明文 HTTP，按连接的第一个字节区分协议。「跳转到 HTTPS」把 `http://地址:端口` 重定向到 `https://地址:端口`（GET/HEAD 用 301，其他方法用 308），适合只能用一个端口、又希望输错协议也能打开的场景；「直接服务」按 HTTP 提供站点，不加密。ACME HTTP-01 验证请求照常应答，修改此项会重启该监听；
 - HTTP/3（QUIC）：在开启 HTTPS 的监听中打开，同一端口号的 UDP 上同时提供 HTTP/3，并通过 `Alt-Svc` 响应头通告浏览器；需要在防火墙与端口映射中放行该 UDP 端口；
 - WebSocket：反向代理自动支持；
-- PROXY 协议：监听可接收上游（如 haproxy、frp）发送的 PROXY 头，仅信任「全局设置 → 可信 PROXY 来源」中列出的 IP 或网段，留空表示不信任任何来源；反向代理可向后端发送 PROXY 头。
+- PROXY 协议：监听可接收上游（如 haproxy、frp）发送的 PROXY 头，仅信任「全局设置 → 可信 PROXY 来源」中列出的 IP 或网段，留空表示不信任任何来源；反向代理可向后端发送 PROXY 头。经可信来源进入的连接带的 `X-Forwarded-Proto: https` 同样被采信：会话 Cookie 带 Secure、开启明文跳转的端口不再跳转，开启「添加 X-Forwarded-*」时也向后端如实传递 https。
 
 ## 认证
 

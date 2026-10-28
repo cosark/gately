@@ -317,6 +317,10 @@ func (h *siteHandler) newProxy(s Site, p *pool) http.Handler {
 			pr.Out.Header.Del("X-Real-Ip")
 			if s.ForwardedHeaders {
 				pr.SetXForwarded()
+				// SetXForwarded 只看本连接是否为 TLS；访客经可信反向代理以 HTTPS 访问时，向后端如实写 https
+				if pr.In.TLS == nil && requestIsHTTPS(pr.In) {
+					pr.Out.Header.Set("X-Forwarded-Proto", "https")
+				}
 				pr.Out.Header.Set("X-Real-Ip", clientAddr(pr.In).Addr().String())
 				if port := localPort(pr.In); port != "" {
 					pr.Out.Header.Set("X-Forwarded-Port", port)

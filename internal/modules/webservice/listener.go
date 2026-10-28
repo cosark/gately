@@ -112,8 +112,9 @@ func (l *listenerRunner) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.TLS == nil && acmehttp.Serve(w, r) {
 		return
 	}
-	// HTTPS 端口收到的明文请求按设置跳转到同端口的 https 地址（ACME 验证已在上面应答）
-	if r.TLS == nil && l.cfg.PlainHTTP == PlainHTTPRedirect {
+	// HTTPS 端口收到的明文请求按设置跳转到同端口的 https 地址（ACME 验证已在上面应答）；
+	// 可信反向代理已终止 TLS 并以 X-Forwarded-Proto: https 转来的请求不再跳转，否则会循环跳转
+	if l.cfg.PlainHTTP == PlainHTTPRedirect && !requestIsHTTPS(r) {
 		redirectToHTTPS(w, r)
 		return
 	}

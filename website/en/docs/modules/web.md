@@ -79,7 +79,7 @@ For "Fixed text" sites, `Content-Type` can be picked from common types or typed 
 - Plain HTTP on the same port: a listener with HTTPS can also accept plain HTTP, telling the protocols apart by the first byte of each connection. *Redirect to HTTPS* sends `http://host:port` to `https://host:port` (301 for GET/HEAD, 308 for other methods), useful when only one port is available and visitors may type the wrong scheme; *Serve* answers over unencrypted HTTP. ACME HTTP-01 challenges are still answered, and changing this option restarts the listener;
 - HTTP/3 (QUIC): turn it on for a listener with HTTPS enabled. HTTP/3 is then also served over UDP on the same port number and advertised to browsers with the `Alt-Svc` response header; allow that UDP port in your firewall and port mapping;
 - WebSocket: supported automatically by reverse proxy;
-- PROXY protocol: a listener can accept PROXY headers sent by upstream components (such as haproxy and frp). It trusts only the IPs or subnets listed in "Global settings → Trusted PROXY sources"; leaving it empty trusts no source. Reverse proxy can send PROXY headers to the backend.
+- PROXY protocol: a listener can accept PROXY headers sent by upstream components (such as haproxy and frp). It trusts only the IPs or subnets listed in "Global settings → Trusted PROXY sources"; leaving it empty trusts no source. Reverse proxy can send PROXY headers to the backend. `X-Forwarded-Proto: https` on connections from a trusted source is honored too: session cookies get Secure, ports that redirect plain HTTP no longer redirect, and with "Add X-Forwarded-*" on, https is passed on to the backend.
 
 ## Authentication
 

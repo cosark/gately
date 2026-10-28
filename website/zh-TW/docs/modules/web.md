@@ -79,7 +79,7 @@
 - 同埠 HTTP：開啟 HTTPS 的監聽可同時接受明文 HTTP，依連線的第一個位元組區分協定。「跳轉到 HTTPS」把 `http://位址:埠` 重新導向到 `https://位址:埠`（GET/HEAD 用 301，其他方法用 308），適合只能使用一個埠、又希望輸錯協定也能開啟的情境；「直接服務」以 HTTP 提供站台，不加密。ACME HTTP-01 驗證請求照常回應，修改此項會重啟該監聽；
 - HTTP/3（QUIC）：在開啟 HTTPS 的監聽中啟用，相同埠號的 UDP 上同時提供 HTTP/3，並透過 `Alt-Svc` 回應標頭通告瀏覽器；需要在防火牆與連接埠映射中放行該 UDP 埠；
 - WebSocket：反向代理自動支援；
-- PROXY 協定：監聽可接收上游（如 haproxy、frp）送出的 PROXY 標頭，僅信任「全域設定 → 可信 PROXY 來源」中列出的 IP 或網段，留空表示不信任任何來源；反向代理可向後端送出 PROXY 標頭。
+- PROXY 協定：監聽可接收上游（如 haproxy、frp）送出的 PROXY 標頭，僅信任「全域設定 → 可信 PROXY 來源」中列出的 IP 或網段，留空表示不信任任何來源；反向代理可向後端送出 PROXY 標頭。經可信來源進入的連線帶的 `X-Forwarded-Proto: https` 同樣被採信：工作階段 Cookie 帶 Secure、開啟明文跳轉的連接埠不再跳轉，開啟「新增 X-Forwarded-*」時也向後端如實傳遞 https。
 
 ## 驗證
 
