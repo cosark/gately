@@ -7,6 +7,10 @@ description: Anuncios y notas de cada versión de Gately.
 
 A continuación se listan los anuncios de las versiones principales. Consulta [GitHub Releases](https://github.com/wangwanjie/gately/releases) para ver todos los cambios y las descargas de cada versión.
 
+## [v0.6.0.2](/es/news/v0.6.0.2)
+
+28 de octubre de 2026 · Corrige que el terminal web se quedara en «Conectando» al abrirlo desde el escritorio de fnOS, que File Browser no arrancara con un directorio de configuración relativo y que las respuestas de la API en idiomas distintos del chino simplificado tradujeran en parte el texto chino introducido por los usuarios.
+
 ## [v0.6.0.1](/es/news/v0.6.0.1)
 
 27 de octubre de 2026 · El DNS dinámico y el reenvío de puertos admiten grupos, orden y búsqueda; las páginas del Servicio web, DNS dinámico y reenvío de puertos permiten asignar grupo en lote, arrastrar varios elementos marcados a la vez y renombrar grupos.
