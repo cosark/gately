@@ -23,7 +23,7 @@ Gately 内置一个 OpenID Connect（OIDC）身份提供方，把 [Web 服务](/
    - 分组：作为 `groups` 声明，可在应用中映射为管理员，也可以用来限制哪些用户能登录某个应用。
 3. 准备一个签发者域名，例如 `auth.example.com`：解析到 Gately 所在的主机，并在 [SSL 证书](/docs/modules/ssl) 中准备好覆盖它的证书，再确认某个 HTTPS 监听能收到这个域名的请求。这个域名不需要建站点，Gately 会在所有监听上识别它的 OIDC 路径；建议使用独立的域名，这个域名上的其他路径照常按站点处理。
 
-签发者地址为 `https` 时，通过明文 HTTP 访问 OIDC 路径的 GET 请求会被跳转到 HTTPS，其他请求被拒绝，密码和令牌不会明文传输。前面还有一层反向代理终止 TLS、再以 HTTP 转发给 Gately 时，代理需要带上 `X-Forwarded-Proto: https`，Gately 只信任本机和内网来源的这个请求头。签发者域名在某个监听上能匹配到站点（含默认站点）时，该站点的 IP 黑白名单、订阅 IP 列表、国家过滤和限流同样作用于 OIDC 路径，可以借此把登录页限制在内网。
+签发者地址为 `https` 时，通过明文 HTTP 访问 OIDC 路径的 GET 请求会被跳转到 HTTPS，其他请求被拒绝，密码和令牌不会明文传输。前面还有一层反向代理终止 TLS、再以 HTTP 转发给 Gately 时，代理需要带上 `X-Forwarded-Proto: https`，Gately 信任本机、内网来源，以及经可信 PROXY 来源进入的连接带的这个请求头。例如公网 Gately 终止 TLS 后经 frp 隧道以 HTTP 转给内网 Gately：公网站点开启「添加 X-Forwarded-*」和「向后端发送 PROXY v2」，内网 Gately 的监听开启接收 PROXY 协议，并把隧道在本机的来源地址加入可信 PROXY 来源。签发者域名在某个监听上能匹配到站点（含默认站点）时，该站点的 IP 黑白名单、订阅 IP 列表、国家过滤和限流同样作用于 OIDC 路径，可以借此把登录页限制在内网。
 
 ## 启用
 

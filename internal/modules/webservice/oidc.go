@@ -372,13 +372,17 @@ func (a *authenticator) oidcTarget(r *http.Request) *oidcEnv {
 	return e
 }
 
-// requestIsHTTPS 判断访客是否经 HTTPS 访问：TLS 直连，或本机、内网的反向代理以 X-Forwarded-Proto: https 转发。
-// 浏览器自身不会发送该头，公网来源（包括经 PROXY 协议还原出的真实地址）带上它也不被采信。
+// requestIsHTTPS 判断访客是否经 HTTPS 访问：TLS 直连，或由反向代理以 X-Forwarded-Proto: https 转发，
+// 转发方需是本机、内网地址，或经可信 PROXY 来源进入的连接（如公网 Gately 解开 TLS 后经 frp 隧道以明文转给本机）。
+// 浏览器自身不会发送该头，其他公网来源带上它也不被采信。
 func requestIsHTTPS(r *http.Request) bool {
 	if r.TLS != nil {
 		return true
 	}
-	return strings.EqualFold(strings.TrimSpace(r.Header.Get("X-Forwarded-Proto")), "https") && geoip.IsLocal(clientAddr(r).Addr())
+	if !strings.EqualFold(strings.TrimSpace(r.Header.Get("X-Forwarded-Proto")), "https") {
+		return false
+	}
+	return geoip.IsLocal(clientAddr(r).Addr()) || viaTrustedProxy(r)
 }
 
 // serveOIDC 在签发者域名上处理 OIDC 协议路径（调用方已通过 oidcTarget 确认，并执行过签发者域名所在站点的访问控制）。

@@ -318,7 +318,7 @@ func (h *siteHandler) tryShare(w http.ResponseWriter, r *http.Request) (handled,
 		sess := shareSession{Link: link.Key, Host: hostOnly(r.Host), Scope: h.site.scope}
 		http.SetCookie(w, &http.Cookie{
 			Name: shareCookieName(h.site), Value: h.auth.signBlob("share", sess, ttl),
-			Path: "/", Expires: now.Add(ttl), HttpOnly: true, Secure: r.TLS != nil, SameSite: http.SameSiteLaxMode,
+			Path: "/", Expires: now.Add(ttl), HttpOnly: true, Secure: requestIsHTTPS(r), SameSite: http.SameSiteLaxMode,
 		})
 		h.reqLog(r).Infof("分享链接「%s」被兑换（%s）", link.Name, clientAddr(r).Addr())
 		q := r.URL.Query()

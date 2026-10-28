@@ -191,7 +191,7 @@ func (a *authenticator) checkTOTP(u AuthUser, code string) string {
 func (a *authenticator) issueSharedSession(w http.ResponseWriter, r *http.Request, s Site, u AuthUser) {
 	host := hostOnly(r.Host)
 	sess := siteSession{User: u.Name, Shared: true, Cred: a.sharedCred(u)}
-	c := &http.Cookie{Path: "/", Expires: time.Now().Add(sessionTTL), HttpOnly: true, Secure: r.TLS != nil, SameSite: http.SameSiteLaxMode}
+	c := &http.Cookie{Path: "/", Expires: time.Now().Add(sessionTTL), HttpOnly: true, Secure: requestIsHTTPS(r), SameSite: http.SameSiteLaxMode}
 	if domain := a.shared.get().ssoFor(host); domain != "" {
 		sess.Scope = "sso"
 		c.Name, c.Domain = ssoCookie, domain

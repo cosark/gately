@@ -270,8 +270,10 @@ func (l *listenerRunner) start(certs CertSource, trusted []string) error {
 	l.cancel = cancel
 	l.baseCtx = baseCtx
 	l.srv = &http.Server{
-		Handler:           l,
-		BaseContext:       func(net.Listener) context.Context { return baseCtx },
+		Handler:     l,
+		BaseContext: func(net.Listener) context.Context { return baseCtx },
+		// 记下连接本身，处理请求时据此判断它是否经可信 PROXY 来源进入（见 viaTrustedProxy）
+		ConnContext:       func(ctx context.Context, c net.Conn) context.Context { return context.WithValue(ctx, ctxKeyConn{}, c) },
 		ReadHeaderTimeout: 30 * time.Second,
 		IdleTimeout:       120 * time.Second,
 		// 默认的 HTTP/2 接收窗口为 1 MB，高延迟线路上会限制单连接的上传速度，这里放大到与 nginx 默认缓冲相当的水平。
@@ -378,4 +380,27 @@ func (l *listenerRunner) stop() {
 	// Shutdown 不管理已劫持的连接；取消请求上下文后反向代理会关闭升级后的连接
 	l.cancel()
 	l.current().retire()
+}
+
+// ctxKeyConn 在请求上下文中保存接入的连接（可能经过 TLS 与协议嗅探的包装）。
+type ctxKeyConn struct{}
+
+// viaTrustedProxy 判断请求所在的连接是否带着可信来源发来的 PROXY 头：只有可信来源的头会被采用，
+// 采用后 ProxyHeader 才非空。调用时连接的 PROXY 头已在读取请求前处理完，不会阻塞；
+// 不能放在 ConnContext 里判断，那里还没读头，慢客户端会卡住 accept 循环。
+func viaTrustedProxy(r *http.Request) bool {
+	c, _ := r.Context().Value(ctxKeyConn{}).(net.Conn)
+	for c != nil {
+		switch v := c.(type) {
+		case *proxyproto.Conn:
+			return v.ProxyHeader() != nil
+		case *tls.Conn:
+			c = v.NetConn()
+		case *prefixConn:
+			c = v.Conn
+		default:
+			return false
+		}
+	}
+	return false
 }

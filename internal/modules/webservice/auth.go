@@ -209,7 +209,7 @@ func (a *authenticator) issueSession(w http.ResponseWriter, r *http.Request, s S
 	sess := siteSession{User: user, Host: hostOnly(r.Host), Scope: s.scope, Cred: a.credVersion(s.Users, user), Aliases: aliases}
 	http.SetCookie(w, &http.Cookie{
 		Name: cookieName(s), Value: a.signBlob("session", sess, sessionTTL),
-		Path: "/", Expires: exp, HttpOnly: true, Secure: r.TLS != nil, SameSite: http.SameSiteLaxMode,
+		Path: "/", Expires: exp, HttpOnly: true, Secure: requestIsHTTPS(r), SameSite: http.SameSiteLaxMode,
 	})
 }
 

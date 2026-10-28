@@ -94,7 +94,7 @@ func (f *forwardAuther) stripIdentity(r *http.Request) {
 // originalURL 返回访客请求的完整地址。
 func originalURL(r *http.Request) string {
 	scheme := "http"
-	if r.TLS != nil {
+	if requestIsHTTPS(r) {
 		scheme = "https"
 	}
 	return scheme + "://" + r.Host + r.URL.RequestURI()
@@ -118,7 +118,7 @@ func (f *forwardAuther) check(w http.ResponseWriter, r *http.Request, h *siteHan
 	client := clientAddr(r).Addr().String()
 	orig := originalURL(r)
 	scheme := "http"
-	if r.TLS != nil {
+	if requestIsHTTPS(r) {
 		scheme = "https"
 	}
 	// 同时提供 nginx（X-Original-*）与 Traefik / Caddy（X-Forwarded-*）两种约定，兼容各认证服务的不同接口

@@ -73,7 +73,7 @@ func (e oauthEnv) callbackURL() string {
 
 func requestOrigin(r *http.Request) string {
 	scheme := "http"
-	if r.TLS != nil {
+	if requestIsHTTPS(r) {
 		scheme = "https"
 	}
 	return scheme + "://" + r.Host
@@ -105,7 +105,7 @@ func (a *authenticator) handleOAuthStart(w http.ResponseWriter, r *http.Request,
 	}
 	http.SetCookie(w, &http.Cookie{
 		Name: oauthNonceCookie, Value: nonce, Path: authPath, MaxAge: int(stateTTL / time.Second),
-		HttpOnly: true, Secure: r.TLS != nil, SameSite: http.SameSiteLaxMode,
+		HttpOnly: true, Secure: requestIsHTTPS(r), SameSite: http.SameSiteLaxMode,
 	})
 	http.Redirect(w, r, target, http.StatusFound)
 }
