@@ -13,6 +13,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -122,6 +123,15 @@ func New(opts Options) (*App, error) {
 		return nil, err
 	}
 	opts.GatewayPrefix = prefix
+	// 配置目录转为绝对路径：默认值是相对当前目录的 data，托管程序（如 File Browser）在自己的
+	// 工作目录里启动，相对的程序、配置与数据库路径会按子进程工作目录解析而找不到
+	if opts.ConfigDir != "" {
+		abs, err := filepath.Abs(opts.ConfigDir)
+		if err != nil {
+			return nil, err
+		}
+		opts.ConfigDir = abs
+	}
 	store, err := config.Open(opts.ConfigDir)
 	if err != nil {
 		return nil, err

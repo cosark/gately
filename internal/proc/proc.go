@@ -31,7 +31,16 @@ const (
 
 // Resolve 查找可执行文件：优先使用配置的路径，其次是配置目录下的 bin 子目录，最后是 PATH。
 // bin 放在 PATH 之前：界面中在线安装、更新或回滚的程序都在 bin 下，应当优先生效。
+// 返回绝对路径：子进程可能在其他工作目录启动（如 File Browser），相对路径会按该目录解析而找不到。
 func Resolve(configured, configDir string, names ...string) (string, error) {
+	p, err := resolve(configured, configDir, names...)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Abs(p)
+}
+
+func resolve(configured, configDir string, names ...string) (string, error) {
 	configured = strings.TrimSpace(configured)
 	if configured != "" {
 		if strings.ContainsRune(configured, filepath.Separator) {

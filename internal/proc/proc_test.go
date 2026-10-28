@@ -159,5 +159,13 @@ func TestResolve(t *testing.T) {
 		if p, err := Resolve("", dir, "sh"); err != nil || p != local {
 			t.Errorf("应优先使用配置目录 bin 下的程序: %q %v", p, err)
 		}
+		// 相对的配置目录与相对的配置路径都返回绝对路径，避免子进程换工作目录后找不到程序
+		t.Chdir(dir)
+		if p, err := Resolve("", "", "sh"); err != nil || p != local {
+			t.Errorf("相对配置目录应解析为绝对路径: %q %v", p, err)
+		}
+		if p, err := Resolve(filepath.Join("bin", "sh"), "", "sh"); err != nil || p != local {
+			t.Errorf("相对配置路径应解析为绝对路径: %q %v", p, err)
+		}
 	}
 }
