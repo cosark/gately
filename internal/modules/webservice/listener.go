@@ -35,8 +35,11 @@ type listenerRunner struct {
 	auth *authenticator
 	log  *logbuf.Logger
 	srv  *http.Server
-	// h3 为 HTTP/3（QUIC）服务，仅在监听器开启 HTTP3 时存在
-	h3 *http3.Server
+	// ln 为交给 srv 的监听（含各层包装），停止时由 stop 同步关闭，见 stop 中的说明
+	ln net.Listener
+	// h3 为 HTTP/3（QUIC）服务，仅在监听器开启 HTTP3 时存在；h3pc 为它的 UDP 监听
+	h3   *http3.Server
+	h3pc net.PacketConn
 	// altSvc 为通告 HTTP/3 的响应头值，未开启时为空
 	altSvc string
 	// cancel 结束所有请求上下文，用于关闭已升级（WebSocket）的连接
@@ -311,8 +314,11 @@ func (l *listenerRunner) start(certs CertSource, trusted []string) error {
 	}
 	l.startAt = time.Now()
 	startTable(l.current(), baseCtx)
+	l.ln = ln
+	srv := l.srv
 	go func() {
-		if err := l.srv.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		// 使用本次启动的 srv：goroutine 可能在下一次 start 替换 l.srv 之后才运行
+		if err := srv.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			l.log.Errorf("监听 %s 退出: %v", addr, err)
 		}
 	}()
@@ -351,6 +357,7 @@ func (l *listenerRunner) startHTTP3(addr string) error {
 	if err != nil {
 		return err
 	}
+	l.h3pc = pc
 	l.h3 = &http3.Server{
 		Handler:     l,
 		TLSConfig:   http3.ConfigureTLSConfig(l.srv.TLSConfig),
@@ -372,11 +379,18 @@ func (l *listenerRunner) stop() {
 	}
 	if l.h3 != nil {
 		_ = l.h3.Close()
+		_ = l.h3pc.Close()
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := l.srv.Shutdown(ctx); err != nil {
 		_ = l.srv.Close()
+	}
+	// Serve 在后台 goroutine 中启动：刚启动就停止时它可能还没登记监听，Shutdown 关不到，
+	// 监听要等那个 goroutine 退出时才关闭，紧接着在同一端口重新监听会报端口已被占用。这里同步关闭
+	if l.ln != nil {
+		_ = l.ln.Close()
+		l.ln = nil
 	}
 	// Shutdown 不管理已劫持的连接；取消请求上下文后反向代理会关闭升级后的连接
 	l.cancel()

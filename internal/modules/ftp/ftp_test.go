@@ -67,6 +67,7 @@ func TestFTPLogin(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer waitClientsGone(t, m)
 		defer conn.Close()
 		_ = conn.SetDeadline(time.Now().Add(5 * time.Second))
 		tp := textproto.NewConn(conn)
@@ -87,6 +88,28 @@ func TestFTPLogin(t *testing.T) {
 	if c := login("rw", "bad"); c != 530 {
 		t.Fatalf("错误密码应返回 530，实际 %d", c)
 	}
+}
+
+// waitClientsGone 等服务端处理完已断开的会话：ftpserverlib 在认证失败时自行断开连接，
+// 与 Stop/重启时 closeClients 再次关闭同一会话会在库内产生数据竞争（-race 下测试失败）。
+func waitClientsGone(t *testing.T, m *Module) {
+	t.Helper()
+	for i := 0; i < 200; i++ {
+		m.mu.Lock()
+		d := m.drv
+		m.mu.Unlock()
+		if d == nil {
+			return
+		}
+		d.clientsMu.Lock()
+		n := len(d.clients)
+		d.clientsMu.Unlock()
+		if n == 0 {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	t.Fatal("等待 FTP 会话结束超时")
 }
 
 // TestFTPMounts 验证多目录用户：根目录列出挂载名称，只读挂载拒绝上传。

@@ -65,6 +65,8 @@ type Provider struct {
 
 	mu  sync.Mutex
 	srv *http.Server
+	// ln 为临时服务的监听，关闭时同步关闭，避免下次签发紧接着监听同一端口时报端口已被占用
+	ln net.Listener
 	// active 为尚未清理的 token 数量，归零时关闭临时服务
 	active int
 }
@@ -108,6 +110,7 @@ func (p *Provider) Present(domain, token, keyAuth string) error {
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 	srv := p.srv
+	p.ln = ln
 	go func() { _ = srv.Serve(ln) }()
 	p.logf("已在 %d 端口临时监听，用于 HTTP-01 验证", port)
 	return nil
@@ -125,7 +128,10 @@ func (p *Provider) CleanUp(domain, token, keyAuth string) error {
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
 		_ = p.srv.Shutdown(ctx)
-		p.srv = nil
+		if p.ln != nil {
+			_ = p.ln.Close()
+		}
+		p.srv, p.ln = nil, nil
 	}
 	return nil
 }

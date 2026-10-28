@@ -58,6 +58,7 @@ func TestFTPSharedUsers(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		defer waitClientsGone(t, m)
 		defer conn.Close()
 		_ = conn.SetDeadline(time.Now().Add(5 * time.Second))
 		tp := textproto.NewConn(conn)

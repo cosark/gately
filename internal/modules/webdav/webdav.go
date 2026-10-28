@@ -111,6 +111,8 @@ type Module struct {
 	certs    CertSource
 	settings Settings
 	srv      *http.Server
+	// ln 为交给 srv 的监听，停止时同步关闭，见 stopLocked 中的说明
+	ln       net.Listener
 	err      string
 	handlers map[string]*userHandler
 	// shared 为共享用户的处理器，按用户名缓存；共享用户被修改后清空，下次请求按新的目录配置重建
@@ -194,7 +196,12 @@ func (m *Module) stopLocked() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		_ = m.srv.Shutdown(ctx)
-		m.srv = nil
+		// Serve 在后台 goroutine 中启动：刚启动就停止时它可能还没登记监听，Shutdown 关不到，
+		// 监听要等那个 goroutine 退出时才关闭，紧接着重启时在同一端口监听会报端口已被占用。这里同步关闭
+		if m.ln != nil {
+			_ = m.ln.Close()
+		}
+		m.srv, m.ln = nil, nil
 	}
 }
 
@@ -230,6 +237,7 @@ func (m *Module) restartLocked() {
 		ln = tls.NewListener(ln, m.srv.TLSConfig)
 	}
 	srv := m.srv
+	m.ln = ln
 	go func() { _ = srv.Serve(ln) }()
 	m.logListenLocked(addr)
 }

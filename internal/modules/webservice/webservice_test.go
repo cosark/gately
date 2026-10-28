@@ -823,3 +823,14 @@ func TestSiteGroup(t *testing.T) {
 		t.Fatal("超长分组名称应报错")
 	}
 }
+
+// 刚启动就停止再启动同一端口：停止时同步关闭监听，重新监听不报端口已被占用。
+func TestListenerImmediateRestart(t *testing.T) {
+	_, r := startRunner(t, Listener{AcceptProxyProtocol: true, Sites: []Site{{Enable: true, Domains: []string{"a.test"}, Type: TypeText, Text: "ok"}}}, nil, []string{"127.0.0.1"})
+	for i := 0; i < 200; i++ {
+		r.stop()
+		if err := r.start(nil, []string{"127.0.0.1"}); err != nil {
+			t.Fatalf("第 %d 次重新启动失败: %v", i+1, err)
+		}
+	}
+}

@@ -133,3 +133,25 @@ type secretsRouter struct{ *http.ServeMux }
 func (r secretsRouter) HandleFunc(pattern string, h http.HandlerFunc) {
 	r.ServeMux.HandleFunc(pattern, h)
 }
+
+// 刚启动就重启时，旧监听可能还没被后台的 Serve 登记，停止时要同步关闭它，否则同一端口重新监听会报端口已被占用。
+func TestWebDAVImmediateRestart(t *testing.T) {
+	ln, _ := net.Listen("tcp4", "127.0.0.1:0")
+	port := ln.Addr().(*net.TCPAddr).Port
+	ln.Close()
+	st, _ := config.Open(t.TempDir())
+	m := New(nil)
+	if err := m.Init(module.Env{Store: st, Logs: logbuf.New(20, log.New(io.Discard, "", 0))}); err != nil {
+		t.Fatal(err)
+	}
+	m.settings = Settings{Enable: true, ListenIP: "127.0.0.1", Port: port, Users: []User{{Name: "u", Password: "p", Root: t.TempDir()}}}
+	defer m.Stop()
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	for i := 0; i < 200; i++ {
+		m.restartLocked()
+		if m.err != "" {
+			t.Fatalf("第 %d 次重启失败: %s", i+1, m.err)
+		}
+	}
+}
