@@ -45,7 +45,7 @@ O destino de um site de redirecionamento pode usar as variáveis a seguir. A sin
 | `{args}` / `{Args}` | String de consulta; `{args}` inclui o `?` inicial (vazia quando não há consulta), `{Args}` não |
 | `{domainPartN}` / `{pathPartN}` | A N-ésima parte do domínio (separado por `.`) ou do caminho (separado por `/`), contando a partir de 1 |
 | `{ClientIP}` / `{RemoteIP}` | IP do cliente |
-| `{time}` | Hora atual no formato `2006-01-02 15:04:05` |
+| `{time}` | Hora atual no formato `2006-01-02 15:04:05`, com o espaço escrito como `%20` (`2006-01-02%2015:04:05`) para que o endereço de redirecionamento seja uma URL válida |
 | `{1}` | A parte que corresponde ao `*` em um domínio do site como `*.example.com`; vazia quando um domínio exato corresponde, o domínio completo quando `*` ou o site padrão corresponde |
 | `{STUN_NomeRegra_PORT}` / `{STUN_NomeRegra_IP}` / `{STUN_NomeRegra_ADDR}` | Porta, IP e `IP:porta` públicos atuais de uma regra de [Travessia STUN](/pt-BR/docs/modules/stun); o nome é o exibido na lista e pode conter sublinhados |
 

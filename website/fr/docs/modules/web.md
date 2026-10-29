@@ -45,7 +45,7 @@ La cible d'un site de redirection peut utiliser les variables suivantes. La synt
 | `{args}` / `{Args}` | Chaîne de requête ; `{args}` inclut le `?` initial (vide sans chaîne de requête), `{Args}` non |
 | `{domainPartN}` / `{pathPartN}` | La N-ième partie du domaine (séparé par `.`) ou du chemin (séparé par `/`), à partir de 1 |
 | `{ClientIP}` / `{RemoteIP}` | IP du client |
-| `{time}` | Heure actuelle au format `2006-01-02 15:04:05` |
+| `{time}` | Heure actuelle au format `2006-01-02 15:04:05`, l'espace étant écrit `%20` (`2006-01-02%2015:04:05`) pour que l'adresse de redirection reste une URL valide |
 | `{1}` | La partie couverte par `*` dans un domaine de site comme `*.example.com` ; vide si un domaine exact correspond, le domaine complet si `*` ou le site par défaut correspond |
 | `{STUN_NomRègle_PORT}` / `{STUN_NomRègle_IP}` / `{STUN_NomRègle_ADDR}` | Port, IP et `IP:port` publics actuels d'une règle de [Traversée STUN](/fr/docs/modules/stun) ; le nom est celui affiché dans la liste et peut contenir des tirets bas |
 

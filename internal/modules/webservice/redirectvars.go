@@ -138,6 +138,13 @@ func requestPort(r *http.Request) string {
 	return "80"
 }
 
+// timeVar 返回 {time} 的值。格式与 Lucky 一致（2006-01-02 15:04:05），中间的空格写成 %20：
+// 原样写入 Location 时地址中含空格，不是合法的 URL，部分客户端会拒绝跳转或截断。
+// %20 在路径与查询串中都表示空格，接收方解码后得到原来的时间
+func timeVar(t time.Time) string {
+	return strings.ReplaceAll(t.Format("2006-01-02 15:04:05"), " ", "%20")
+}
+
 // lookup 返回请求变量的值。
 func (q redirectRequest) lookup(name string) (string, bool, error) {
 	r := q.r
@@ -166,7 +173,7 @@ func (q redirectRequest) lookup(name string) (string, bool, error) {
 		}
 		return "", true, nil
 	case "time":
-		return time.Now().Format("2006-01-02 15:04:05"), true, nil
+		return timeVar(time.Now()), true, nil
 	case "1":
 		return q.wildcard, true, nil
 	}
@@ -213,7 +220,7 @@ func sampleVar(name string) (string, bool, error) {
 	case "ClientIP", "RemoteIP":
 		return "192.0.2.1", true, nil
 	case "time":
-		return "2006-01-02 15:04:05", true, nil
+		return timeVar(time.Date(2006, 1, 2, 15, 4, 5, 0, time.UTC)), true, nil
 	case "1":
 		return "a", true, nil
 	}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http/httptest"
 	"net/netip"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -64,10 +65,17 @@ func TestRedirectTargetVars(t *testing.T) {
 		})
 	}
 
-	// {time} 为当前时间
+	// {time} 为当前时间，空格写成 %20，生成的地址是合法 URL，查询参数解码后为原时间
 	s := Site{Domains: []string{"a.test"}, RedirectTo: "https://a.test/?t={time}"}
 	got, _ := redirectTarget(&s, httptest.NewRequest("GET", "http://a.test/", nil))
-	if _, err := time.Parse("2006-01-02 15:04:05", strings.TrimPrefix(got, "https://a.test/?t=")); err != nil {
+	if strings.Contains(got, " ") {
+		t.Fatalf("{time} 不应含未转义的空格: %q", got)
+	}
+	u, err := url.Parse(got)
+	if err != nil {
+		t.Fatalf("{time} 生成的地址无效: %q %v", got, err)
+	}
+	if _, err := time.Parse("2006-01-02 15:04:05", u.Query().Get("t")); err != nil {
 		t.Fatalf("{time} 格式错误: %q", got)
 	}
 

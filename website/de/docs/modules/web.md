@@ -45,7 +45,7 @@ Das Ziel einer Weiterleitungs-Site kann die folgenden Variablen verwenden. Die S
 | `{args}` / `{Args}` | Query-String; `{args}` mit führendem `?` (leer ohne Query-String), `{Args}` ohne |
 | `{domainPartN}` / `{pathPartN}` | Der N-te Teil der Domain (durch `.` getrennt) oder des Pfads (durch `/` getrennt), gezählt ab 1 |
 | `{ClientIP}` / `{RemoteIP}` | Client-IP |
-| `{time}` | Aktuelle Zeit im Format `2006-01-02 15:04:05` |
+| `{time}` | Aktuelle Zeit im Format `2006-01-02 15:04:05`, das Leerzeichen wird als `%20` geschrieben (`2006-01-02%2015:04:05`), damit die Zieladresse eine gültige URL bleibt |
 | `{1}` | Der von `*` erfasste Teil einer Site-Domain wie `*.example.com`; leer bei exakter Domain, die vollständige Domain bei `*` oder der Standard-Site |
 | `{STUN_Regelname_PORT}` / `{STUN_Regelname_IP}` / `{STUN_Regelname_ADDR}` | Aktueller öffentlicher Port, IP und `IP:Port` einer [STUN-Traversal](/de/docs/modules/stun)-Regel; der Regelname ist der in der Liste angezeigte Name und darf Unterstriche enthalten |
 

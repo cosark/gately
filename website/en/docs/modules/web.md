@@ -45,7 +45,7 @@ The target of a redirect site can use the following variables. The syntax is the
 | `{args}` / `{Args}` | Query string; `{args}` includes the leading `?` (empty when there is no query string), `{Args}` does not |
 | `{domainPartN}` / `{pathPartN}` | The Nth part of the domain (split by `.`) or path (split by `/`), counting from 1 |
 | `{ClientIP}` / `{RemoteIP}` | Client IP |
-| `{time}` | Current time in the format `2006-01-02 15:04:05` |
+| `{time}` | Current time in the format `2006-01-02 15:04:05`, with the space written as `%20` (`2006-01-02%2015:04:05`) so the redirect address stays a valid URL |
 | `{1}` | The part matched by `*` in a site domain such as `*.example.com`; empty when an exact domain matched, the full domain when `*` or the default site matched |
 | `{STUN_RuleName_PORT}` / `{STUN_RuleName_IP}` / `{STUN_RuleName_ADDR}` | The current public port, IP and `IP:port` of a [STUN Traversal](/en/docs/modules/stun) rule; the rule name is the name shown in the list and may contain underscores |
 
