@@ -429,6 +429,12 @@ func TestGatewayTerminalWebSocket(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// 终端会话在 WebSocket 断开后异步结束并写日志：删除临时目录前先停止落盘，
+	// 否则日志文件可能在删除过程中被重新创建，TempDir 清理报 directory not empty
+	t.Cleanup(func() {
+		a.stopModules()
+		a.closeLogs()
+	})
 	a.logger = log.New(io.Discard, "", 0)
 	if err := a.auth.ChangeCredentials(mustInitialPassword(t, a), "admin", "test-password"); err != nil {
 		t.Fatal(err)
