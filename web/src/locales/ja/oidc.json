@@ -32,5 +32,17 @@
   "allowPlaceholder": "1 行に 1 つのユーザー名、または group:グループ名",
   "allowHelp": "空欄にするとすべての共有ユーザーがこのアプリにログインできます。ユーザー名で照合するため、ユーザー名を変更したらここも更新してください。グループは共有ユーザーで設定します",
   "addClient": "クライアントを追加",
-  "docs": "主なアプリの設定例"
+  "docs": "主なアプリの設定例",
+  "noClients": "クライアントはまだありません",
+  "unnamed": "名前のないクライアント",
+  "confidential": "機密クライアント",
+  "secretUnsaved": "新しいシークレットは未保存です。先にコピーしてください",
+  "noRedirect": "リダイレクト URI 未入力",
+  "redirectCount": "リダイレクト URI：{count} 件",
+  "allowCount": "許可項目：{count} 件",
+  "allowAll": "すべての共有ユーザーがログイン可能",
+  "editClient": "クライアントを編集",
+  "applyHelp": "「OK」でグローバル設定に戻ります。グローバル設定を保存すると反映されます。",
+  "idRequired": "Client ID を入力してください",
+  "idDuplicate": "Client ID「{id}」は他のクライアントで使用されています"
 }

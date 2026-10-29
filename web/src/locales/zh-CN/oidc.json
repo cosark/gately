@@ -32,5 +32,17 @@
   "allowPlaceholder": "每行一个用户名，或 group:分组名",
   "allowHelp": "留空表示全部共享用户都能登录该应用；按用户名匹配，用户改名后需同步修改；分组在共享用户中设置",
   "addClient": "添加客户端",
-  "docs": "各应用的配置示例"
+  "docs": "各应用的配置示例",
+  "noClients": "还没有客户端",
+  "unnamed": "未命名客户端",
+  "confidential": "机密客户端",
+  "secretUnsaved": "新密钥待保存，请先复制",
+  "noRedirect": "未填写回调地址",
+  "redirectCount": "回调地址 {count} 个",
+  "allowCount": "允许 {count} 项",
+  "allowAll": "所有共享用户可登录",
+  "editClient": "编辑客户端",
+  "applyHelp": "点「确定」后回到全局设置，保存全局设置才会生效。",
+  "idRequired": "请填写 Client ID",
+  "idDuplicate": "Client ID「{id}」已被其他客户端使用"
 }

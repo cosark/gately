@@ -32,5 +32,17 @@
   "allowPlaceholder": "Un nom d'utilisateur par ligne, ou group:nom",
   "allowHelp": "Vide pour autoriser tous les utilisateurs partagés à se connecter à cette application. Les utilisateurs sont identifiés par leur nom : mettez cette liste à jour après un renommage. Les groupes se définissent sur les utilisateurs partagés",
   "addClient": "Ajouter un client",
-  "docs": "Exemples de configuration des applications courantes"
+  "docs": "Exemples de configuration des applications courantes",
+  "noClients": "Aucun client",
+  "unnamed": "Client sans nom",
+  "confidential": "Client confidentiel",
+  "secretUnsaved": "Nouveau secret non enregistré, copiez-le d’abord",
+  "noRedirect": "Aucune URI de redirection",
+  "redirectCount": "URI de redirection : {count}",
+  "allowCount": "Entrées autorisées : {count}",
+  "allowAll": "Tous les utilisateurs partagés peuvent se connecter",
+  "editClient": "Modifier le client",
+  "applyHelp": "Cliquez sur OK pour revenir aux paramètres globaux ; les modifications s’appliquent après l’enregistrement des paramètres globaux.",
+  "idRequired": "Saisissez un Client ID",
+  "idDuplicate": "Le Client ID « {id} » est déjà utilisé par un autre client"
 }

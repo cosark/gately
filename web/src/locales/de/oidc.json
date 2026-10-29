@@ -32,5 +32,17 @@
   "allowPlaceholder": "Ein Benutzername pro Zeile oder group:Name",
   "allowHelp": "Leer lassen, damit sich alle gemeinsamen Benutzer bei dieser Anwendung anmelden können. Benutzer werden über den Namen zugeordnet; nach einer Umbenennung diese Liste anpassen. Gruppen werden bei den gemeinsamen Benutzern festgelegt",
   "addClient": "Client hinzufügen",
-  "docs": "Einrichtungsbeispiele für gängige Anwendungen"
+  "docs": "Einrichtungsbeispiele für gängige Anwendungen",
+  "noClients": "Noch keine Clients",
+  "unnamed": "Unbenannter Client",
+  "confidential": "Vertraulicher Client",
+  "secretUnsaved": "Neues Secret noch nicht gespeichert, zuerst kopieren",
+  "noRedirect": "Keine Redirect-URI",
+  "redirectCount": "Redirect-URIs: {count}",
+  "allowCount": "Erlaubte Einträge: {count}",
+  "allowAll": "Alle gemeinsamen Benutzer können sich anmelden",
+  "editClient": "Client bearbeiten",
+  "applyHelp": "Mit OK zurück zu den globalen Einstellungen; Änderungen gelten nach dem Speichern der globalen Einstellungen.",
+  "idRequired": "Client ID eingeben",
+  "idDuplicate": "Client ID „{id}“ wird bereits von einem anderen Client verwendet"
 }

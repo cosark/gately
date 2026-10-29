@@ -14,5 +14,15 @@
   "emailPlaceholder": "Email (необязательно)",
   "displayNamePlaceholder": "Отображаемое имя (необязательно)",
   "groupsPlaceholder": "Группы (необязательно, Enter — добавить)",
-  "totpShow": "Показать QR-код"
+  "totpShow": "Показать QR-код",
+  "empty": "Общих пользователей пока нет",
+  "unnamed": "Без имени пользователя",
+  "noPassword": "Пароль не задан",
+  "editTitle": "Изменить общего пользователя",
+  "nameLabel": "Имя пользователя",
+  "passwordLabel": "Пароль",
+  "emailLabel": "Email",
+  "displayNameLabel": "Отображаемое имя",
+  "groupsLabel": "Группы",
+  "applyHelp": "Нажмите OK, чтобы вернуться к глобальным настройкам; изменения вступят в силу после их сохранения."
 }

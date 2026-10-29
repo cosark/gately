@@ -14,5 +14,15 @@
   "emailPlaceholder": "E-mail (opcional)",
   "displayNamePlaceholder": "Nome de exibição (opcional)",
   "groupsPlaceholder": "Grupos (opcional, Enter para adicionar)",
-  "totpShow": "Ver QR code"
+  "totpShow": "Ver QR code",
+  "empty": "Nenhum usuário compartilhado ainda",
+  "unnamed": "Sem nome de usuário",
+  "noPassword": "Sem senha",
+  "editTitle": "Editar usuário compartilhado",
+  "nameLabel": "Nome de usuário",
+  "passwordLabel": "Senha",
+  "emailLabel": "E-mail",
+  "displayNameLabel": "Nome de exibição",
+  "groupsLabel": "Grupos",
+  "applyHelp": "Clique em OK para voltar às configurações globais; as alterações valem após salvar as configurações globais."
 }

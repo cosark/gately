@@ -32,5 +32,17 @@
   "allowPlaceholder": "한 줄에 사용자 이름 하나, 또는 group:그룹명",
   "allowHelp": "비워 두면 모든 공유 사용자가 이 앱에 로그인할 수 있습니다. 사용자 이름으로 매칭하므로 사용자 이름을 바꾸면 이 목록도 수정하세요. 그룹은 공유 사용자에서 설정합니다",
   "addClient": "클라이언트 추가",
-  "docs": "주요 앱 설정 예시"
+  "docs": "주요 앱 설정 예시",
+  "noClients": "클라이언트가 아직 없습니다",
+  "unnamed": "이름 없는 클라이언트",
+  "confidential": "기밀 클라이언트",
+  "secretUnsaved": "새 시크릿이 아직 저장되지 않았습니다. 먼저 복사하세요",
+  "noRedirect": "리디렉션 URI 없음",
+  "redirectCount": "리디렉션 URI: {count}개",
+  "allowCount": "허용 항목: {count}개",
+  "allowAll": "모든 공유 사용자 로그인 가능",
+  "editClient": "클라이언트 편집",
+  "applyHelp": "확인을 누르면 전역 설정으로 돌아가며, 전역 설정을 저장해야 적용됩니다.",
+  "idRequired": "Client ID를 입력하세요",
+  "idDuplicate": "Client ID \"{id}\"는 다른 클라이언트에서 사용 중입니다"
 }

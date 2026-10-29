@@ -32,5 +32,17 @@
   "allowPlaceholder": "Un nombre de usuario por línea, o group:nombre",
   "allowHelp": "Vacío permite iniciar sesión en esta aplicación a todos los usuarios compartidos. Los usuarios se identifican por nombre: actualiza esta lista si renombras un usuario. Los grupos se asignan en los usuarios compartidos",
   "addClient": "Añadir cliente",
-  "docs": "Ejemplos de configuración de aplicaciones comunes"
+  "docs": "Ejemplos de configuración de aplicaciones comunes",
+  "noClients": "Aún no hay clientes",
+  "unnamed": "Cliente sin nombre",
+  "confidential": "Cliente confidencial",
+  "secretUnsaved": "Secreto nuevo sin guardar, cópialo primero",
+  "noRedirect": "Sin URI de redirección",
+  "redirectCount": "URI de redirección: {count}",
+  "allowCount": "Entradas permitidas: {count}",
+  "allowAll": "Todos los usuarios compartidos pueden iniciar sesión",
+  "editClient": "Editar cliente",
+  "applyHelp": "Pulsa Aceptar para volver a la configuración global; los cambios se aplican al guardar la configuración global.",
+  "idRequired": "Introduce un Client ID",
+  "idDuplicate": "El Client ID «{id}» ya lo usa otro cliente"
 }

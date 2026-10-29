@@ -14,5 +14,15 @@
   "emailPlaceholder": "E-mail (facultatif)",
   "displayNamePlaceholder": "Nom affiché (facultatif)",
   "groupsPlaceholder": "Groupes (facultatif, Entrée pour ajouter)",
-  "totpShow": "Afficher le QR code"
+  "totpShow": "Afficher le QR code",
+  "empty": "Aucun utilisateur partagé",
+  "unnamed": "Sans nom d’utilisateur",
+  "noPassword": "Pas de mot de passe",
+  "editTitle": "Modifier l’utilisateur partagé",
+  "nameLabel": "Nom d’utilisateur",
+  "passwordLabel": "Mot de passe",
+  "emailLabel": "E-mail",
+  "displayNameLabel": "Nom affiché",
+  "groupsLabel": "Groupes",
+  "applyHelp": "Cliquez sur OK pour revenir aux paramètres globaux ; les modifications s’appliquent après l’enregistrement des paramètres globaux."
 }

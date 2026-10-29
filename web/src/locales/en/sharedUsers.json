@@ -14,5 +14,15 @@
   "emailPlaceholder": "Email (optional)",
   "displayNamePlaceholder": "Display name (optional)",
   "groupsPlaceholder": "Groups (optional, press Enter to add)",
-  "totpShow": "Show QR code"
+  "totpShow": "Show QR code",
+  "empty": "No shared users yet",
+  "unnamed": "No username",
+  "noPassword": "No password",
+  "editTitle": "Edit shared user",
+  "nameLabel": "Username",
+  "passwordLabel": "Password",
+  "emailLabel": "Email",
+  "displayNameLabel": "Display name",
+  "groupsLabel": "Groups",
+  "applyHelp": "Click OK to return to Global settings; changes take effect after you save Global settings."
 }

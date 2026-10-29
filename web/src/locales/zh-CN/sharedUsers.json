@@ -14,5 +14,15 @@
   "emailPlaceholder": "邮箱（可选）",
   "displayNamePlaceholder": "显示名（可选）",
   "groupsPlaceholder": "分组（可选，回车添加）",
-  "totpShow": "查看二维码"
+  "totpShow": "查看二维码",
+  "empty": "还没有共享用户",
+  "unnamed": "未填写用户名",
+  "noPassword": "未设置密码",
+  "editTitle": "编辑共享用户",
+  "nameLabel": "用户名",
+  "passwordLabel": "密码",
+  "emailLabel": "邮箱",
+  "displayNameLabel": "显示名",
+  "groupsLabel": "分组",
+  "applyHelp": "点「确定」后回到全局设置，保存全局设置才会生效。"
 }

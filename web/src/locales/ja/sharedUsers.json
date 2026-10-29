@@ -14,5 +14,15 @@
   "emailPlaceholder": "メール（任意）",
   "displayNamePlaceholder": "表示名（任意）",
   "groupsPlaceholder": "グループ（任意、Enter で追加）",
-  "totpShow": "QR コードを表示"
+  "totpShow": "QR コードを表示",
+  "empty": "共有ユーザーはまだありません",
+  "unnamed": "ユーザー名未入力",
+  "noPassword": "パスワード未設定",
+  "editTitle": "共有ユーザーを編集",
+  "nameLabel": "ユーザー名",
+  "passwordLabel": "パスワード",
+  "emailLabel": "メール",
+  "displayNameLabel": "表示名",
+  "groupsLabel": "グループ",
+  "applyHelp": "「OK」でグローバル設定に戻ります。グローバル設定を保存すると反映されます。"
 }

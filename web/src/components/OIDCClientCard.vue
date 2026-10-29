@@ -1,9 +1,7 @@
 <template>
   <div class="client">
-    <div class="row">
-      <el-input v-model="model.name" :placeholder="t('oidc.namePlaceholder')" class="name" />
-      <el-button text type="danger" :icon="Trash2" :aria-label="t('common.delete')" @click="$emit('remove')" />
-    </div>
+    <div class="label first">{{ t('common.name') }}</div>
+    <el-input v-model="model.name" :placeholder="t('oidc.namePlaceholder')" />
     <div class="row">
       <el-input v-model="model.id" :placeholder="t('oidc.idPlaceholder')" class="mono grow">
         <template #prepend>Client ID</template>
@@ -40,18 +38,18 @@
     <div class="label">{{ t('oidc.allow') }}</div>
     <el-input v-model="allowText" type="textarea" :rows="2" class="mono" :placeholder="t('oidc.allowPlaceholder')" />
     <div class="form-help">{{ t('oidc.allowHelp') }}</div>
-    <el-input v-model="model.remark" :placeholder="t('common.remark')" class="remark" />
+    <div class="label">{{ t('common.remark') }}</div>
+    <el-input v-model="model.remark" :placeholder="t('common.remark')" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { Copy, RefreshCw, Trash2 } from 'lucide-vue-next'
+import { Copy, RefreshCw } from 'lucide-vue-next'
 import { copyText } from '../composables/useClipboard'
 import { splitLines, useListText } from '../composables/useListText'
 import { randomSecret, type OIDCClient } from '../oidc'
 
-defineEmits<{ remove: [] }>()
 const { t } = useI18n()
 const model = defineModel<OIDCClient>({ required: true })
 const redirectText = useListText(() => model.value.redirectUris, (v) => (model.value.redirectUris = v), { split: splitLines })
@@ -59,24 +57,17 @@ const allowText = useListText(() => model.value.allow, (v) => (model.value.allow
 </script>
 
 <style scoped>
+/* 客户端的完整编辑表单，放在 OIDCProvider 的编辑弹窗里 */
 .client {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 8px;
 }
 .row {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
-}
-.name {
-  flex: 1;
-  min-width: 0;
 }
 .grow {
   flex: 1;
@@ -98,7 +89,7 @@ const allowText = useListText(() => model.value.allow, (v) => (model.value.allow
 .once {
   padding: 4px 10px;
 }
-.remark {
-  margin-top: 4px;
+.label.first {
+  margin-top: 0;
 }
 </style>

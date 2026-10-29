@@ -32,5 +32,17 @@
   "allowPlaceholder": "One username per line, or group:name",
   "allowHelp": "Leave empty to let every shared user sign in to this application. Users are matched by name, so update this list after renaming a user. Groups are set on shared users",
   "addClient": "Add client",
-  "docs": "Setup examples for common applications"
+  "docs": "Setup examples for common applications",
+  "noClients": "No clients yet",
+  "unnamed": "Unnamed client",
+  "confidential": "Confidential client",
+  "secretUnsaved": "New secret not saved yet, copy it first",
+  "noRedirect": "No redirect URI",
+  "redirectCount": "Redirect URIs: {count}",
+  "allowCount": "Allowed entries: {count}",
+  "allowAll": "All shared users can sign in",
+  "editClient": "Edit client",
+  "applyHelp": "Click OK to return to Global settings; changes take effect after you save Global settings.",
+  "idRequired": "Enter a Client ID",
+  "idDuplicate": "Client ID \"{id}\" is already used by another client"
 }

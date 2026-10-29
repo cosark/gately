@@ -14,5 +14,15 @@
   "emailPlaceholder": "E-Mail (optional)",
   "displayNamePlaceholder": "Anzeigename (optional)",
   "groupsPlaceholder": "Gruppen (optional, Enter zum Hinzufügen)",
-  "totpShow": "QR-Code anzeigen"
+  "totpShow": "QR-Code anzeigen",
+  "empty": "Noch keine gemeinsamen Benutzer",
+  "unnamed": "Kein Benutzername",
+  "noPassword": "Kein Passwort",
+  "editTitle": "Gemeinsamen Benutzer bearbeiten",
+  "nameLabel": "Benutzername",
+  "passwordLabel": "Passwort",
+  "emailLabel": "E-Mail",
+  "displayNameLabel": "Anzeigename",
+  "groupsLabel": "Gruppen",
+  "applyHelp": "Mit OK zurück zu den globalen Einstellungen; Änderungen gelten nach dem Speichern der globalen Einstellungen."
 }

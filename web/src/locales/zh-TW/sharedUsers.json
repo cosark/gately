@@ -14,5 +14,15 @@
   "emailPlaceholder": "電子郵件（選填）",
   "displayNamePlaceholder": "顯示名稱（選填）",
   "groupsPlaceholder": "群組（選填，按 Enter 新增）",
-  "totpShow": "查看 QR 碼"
+  "totpShow": "查看 QR 碼",
+  "empty": "還沒有共享使用者",
+  "unnamed": "未填寫使用者名稱",
+  "noPassword": "未設定密碼",
+  "editTitle": "編輯共享使用者",
+  "nameLabel": "使用者名稱",
+  "passwordLabel": "密碼",
+  "emailLabel": "電子郵件",
+  "displayNameLabel": "顯示名稱",
+  "groupsLabel": "群組",
+  "applyHelp": "按「確定」後回到全域設定，儲存全域設定才會生效。"
 }

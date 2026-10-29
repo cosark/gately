@@ -32,5 +32,17 @@
   "allowPlaceholder": "Um nome de usuário por linha, ou group:nome",
   "allowHelp": "Vazio permite que todos os usuários compartilhados entrem neste aplicativo. Os usuários são identificados pelo nome: atualize esta lista ao renomear um usuário. Os grupos são definidos nos usuários compartilhados",
   "addClient": "Adicionar cliente",
-  "docs": "Exemplos de configuração de aplicativos comuns"
+  "docs": "Exemplos de configuração de aplicativos comuns",
+  "noClients": "Nenhum cliente ainda",
+  "unnamed": "Cliente sem nome",
+  "confidential": "Cliente confidencial",
+  "secretUnsaved": "Novo segredo ainda não salvo, copie-o primeiro",
+  "noRedirect": "Sem URI de redirecionamento",
+  "redirectCount": "URIs de redirecionamento: {count}",
+  "allowCount": "Entradas permitidas: {count}",
+  "allowAll": "Todos os usuários compartilhados podem entrar",
+  "editClient": "Editar cliente",
+  "applyHelp": "Clique em OK para voltar às configurações globais; as alterações valem após salvar as configurações globais.",
+  "idRequired": "Informe um Client ID",
+  "idDuplicate": "O Client ID \"{id}\" já está em uso por outro cliente"
 }

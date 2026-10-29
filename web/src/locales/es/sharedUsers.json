@@ -14,5 +14,15 @@
   "emailPlaceholder": "Correo (opcional)",
   "displayNamePlaceholder": "Nombre visible (opcional)",
   "groupsPlaceholder": "Grupos (opcional, Intro para añadir)",
-  "totpShow": "Ver código QR"
+  "totpShow": "Ver código QR",
+  "empty": "Aún no hay usuarios compartidos",
+  "unnamed": "Sin nombre de usuario",
+  "noPassword": "Sin contraseña",
+  "editTitle": "Editar usuario compartido",
+  "nameLabel": "Nombre de usuario",
+  "passwordLabel": "Contraseña",
+  "emailLabel": "Correo",
+  "displayNameLabel": "Nombre visible",
+  "groupsLabel": "Grupos",
+  "applyHelp": "Pulsa Aceptar para volver a la configuración global; los cambios se aplican al guardar la configuración global."
 }

@@ -32,5 +32,17 @@
   "allowPlaceholder": "每行一個使用者名稱，或 group:群組名",
   "allowHelp": "留空表示所有共用使用者都能登入該應用程式；依使用者名稱比對，使用者改名後需同步修改；群組在共用使用者中設定",
   "addClient": "新增用戶端",
-  "docs": "各應用程式的設定範例"
+  "docs": "各應用程式的設定範例",
+  "noClients": "還沒有用戶端",
+  "unnamed": "未命名用戶端",
+  "confidential": "機密用戶端",
+  "secretUnsaved": "新密鑰待儲存，請先複製",
+  "noRedirect": "未填寫回呼位址",
+  "redirectCount": "回呼位址 {count} 個",
+  "allowCount": "允許 {count} 項",
+  "allowAll": "所有共享使用者可登入",
+  "editClient": "編輯用戶端",
+  "applyHelp": "按「確定」後回到全域設定，儲存全域設定才會生效。",
+  "idRequired": "請填寫 Client ID",
+  "idDuplicate": "Client ID「{id}」已被其他用戶端使用"
 }

@@ -14,5 +14,15 @@
   "emailPlaceholder": "이메일(선택)",
   "displayNamePlaceholder": "표시 이름(선택)",
   "groupsPlaceholder": "그룹(선택, Enter로 추가)",
-  "totpShow": "QR 코드 보기"
+  "totpShow": "QR 코드 보기",
+  "empty": "공유 사용자가 아직 없습니다",
+  "unnamed": "사용자 이름 없음",
+  "noPassword": "비밀번호 미설정",
+  "editTitle": "공유 사용자 편집",
+  "nameLabel": "사용자 이름",
+  "passwordLabel": "비밀번호",
+  "emailLabel": "이메일",
+  "displayNameLabel": "표시 이름",
+  "groupsLabel": "그룹",
+  "applyHelp": "확인을 누르면 전역 설정으로 돌아가며, 전역 설정을 저장해야 적용됩니다."
 }
