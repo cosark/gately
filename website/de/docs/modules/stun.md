@@ -15,6 +15,7 @@ Der per STUN erhaltene öffentliche Port ändert sich meist. Kombinieren Sie ihn
 
 - [Dynamischem DNS](/de/docs/modules/ddns) oder einem Webhook / Skript, um die neue Adresse in Ihre DNS-Einträge zu übernehmen;
 - [Web-Diensten](/de/docs/modules/web), um einen HTTPS-Einstiegspunkt bereitzustellen.
+- Weiterleitungs-Sites der Web-Dienste können die aktuelle öffentliche Adresse der Regel mit Variablen wie `{STUN_Regelname_PORT}` referenzieren und folgen bei einer Änderung automatisch dem neuen Port; siehe [Weiterleitungsvariablen](/de/docs/modules/web#redirect-vars).
 
 ## Einschränkungen
 

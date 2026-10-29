@@ -15,6 +15,7 @@ Le port public obtenu via STUN change généralement. Associez-le à :
 
 - [DNS dynamique](/fr/docs/modules/ddns) ou à un Webhook / script pour synchroniser la nouvelle adresse avec vos enregistrements DNS ;
 - [Services Web](/fr/docs/modules/web) pour fournir un point d'entrée HTTPS.
+- Les sites de redirection des Services Web peuvent référencer l'adresse publique actuelle de la règle avec des variables comme `{STUN_NomRègle_PORT}` et suivent automatiquement le nouveau port quand il change ; voir [Variables de redirection](/fr/docs/modules/web#redirect-vars).
 
 ## Limitations
 

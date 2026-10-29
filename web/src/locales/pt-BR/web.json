@@ -127,6 +127,7 @@
   "addLocation": "Adicionar caminho",
   "locationsHelp": "Envia as requisições de um prefixo de caminho para outros backends. O prefixo mais longo vence e o caminho é repassado sem alteração. Equivale a location /api/ + proxy_pass do nginx",
   "redirectHostHelp": "Use {'{host}'} para o domínio do visitante, ex.: https://{'{host}'} com “Manter caminho” para levar todo HTTP ao HTTPS",
+  "redirectVarsHelp": "Também: {'{path}'}{'{args}'} (caminho e consulta originais; se usados, “Manter caminho” não os acrescenta), {'{port}'}, {'{1}'} (a parte que corresponde ao * em um domínio como *.example.com), {'{STUN_nome da regra_PORT}'}, {'{STUN_nome da regra_IP}'}, {'{STUN_nome da regra_ADDR}'} (endereço público atual da regra STUN). Mesma sintaxe do Lucky, ex.: https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "URLs sem extensão",
   "cleanUrlsHelp": "Se o arquivo não existir, tenta também caminho.html e caminho/index.html. Para VitePress e sites estáticos parecidos; equivale a try_files do nginx",
   "notFoundPage": "Página 404",

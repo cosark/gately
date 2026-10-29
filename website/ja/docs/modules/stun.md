@@ -15,6 +15,7 @@ STUN で得られる公開ポートは通常変化するため、次のものと
 
 - [ダイナミック DNS](/ja/docs/modules/ddns)、または Webhook / スクリプトで、新しいアドレスを DNS に同期する
 - [Web サービス](/ja/docs/modules/web) で HTTPS の入口を提供する
+- Web サービスのリダイレクトサイトでは `{STUN_ルール名_PORT}` などの変数でルールの現在のパブリックアドレスを参照でき、ポートが変わると自動で新しいポートへ転送します。[リダイレクト変数](/ja/docs/modules/web#redirect-vars)を参照。
 
 ## 制限
 

@@ -15,6 +15,7 @@ STUN으로 얻은 공인 포트는 보통 바뀌므로 다음과 함께 쓰기�
 
 - [동적 DNS](/ko/docs/modules/ddns) 또는 Webhook / 스크립트로 새 주소를 DNS에 동기화
 - [웹 서비스](/ko/docs/modules/web)로 HTTPS 진입점 제공
+- 웹 서비스의 리다이렉트 사이트에서 `{STUN_규칙이름_PORT}` 등의 변수로 규칙의 현재 공인 주소를 참조할 수 있으며, 포트가 바뀌면 자동으로 새 포트로 이동합니다. [리다이렉트 변수](/ko/docs/modules/web#redirect-vars) 참고.
 
 ## 제약
 

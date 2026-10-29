@@ -356,7 +356,12 @@ func (s *Site) validate(isDefault bool) error {
 		}
 	case TypeRedirect:
 		s.RedirectTo = strings.TrimSpace(s.RedirectTo)
-		u, err := url.Parse(strings.ReplaceAll(s.RedirectTo, hostPlaceholder, "example.com"))
+		// 变量换成示例值后再检查，例如 https://{1}.example.com:{STUN_web_PORT}{path}{args}
+		sample, err := expandVars(s.RedirectTo, sampleVar)
+		if err != nil {
+			return err
+		}
+		u, err := url.Parse(sample)
 		if err != nil || u.Scheme == "" || u.Host == "" {
 			return errors.New("重定向地址需为完整 URL")
 		}

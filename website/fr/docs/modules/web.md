@@ -23,7 +23,7 @@ Survolez l’en-tête d’un groupe et cliquez sur le crayon pour le renommer : 
 | Type | Description |
 | --- | --- |
 | Proxy inverse | Transmet à un ou plusieurs backends. Les adresses de backend ont la forme `http(s)://host:port`, et WebSocket est pris en charge |
-| Redirection | Redirige vers une URL complète avec le code de statut 301 / 302 / 307 / 308 (302 par défaut), en conservant éventuellement le chemin et la chaîne de requête d'origine. L'URL peut contenir `{host}`, remplacé par le domaine utilisé par le visiteur : `https://{host}` avec « Conserver le chemin et la requête » envoie chaque requête HTTP vers HTTPS sur le même domaine |
+| Redirection | Redirige vers une URL complète avec le code de statut 301 / 302 / 307 / 308 (302 par défaut), en conservant éventuellement le chemin et la chaîne de requête d'origine. L'URL peut contenir `{host}`, remplacé par le domaine utilisé par le visiteur : `https://{host}` avec « Conserver le chemin et la requête » envoie chaque requête HTTP vers HTTPS sur le même domaine. Des variables comme `{path}`, `{1}` et `{STUN_NomRègle_PORT}` sont aussi disponibles ; voir [Variables de redirection](#redirect-vars). |
 | Fichiers statiques | Le répertoire doit être un chemin absolu. Avec « Liste du répertoire » désactivée, une requête sur un répertoire n'obtient de réponse que si `index.html` existe. « URL sans extension » essaie `path.html` et `path/index.html` lorsqu'un fichier est introuvable (pour VitePress et les générateurs similaires, comme `try_files $uri $uri.html $uri/index.html` de nginx). « Page 404 » est un chemin à l'intérieur du répertoire, comme `404.html`, renvoyé avec le statut 404 |
 | Texte fixe | Contenu personnalisé, `Content-Type` (`text/plain; charset=utf-8` par défaut) et code de statut (100-599, 200 par défaut) |
 | Fermer la connexion | N'envoie rien et ferme la connexion, comme `return 444` de nginx. Sert surtout de site par défaut pour que les requêtes qui sondent des domaines inconnus ne reçoivent aucune réponse ; le journal d'accès les enregistre avec le code 444 ; ne passe ni par l'authentification, ni par le contrôle d'accès, ni par le WAF, ni par les réécritures : les autres réglages du site sont sans effet |
@@ -31,6 +31,30 @@ Survolez l’en-tête d’un groupe et cliquez sur le crayon pour le renommer : 
 Les sites de tous types peuvent définir un journal d'accès, le cross-origin (CORS), des en-têtes de requête et de réponse personnalisés (un `Key: Value` par ligne ; une Value vide supprime cet en-tête), et peuvent référencer une instance de [Pare-feu WAF](/fr/docs/modules/waf) (si l'instance n'existe pas ou est désactivée, les requêtes passent sans filtrage). Voir [En-têtes de requête et de réponse](#headers) pour la modification des en-têtes de requête, des en-têtes de réponse et du Content-Type.
 
 Les entrées du journal d'accès enregistrent l'IP du client, la méthode, le domaine et le chemin, le code d'état, la durée et le nom du site, suivis du Referer et du User-Agent au format nginx (`-` s'ils manquent) : les appareils situés derrière une même IP publique se distinguent ainsi par leur User-Agent. Le journal peut être filtré par site, code d'état, IP source, etc. Voir [consulter et filtrer les journaux d'exécution](/fr/docs/guide/configuration#log-filter).
+
+### Variables de redirection {#redirect-vars}
+
+La cible d'un site de redirection peut utiliser les variables suivantes. La syntaxe est la même que dans Lucky : les règles de redirection importées de Lucky fonctionnent telles quelles :
+
+| Variable | Signification |
+| --- | --- |
+| `{host}` | Domaine demandé par le visiteur, sans le port |
+| `{port}` | Port par lequel la requête est arrivée |
+| `{hostAndPort}` | Domaine et port, identiques au Host de la requête |
+| `{path}` / `{PATH}` | Chemin de la requête ; `{PATH}` sans le `/` initial |
+| `{args}` / `{Args}` | Chaîne de requête ; `{args}` inclut le `?` initial (vide sans chaîne de requête), `{Args}` non |
+| `{domainPartN}` / `{pathPartN}` | La N-ième partie du domaine (séparé par `.`) ou du chemin (séparé par `/`), à partir de 1 |
+| `{ClientIP}` / `{RemoteIP}` | IP du client |
+| `{time}` | Heure actuelle au format `2006-01-02 15:04:05` |
+| `{1}` | La partie couverte par `*` dans un domaine de site comme `*.example.com` ; vide si un domaine exact correspond, le domaine complet si `*` ou le site par défaut correspond |
+| `{STUN_NomRègle_PORT}` / `{STUN_NomRègle_IP}` / `{STUN_NomRègle_ADDR}` | Port, IP et `IP:port` publics actuels d'une règle de [Traversée STUN](/fr/docs/modules/stun) ; le nom est celui affiché dans la liste et peut contenir des tirets bas |
+
+- Si la cible contient `{path}`, `{PATH}`, `{args}`, `{Args}` ou `{pathPartN}`, « Conserver le chemin » n'ajoute plus le chemin d'origine ;
+- Quand le port STUN change, inutile de modifier le site : la requête suivante va vers le nouveau port. Si la règle référencée n'existe pas, est désactivée ou n'a pas encore réussi la traversée, le site renvoie 503 et le journal d'exécution en indique la raison ;
+- Les domaines de site n'acceptent qu'un seul `*`, il n'existe donc que `{1}` ;
+- Les cibles de redirection des règles de réécriture de chemin ne gèrent toujours que `{host}` ; un `{xxx}` inconnu est conservé tel quel.
+
+Exemple : le CDN Cloudflare envoie `*.example.com` vers le port 2053 de cette machine, et cet écouteur a un site de redirection pour `*.example.com` avec la cible `https://{1}.v4.example.com:{STUN_web_PORT}{path}{args}`. Visiter `zly.example.com/a?b=1` redirige vers `https://zly.v4.example.com:<port STUN>/a?b=1` ; la règle STUN web transfère vers un autre écouteur, où des sites de proxy inverse sont créés pour les domaines sous `*.v4.example.com`.
 
 ### Options du proxy inverse {#proxy-options}
 

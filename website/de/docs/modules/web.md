@@ -23,7 +23,7 @@ Fahren Sie über einen Gruppenkopf und klicken Sie auf den Stift, um die Gruppe 
 | Typ | Beschreibung |
 | --- | --- |
 | Reverse Proxy | Leitet an ein oder mehrere Backends weiter. Backend-Adressen haben die Form `http(s)://host:port`, WebSocket wird unterstützt |
-| Weiterleitung | Leitet mit Statuscode 301 / 302 / 307 / 308 (Standard 302) auf eine vollständige URL um, wahlweise unter Beibehaltung von ursprünglichem Pfad und Query-String. Die URL darf `{host}` enthalten, das durch die vom Besucher verwendete Domain ersetzt wird: `https://{host}` mit „Pfad und Query beibehalten“ leitet jede HTTP-Anfrage auf HTTPS derselben Domain um |
+| Weiterleitung | Leitet mit Statuscode 301 / 302 / 307 / 308 (Standard 302) auf eine vollständige URL um, wahlweise unter Beibehaltung von ursprünglichem Pfad und Query-String. Die URL darf `{host}` enthalten, das durch die vom Besucher verwendete Domain ersetzt wird: `https://{host}` mit „Pfad und Query beibehalten“ leitet jede HTTP-Anfrage auf HTTPS derselben Domain um. Variablen wie `{path}`, `{1}` und `{STUN_Regelname_PORT}` sind ebenfalls verfügbar; siehe [Weiterleitungsvariablen](#redirect-vars). |
 | Statische Dateien | Das Verzeichnis muss ein absoluter Pfad sein. Ist „Verzeichnisauflistung“ aus, liefert eine Verzeichnisanfrage nur dann eine Antwort, wenn `index.html` existiert. „URLs ohne Endung“ probiert `path.html` und `path/index.html`, wenn eine Datei fehlt (für VitePress und ähnliche Generatoren, wie nginx `try_files $uri $uri.html $uri/index.html`). „404-Seite“ ist ein Pfad innerhalb des Verzeichnisses, etwa `404.html`, der mit Status 404 ausgeliefert wird |
 | Fester Text | Eigener Inhalt, `Content-Type` (Standard `text/plain; charset=utf-8`) und Statuscode (100-599, Standard 200) |
 | Verbindung schließen | Sendet nichts und schließt die Verbindung, wie nginx `return 444`. Meist als Standard-Site genutzt, damit Anfragen, die unbekannte Domains abtasten, keine Antwort erhalten; im Zugriffslog erscheinen sie als 444; Authentifizierung, Zugriffskontrolle, WAF und Umschreibungen werden übersprungen, die übrigen Site-Einstellungen wirken nicht |
@@ -31,6 +31,30 @@ Fahren Sie über einen Gruppenkopf und klicken Sie auf den Stift, um die Gruppe 
 Sites jedes Typs können ein Zugriffslog, Cross-Origin (CORS) sowie eigene Request- und Response-Header festlegen (je Zeile ein `Key: Value`; ein leerer Value entfernt den Header) und auf eine Instanz der [WAF-Firewall](/de/docs/modules/waf) verweisen (existiert die Instanz nicht oder ist sie deaktiviert, werden Anfragen durchgelassen). Wie Anfrage-Header, Antwort-Header und Content-Type bearbeitet werden, steht unter [Anfrage- und Antwort-Header](#headers).
 
 Einträge im Zugriffslog enthalten Client-IP, Methode, Domain und Pfad, Statuscode, Dauer und Site-Name, gefolgt von Referer und User-Agent im nginx-Format (`-`, wenn sie fehlen); so lassen sich verschiedene Geräte hinter derselben öffentlichen IP am User-Agent unterscheiden. Das Protokoll lässt sich nach Site, Statuscode, Quell-IP und mehr filtern; siehe [Laufzeitprotokolle anzeigen und filtern](/de/docs/guide/configuration#log-filter).
+
+### Weiterleitungsvariablen {#redirect-vars}
+
+Das Ziel einer Weiterleitungs-Site kann die folgenden Variablen verwenden. Die Schreibweise entspricht Lucky, aus Lucky importierte Weiterleitungsregeln funktionieren daher unverändert:
+
+| Variable | Bedeutung |
+| --- | --- |
+| `{host}` | Vom Besucher angefragte Domain ohne Port |
+| `{port}` | Port, über den die Anfrage kam |
+| `{hostAndPort}` | Domain und Port, wie im Host der Anfrage |
+| `{path}` / `{PATH}` | Anfragepfad; `{PATH}` ohne führendes `/` |
+| `{args}` / `{Args}` | Query-String; `{args}` mit führendem `?` (leer ohne Query-String), `{Args}` ohne |
+| `{domainPartN}` / `{pathPartN}` | Der N-te Teil der Domain (durch `.` getrennt) oder des Pfads (durch `/` getrennt), gezählt ab 1 |
+| `{ClientIP}` / `{RemoteIP}` | Client-IP |
+| `{time}` | Aktuelle Zeit im Format `2006-01-02 15:04:05` |
+| `{1}` | Der von `*` erfasste Teil einer Site-Domain wie `*.example.com`; leer bei exakter Domain, die vollständige Domain bei `*` oder der Standard-Site |
+| `{STUN_Regelname_PORT}` / `{STUN_Regelname_IP}` / `{STUN_Regelname_ADDR}` | Aktueller öffentlicher Port, IP und `IP:Port` einer [STUN-Traversal](/de/docs/modules/stun)-Regel; der Regelname ist der in der Liste angezeigte Name und darf Unterstriche enthalten |
+
+- Enthält das Ziel `{path}`, `{PATH}`, `{args}`, `{Args}` oder `{pathPartN}`, hängt „Pfad beibehalten“ den ursprünglichen Pfad nicht mehr an;
+- Ändert sich der STUN-Port, muss die Site nicht bearbeitet werden: Die nächste Anfrage geht an den neuen Port. Existiert die referenzierte Regel nicht, ist sie deaktiviert oder hat das Traversal noch nicht geklappt, antwortet die Site mit 503 und das Laufzeitprotokoll nennt den Grund;
+- Site-Domains unterstützen nur ein `*`, daher gibt es nur `{1}`;
+- Weiterleitungsziele in Pfad-Umschreiberegeln unterstützen weiterhin nur `{host}`; unbekannte `{xxx}` bleiben unverändert.
+
+Beispiel: Das Cloudflare-CDN leitet `*.example.com` an Port 2053 dieses Rechners, und dieser Listener hat eine Weiterleitungs-Site für `*.example.com` mit dem Ziel `https://{1}.v4.example.com:{STUN_web_PORT}{path}{args}`. Ein Aufruf von `zly.example.com/a?b=1` wird an `https://zly.v4.example.com:<STUN-Port>/a?b=1` weitergeleitet; die STUN-Regel web leitet an einen anderen Listener weiter, der Reverse-Proxy-Sites für die Domains unter `*.v4.example.com` hat.
 
 ### Reverse-Proxy-Optionen {#proxy-options}
 

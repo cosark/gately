@@ -23,7 +23,7 @@ Hover over a group header and click the pencil button to rename the group: every
 | Type | Description |
 | --- | --- |
 | Reverse proxy | Forwards to one or more backends. Backend addresses use the form `http(s)://host:port`, and WebSocket is supported |
-| Redirect | Redirects to a full URL with status code 301 / 302 / 307 / 308 (default 302), optionally keeping the original path and query string. The URL may contain `{host}`, which is replaced by the domain the visitor used: `https://{host}` with "Keep path" sends every HTTP request to HTTPS on the same domain |
+| Redirect | Redirects to a full URL with status code 301 / 302 / 307 / 308 (default 302), optionally keeping the original path and query string. The URL may contain `{host}`, which is replaced by the domain the visitor used: `https://{host}` with "Keep path" sends every HTTP request to HTTPS on the same domain. Variables such as `{path}`, `{1}` and `{STUN_RuleName_PORT}` are also available; see [Redirect variables](#redirect-vars). |
 | Static files | The directory must be an absolute path. With "Directory listing" off, a directory request returns a response only when `index.html` exists. "Clean URLs" tries `path.html` and `path/index.html` when a file is missing (for VitePress and similar generators, like nginx `try_files $uri $uri.html $uri/index.html`). "404 page" is a path inside the directory, such as `404.html`, returned with status 404 |
 | Fixed text | Custom content, `Content-Type` (default `text/plain; charset=utf-8`) and status code (100-599, default 200) |
 | Close connection | Sends nothing and closes the connection, like nginx `return 444`. Typically used as the default site so requests scanning unknown domains get no response; the access log records them as 444; it skips authentication, access control, the WAF and rewrites, so the other site settings have no effect |
@@ -31,6 +31,30 @@ Hover over a group header and click the pencil button to rename the group: every
 Sites of every type can set an access log, cross-origin (CORS), custom request and response headers (one `Key: Value` per line; an empty Value removes that header), and can reference a [WAF Firewall](/en/docs/modules/waf) instance (if the instance does not exist or is disabled, requests pass through). See [Request and response headers](#headers) for how request headers, response headers and Content-Type are edited.
 
 Access log entries record the client IP, method, domain and path, status code, duration and site name, followed by the Referer and User-Agent in nginx format (`-` when missing), so different devices behind the same public IP can be told apart by User-Agent. The log can be filtered by site, status code, client IP and more; see [viewing and filtering runtime logs](/en/docs/guide/configuration#log-filter).
+
+### Redirect variables {#redirect-vars}
+
+The target of a redirect site can use the following variables. The syntax is the same as Lucky, so redirect rules imported from Lucky work as they are:
+
+| Variable | Meaning |
+| --- | --- |
+| `{host}` | The domain the visitor requested, without the port |
+| `{port}` | The port the request came in on |
+| `{hostAndPort}` | Domain and port, the same as the request's Host |
+| `{path}` / `{PATH}` | Request path; `{PATH}` has no leading `/` |
+| `{args}` / `{Args}` | Query string; `{args}` includes the leading `?` (empty when there is no query string), `{Args}` does not |
+| `{domainPartN}` / `{pathPartN}` | The Nth part of the domain (split by `.`) or path (split by `/`), counting from 1 |
+| `{ClientIP}` / `{RemoteIP}` | Client IP |
+| `{time}` | Current time in the format `2006-01-02 15:04:05` |
+| `{1}` | The part matched by `*` in a site domain such as `*.example.com`; empty when an exact domain matched, the full domain when `*` or the default site matched |
+| `{STUN_RuleName_PORT}` / `{STUN_RuleName_IP}` / `{STUN_RuleName_ADDR}` | The current public port, IP and `IP:port` of a [STUN Traversal](/en/docs/modules/stun) rule; the rule name is the name shown in the list and may contain underscores |
+
+- When the target contains `{path}`, `{PATH}`, `{args}`, `{Args}` or `{pathPartN}`, "Keep path" no longer appends the original path;
+- When the STUN port changes, the site needs no edit: the next request goes to the new port. If the referenced rule does not exist, is disabled or has not traversed yet, the site returns 503 and the runtime log records why;
+- Site domains support only one `*`, so only `{1}` exists;
+- Redirect targets in path rewrite rules still support only `{host}`; unknown `{xxx}` is kept as is.
+
+Example: Cloudflare CDN sends `*.example.com` to port 2053 on this machine, and that listener has a redirect site for `*.example.com` with the target `https://{1}.v4.example.com:{STUN_web_PORT}{path}{args}`. Visiting `zly.example.com/a?b=1` redirects to `https://zly.v4.example.com:<STUN port>/a?b=1`; the STUN rule web forwards to another listener, which has reverse proxy sites for the domains under `*.v4.example.com`.
 
 ### Reverse proxy options {#proxy-options}
 

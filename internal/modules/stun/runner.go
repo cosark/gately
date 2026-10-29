@@ -15,6 +15,7 @@ import (
 	"github.com/wangwanjie/gately/internal/events"
 	"github.com/wangwanjie/gately/internal/logbuf"
 	"github.com/wangwanjie/gately/internal/script"
+	"github.com/wangwanjie/gately/internal/stunaddr"
 	"github.com/wangwanjie/gately/internal/upnp"
 	"github.com/wangwanjie/gately/internal/webhook"
 )
@@ -94,6 +95,8 @@ func (r *runner) stop() {
 		r.cancel()
 		<-r.done
 	}
+	// 规则停止后不再提供地址，Web 服务里引用它的重定向会提示暂不可用
+	stunaddr.Delete(r.rule.Key)
 	r.setStatus(StatusStopped, "")
 }
 
@@ -140,6 +143,7 @@ func (r *runner) loop(ctx context.Context) {
 		}
 		r.log.Errorf("%s", msg)
 		if !r.rule.AutoRetry {
+			stunaddr.Delete(r.rule.Key)
 			r.setStatus(StatusFailed, msg)
 			return
 		}
@@ -216,6 +220,8 @@ func (r *runner) publish(ctx context.Context, addr netip.AddrPort) {
 		}
 	}
 	r.mu.Unlock()
+	// 供 Web 服务按规则名引用；重试期间不删除，重新打洞后映射多半不变，不必让引用它的重定向中断
+	stunaddr.Set(r.rule.Key, r.rule.Name, addr)
 	if changed {
 		r.log.Infof("公网地址: %s", s)
 		events.Publish(events.Event{Type: events.STUNChanged, Source: r.rule.Name, Level: events.LevelInfo,

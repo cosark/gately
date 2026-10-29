@@ -127,6 +127,7 @@
   "addLocation": "Add path",
   "locationsHelp": "Send requests under a path prefix to other backends. Longest prefix wins; the path is forwarded unchanged. Same as nginx location /api/ + proxy_pass",
   "redirectHostHelp": "Use {'{host}'} for the visitor's domain, e.g. https://{'{host}'} with “Keep path” to send all HTTP to HTTPS",
+  "redirectVarsHelp": "Also available: {'{path}'}{'{args}'} (original path and query; when used, “Keep path” no longer appends them), {'{port}'}, {'{1}'} (the part matched by * in a site domain like *.example.com), {'{STUN_rule name_PORT}'}, {'{STUN_rule name_IP}'}, {'{STUN_rule name_ADDR}'} (the STUN rule's current public address). Same syntax as Lucky, e.g. https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "Clean URLs",
   "cleanUrlsHelp": "When a file is missing, also try path.html and path/index.html. For VitePress and similar static sites; same as nginx try_files",
   "notFoundPage": "404 page",

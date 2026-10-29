@@ -1,0 +1,163 @@
+package webservice
+
+import (
+	"encoding/json"
+	"net/http/httptest"
+	"net/netip"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/wangwanjie/gately/internal/luckyimport"
+	"github.com/wangwanjie/gately/internal/stunaddr"
+)
+
+func TestRedirectTargetVars(t *testing.T) {
+	stunaddr.Set("rule-wz", "wz", netip.MustParseAddrPort("203.0.113.7:51234"))
+	stunaddr.Set("rule-x", "443_穿透", netip.MustParseAddrPort("198.51.100.2:40001"))
+	defer stunaddr.Delete("rule-wz")
+	defer stunaddr.Delete("rule-x")
+
+	cases := []struct {
+		name    string
+		domains []string
+		to      string
+		keep    bool
+		url     string
+		want    string
+	}{
+		// 群里的用法：通配符子域名 + STUN 端口，路径与参数由变量带上
+		{"Lucky 通配符加 STUN", []string{"*.7772888.xyz"}, "https://{1}.v4.7772888.xyz:{STUN_wz_PORT}{path}{args}", true,
+			"http://zly.7772888.xyz:2053/a/b?x=1", "https://zly.v4.7772888.xyz:51234/a/b?x=1"},
+		// 目标里写了 {path}{args} 时不再按「保留路径」重复追加
+		{"写了路径变量不重复追加", []string{"a.test"}, "https://{host}{path}{args}", true,
+			"http://a.test/p?q=1", "https://a.test/p?q=1"},
+		{"无查询串时 args 为空", []string{"a.test"}, "https://{host}{path}{args}", false,
+			"http://a.test/p", "https://a.test/p"},
+		{"保留路径照旧", []string{"a.test"}, "https://{host}", true,
+			"http://a.test/p?q=1", "https://a.test/p?q=1"},
+		{"端口与 hostAndPort", []string{"a.test"}, "https://{host}:{port}/{PATH}?{Args}&h={hostAndPort}", false,
+			"http://a.test:8080/x/y?k=v", "https://a.test:8080/x/y?k=v&h=a.test:8080"},
+		{"规则名含下划线与中文", []string{"a.test"}, "https://{STUN_443_穿透_IP}:{STUN_443_穿透_PORT}/{STUN_wz_ADDR}", false,
+			"http://a.test/", "https://198.51.100.2:40001/203.0.113.7:51234"},
+		{"域名与路径分段", []string{"*.b.test"}, "https://{domainPart2}.c.test/{pathPart2}/{domainPart9}", false,
+			"http://x.y.b.test/p1/p2/p3", "https://y.c.test/p2/"},
+		{"多级子域名", []string{"*.b.test"}, "https://{1}.c.test", false,
+			"http://x.y.b.test/", "https://x.y.c.test"},
+		{"精确域名优先时 {1} 为空", []string{"*.b.test", "a.b.test"}, "https://n{1}.c.test", false,
+			"http://a.b.test/", "https://n.c.test"},
+		{"* 匹配完整域名", []string{"*"}, "https://{1}.c.test", false,
+			"http://a.test/", "https://a.test.c.test"},
+		{"客户端 IP", []string{"a.test"}, "https://a.test/?ip={ClientIP}&r={RemoteIP}", false,
+			"http://a.test/", "https://a.test/?ip=192.0.2.1&r=192.0.2.1"},
+		{"未知变量原样保留", []string{"a.test"}, "https://a.test/{unknown}", false,
+			"http://a.test/", "https://a.test/{unknown}"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			s := Site{Domains: c.domains, RedirectTo: c.to, KeepPath: c.keep}
+			r := httptest.NewRequest("GET", c.url, nil)
+			got, err := redirectTarget(&s, r)
+			if err != nil || got != c.want {
+				t.Fatalf("got %q %v, want %q", got, err, c.want)
+			}
+		})
+	}
+
+	// {time} 为当前时间
+	s := Site{Domains: []string{"a.test"}, RedirectTo: "https://a.test/?t={time}"}
+	got, _ := redirectTarget(&s, httptest.NewRequest("GET", "http://a.test/", nil))
+	if _, err := time.Parse("2006-01-02 15:04:05", strings.TrimPrefix(got, "https://a.test/?t=")); err != nil {
+		t.Fatalf("{time} 格式错误: %q", got)
+	}
+
+	// 引用的 STUN 规则没有地址时报错
+	s = Site{Domains: []string{"a.test"}, RedirectTo: "https://a.test:{STUN_none_PORT}"}
+	if _, err := redirectTarget(&s, httptest.NewRequest("GET", "http://a.test/", nil)); err == nil || !strings.Contains(err.Error(), "none") {
+		t.Fatalf("规则不存在时应报错: %v", err)
+	}
+}
+
+func TestRedirectValidateVars(t *testing.T) {
+	for _, to := range []string{
+		"https://{host}",
+		"https://{host}{path}{args}",
+		"https://{host}:{port}{path}{args}",
+		"https://{1}.v4.7772888.xyz:{STUN_wz_PORT}{path}{args}",
+		"https://{STUN_web_ADDR}/{PATH}",
+		"https://{STUN_web_IP}:8443",
+		"https://{domainPart1}.example.com/{pathPart1}",
+	} {
+		s := Site{Domains: []string{"*.example.com"}, Type: TypeRedirect, RedirectTo: to}
+		if err := s.validate(false); err != nil {
+			t.Errorf("%s 应能保存: %v", to, err)
+		}
+	}
+	for _, to := range []string{"/rel", "{path}", "https://{1}.{2}.example.com", "https://{unknown}"} {
+		s := Site{Domains: []string{"*.example.com"}, Type: TypeRedirect, RedirectTo: to}
+		if err := s.validate(false); err == nil {
+			t.Errorf("%s 应被拒绝", to)
+		}
+	}
+}
+
+// 访问端到端：STUN 端口变化后无需改站点，跳转地址跟着变；规则停止后返回 503
+func TestRedirectSTUNEndToEnd(t *testing.T) {
+	stunaddr.Set("e2e", "wz", netip.MustParseAddrPort("203.0.113.7:51234"))
+	defer stunaddr.Delete("e2e")
+	l := Listener{
+		Sites: []Site{{Enable: true, Domains: []string{"*.7772888.xyz"}, Type: TypeRedirect,
+			RedirectTo: "https://{1}.v4.7772888.xyz:{STUN_wz_PORT}{path}{args}", KeepPath: true, RedirectCode: 302}},
+		Default: Site{Enable: true, Type: TypeText, Text: "default", StatusCode: 404},
+	}
+	addr, _ := startRunner(t, l, nil, nil)
+	c := noRedirect()
+
+	resp, _ := get(t, c, addr, "zly.7772888.xyz", "/dav/a?x=1", nil)
+	if resp.StatusCode != 302 || resp.Header.Get("Location") != "https://zly.v4.7772888.xyz:51234/dav/a?x=1" {
+		t.Fatalf("重定向异常: %d %s", resp.StatusCode, resp.Header.Get("Location"))
+	}
+	stunaddr.Set("e2e", "wz", netip.MustParseAddrPort("203.0.113.7:52000"))
+	resp, _ = get(t, c, addr, "tv.7772888.xyz", "/", nil)
+	if resp.Header.Get("Location") != "https://tv.v4.7772888.xyz:52000/" {
+		t.Fatalf("端口变化后应跟着变: %s", resp.Header.Get("Location"))
+	}
+	stunaddr.Delete("e2e")
+	resp, body := get(t, c, addr, "zly.7772888.xyz", "/", map[string]string{"Accept": "text/html"})
+	if resp.StatusCode != 503 || resp.Header.Get("Location") != "" || !strings.Contains(body, "wz") {
+		t.Fatalf("STUN 无地址时应返回 503: %d %q", resp.StatusCode, body)
+	}
+}
+
+// Lucky 的重定向子规则常用 {host}{path}{args}、{port}、{1} 与 STUN 变量，此前导入时校验失败会跳过整条监听
+func TestConvertLuckyRedirectVars(t *testing.T) {
+	raw, _ := json.Marshal([]map[string]any{{
+		"RuleName": "redir", "Enable": true, "ListenPort": 2053, "Network": "tcp6",
+		"DefaultProxy": map[string]any{"Locations": []string{"https://{host}:{port}{path}{args}"}, "WebServiceType": "redirect"},
+		"ProxyList": []map[string]any{
+			{"Enable": true, "Domains": []string{"*.7772888.xyz"}, "WebServiceType": "redirect",
+				"Locations": []string{"https://{1}.v4.7772888.xyz:{STUN_wz_PORT}{path}{args}"}},
+			{"Enable": true, "Domains": []string{"a.7772888.xyz"}, "WebServiceType": "url",
+				"Locations": []string{"https://{host}{path}{args}"}},
+		},
+	}})
+	ls, warns, found, err := convertLuckyListeners(raw, luckyimport.Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if found != 1 || len(ls) != 1 {
+		t.Fatalf("监听应被导入: found=%d imported=%d %v", found, len(ls), warns)
+	}
+	l := ls[0]
+	if l.Default.Type != TypeRedirect || l.Default.RedirectTo != "https://{host}:{port}{path}{args}" {
+		t.Fatalf("默认子规则映射错误: %+v", l.Default)
+	}
+	if len(l.Sites) != 2 || l.Sites[0].RedirectTo != "https://{1}.v4.7772888.xyz:{STUN_wz_PORT}{path}{args}" || l.Sites[1].Type != TypeRedirect {
+		t.Fatalf("子规则映射错误: %+v", l.Sites)
+	}
+	// 导入后实际跳转：路径只出现一次
+	r := httptest.NewRequest("GET", "http://a.7772888.xyz/p?q=1", nil)
+	if got, _ := redirectTarget(&l.Sites[1], r); got != "https://a.7772888.xyz/p?q=1" {
+		t.Fatalf("导入后的跳转地址错误: %q", got)
+	}
+}

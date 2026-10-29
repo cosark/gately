@@ -127,6 +127,7 @@
   "addLocation": "Pfad hinzufügen",
   "locationsHelp": "Leitet Anfragen unter einem Pfadpräfix an andere Backends. Das längste Präfix gewinnt, der Pfad bleibt unverändert. Entspricht nginx location /api/ + proxy_pass",
   "redirectHostHelp": "{'{host}'} steht für die Domain des Besuchers, z. B. https://{'{host}'} mit „Pfad beibehalten“, um alles von HTTP auf HTTPS umzuleiten",
+  "redirectVarsHelp": "Außerdem: {'{path}'}{'{args}'} (ursprünglicher Pfad und Query; wenn verwendet, hängt „Pfad beibehalten“ sie nicht erneut an), {'{port}'}, {'{1}'} (der von * erfasste Teil einer Domain wie *.example.com), {'{STUN_Name der Regel_PORT}'}, {'{STUN_Name der Regel_IP}'}, {'{STUN_Name der Regel_ADDR}'} (aktuelle öffentliche Adresse der STUN-Regel). Gleiche Schreibweise wie Lucky, z. B. https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "URLs ohne Endung",
   "cleanUrlsHelp": "Fehlt die Datei, werden auch pfad.html und pfad/index.html probiert. Für VitePress und ähnliche statische Sites; entspricht nginx try_files",
   "notFoundPage": "404-Seite",

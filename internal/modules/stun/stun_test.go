@@ -24,6 +24,7 @@ import (
 	"github.com/wangwanjie/gately/internal/luckyimport"
 	"github.com/wangwanjie/gately/internal/module"
 	stunproto "github.com/wangwanjie/gately/internal/stun"
+	"github.com/wangwanjie/gately/internal/stunaddr"
 	"github.com/wangwanjie/gately/internal/webhook"
 )
 
@@ -201,6 +202,10 @@ func TestTCPTraversalEndToEnd(t *testing.T) {
 			if pub.Port() != uint16(r.port) {
 				t.Fatalf("公网端口 %d 应等于通道端口 %d", pub.Port(), r.port)
 			}
+			// Web 服务重定向按规则名读取的地址应与当前公网地址一致
+			if got, ok := stunaddr.Lookup("nas ssh"); !ok || got != pub {
+				t.Fatalf("stunaddr 中的地址应为 %v，实际 %v %v", pub, got, ok)
+			}
 
 			// 通过公网地址访问，经内置转发到达回显服务
 			c, err := net.Dial("tcp4", pub.String())
@@ -242,11 +247,19 @@ func TestTCPTraversalEndToEnd(t *testing.T) {
 			if len(r.snapshot().History) != 2 {
 				t.Fatalf("历史记录应有 2 条: %+v", r.snapshot().History)
 			}
+			if got, _ := stunaddr.Lookup("nas ssh"); got.String() != "203.0.113.9:40000" {
+				t.Fatalf("地址变化后 stunaddr 应同步更新，实际 %v", got)
+			}
 			// 通知脚本在后台执行，等第二次写完再结束，否则 TempDir 清理时脚本可能仍在写文件
 			waitFor(t, "变化后脚本执行", func() bool {
 				b, _ := os.ReadFile(out)
 				return strings.Count(string(b), "\n") >= 2
 			})
+			// 规则停止后不再提供地址
+			r.stop()
+			if _, ok := stunaddr.Lookup("nas ssh"); ok {
+				t.Fatal("规则停止后 stunaddr 应删除地址")
+			}
 			_ = buf
 		})
 	}

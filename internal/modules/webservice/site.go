@@ -144,11 +144,13 @@ func newSiteHandler(s Site, log *logbuf.Logger, auth *authenticator, waf WAFProv
 		}
 	case TypeRedirect:
 		h.handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// {host} 替换为访客请求的域名（不含端口），用于把 HTTP 统一跳到同域名的 HTTPS
-			base := strings.ReplaceAll(s.RedirectTo, hostPlaceholder, hostOnly(r.Host))
-			to := base
-			if s.KeepPath {
-				to = strings.TrimRight(base, "/") + r.URL.RequestURI()
+			// 目标中的 {host}、{path}、{1}、{STUN_规则名_PORT} 等变量按本次请求替换，见 redirectvars.go
+			to, err := redirectTarget(&s, r)
+			if err != nil {
+				// 只有引用的 STUN 规则暂无公网地址时会失败，跳到半成品地址没有意义
+				h.reqLog(r).Warnf("重定向目标暂不可用: %v", err)
+				writeErrorPage(w, r, http.StatusServiceUnavailable, "重定向目标暂不可用", err.Error())
+				return
 			}
 			applyHeaders(w.Header(), s.ResponseHeaders)
 			http.Redirect(w, r, to, s.RedirectCode)

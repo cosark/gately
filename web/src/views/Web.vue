@@ -304,6 +304,7 @@
               <el-form-item :label="t('web.redirectTo')" required>
                 <el-input v-model="site.redirectTo" placeholder="https://example.com" />
                 <div class="form-help">{{ t('web.redirectHostHelp') }}</div>
+                <div class="form-help">{{ t('web.redirectVarsHelp') }}</div>
               </el-form-item>
               <el-form-item :label="t('web.statusCode')">
                 <el-select v-model="site.redirectCode" class="w-120">

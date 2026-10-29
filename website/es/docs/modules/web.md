@@ -23,7 +23,7 @@ Pase el ratón por el encabezado de un grupo y pulse el lápiz para renombrarlo:
 | Tipo | Descripción |
 | --- | --- |
 | Proxy inverso | Reenvía a uno o varios backends. Las direcciones de backend tienen la forma `http(s)://host:port` y se admite WebSocket |
-| Redirección | Redirige a una URL completa con código de estado 301 / 302 / 307 / 308 (por defecto 302), conservando opcionalmente la ruta y la cadena de consulta originales. La URL puede contener `{host}`, que se sustituye por el dominio que usó el visitante: `https://{host}` con «Conservar ruta y consulta» envía todas las peticiones HTTP a HTTPS en el mismo dominio |
+| Redirección | Redirige a una URL completa con código de estado 301 / 302 / 307 / 308 (por defecto 302), conservando opcionalmente la ruta y la cadena de consulta originales. La URL puede contener `{host}`, que se sustituye por el dominio que usó el visitante: `https://{host}` con «Conservar ruta y consulta» envía todas las peticiones HTTP a HTTPS en el mismo dominio. También admite variables como `{path}`, `{1}` y `{STUN_NombreRegla_PORT}`; consulta [Variables de redirección](#redirect-vars). |
 | Archivos estáticos | El directorio debe ser una ruta absoluta. Con «Listado de directorios» desactivado, una petición a un directorio solo devuelve respuesta si existe `index.html`. «URL sin extensión» prueba `ruta.html` y `ruta/index.html` cuando falta un archivo (para VitePress y generadores similares, como `try_files $uri $uri.html $uri/index.html` de nginx). «Página 404» es una ruta dentro del directorio, como `404.html`, que se devuelve con estado 404 |
 | Texto fijo | Contenido personalizado, `Content-Type` (por defecto `text/plain; charset=utf-8`) y código de estado (100-599, por defecto 200) |
 | Cerrar conexión | No envía nada y cierra la conexión, como `return 444` de nginx. Se usa sobre todo como sitio por defecto para que las peticiones que escanean dominios desconocidos no reciban respuesta; el registro de acceso las anota como 444; no pasa por la autenticación, el control de acceso, el WAF ni las reescrituras, así que el resto de ajustes del sitio no tiene efecto |
@@ -31,6 +31,30 @@ Pase el ratón por el encabezado de un grupo y pulse el lápiz para renombrarlo:
 Los sitios de cualquier tipo pueden definir un registro de acceso, orígenes cruzados (CORS), cabeceras de petición y respuesta personalizadas (un `Clave: Valor` por línea; un Valor vacío elimina esa cabecera) y pueden hacer referencia a una instancia de [Cortafuegos WAF](/es/docs/modules/waf) (si la instancia no existe o está desactivada, las peticiones pasan sin filtrar). Consulta [Cabeceras de petición y de respuesta](#headers) para ver cómo se editan las cabeceras de petición, las de respuesta y el Content-Type.
 
 Las entradas del registro de acceso guardan la IP del cliente, el método, el dominio y la ruta, el código de estado, la duración y el nombre del sitio, seguidos del Referer y el User-Agent en formato nginx (`-` si faltan), de modo que los distintos dispositivos detrás de una misma IP pública se distinguen por el User-Agent. El registro se puede filtrar por sitio, código de estado, IP de origen y más; consulte [ver y filtrar los registros de ejecución](/es/docs/guide/configuration#log-filter).
+
+### Variables de redirección {#redirect-vars}
+
+El destino de un sitio de redirección puede usar las siguientes variables. La sintaxis es la misma que en Lucky, así que las reglas de redirección importadas de Lucky funcionan tal cual:
+
+| Variable | Significado |
+| --- | --- |
+| `{host}` | Dominio solicitado por el visitante, sin puerto |
+| `{port}` | Puerto por el que llegó la solicitud |
+| `{hostAndPort}` | Dominio y puerto, igual que el Host de la solicitud |
+| `{path}` / `{PATH}` | Ruta de la solicitud; `{PATH}` sin la `/` inicial |
+| `{args}` / `{Args}` | Cadena de consulta; `{args}` incluye el `?` inicial (vacía si no hay consulta), `{Args}` no |
+| `{domainPartN}` / `{pathPartN}` | La parte N del dominio (separado por `.`) o de la ruta (separada por `/`), contando desde 1 |
+| `{ClientIP}` / `{RemoteIP}` | IP del cliente |
+| `{time}` | Hora actual con el formato `2006-01-02 15:04:05` |
+| `{1}` | La parte que coincide con `*` en un dominio del sitio como `*.example.com`; vacía si coincidió un dominio exacto, el dominio completo si coincidió `*` o el sitio predeterminado |
+| `{STUN_NombreRegla_PORT}` / `{STUN_NombreRegla_IP}` / `{STUN_NombreRegla_ADDR}` | Puerto, IP e `IP:puerto` públicos actuales de una regla de [Travesía STUN](/es/docs/modules/stun); el nombre es el que aparece en la lista y puede contener guiones bajos |
+
+- Si el destino contiene `{path}`, `{PATH}`, `{args}`, `{Args}` o `{pathPartN}`, «Conservar ruta» ya no añade la ruta original;
+- Cuando cambia el puerto STUN no hay que editar el sitio: la siguiente solicitud va al puerto nuevo. Si la regla referenciada no existe, está desactivada o aún no ha completado la travesía, el sitio devuelve 503 y el registro de ejecución indica el motivo;
+- Los dominios del sitio admiten un solo `*`, por lo que solo existe `{1}`;
+- Los destinos de redirección de las reglas de reescritura de rutas siguen admitiendo solo `{host}`; un `{xxx}` desconocido se conserva tal cual.
+
+Ejemplo: la CDN de Cloudflare envía `*.example.com` al puerto 2053 de este equipo, y ese escucha tiene un sitio de redirección para `*.example.com` con el destino `https://{1}.v4.example.com:{STUN_web_PORT}{path}{args}`. Visitar `zly.example.com/a?b=1` redirige a `https://zly.v4.example.com:<puerto STUN>/a?b=1`; la regla STUN web reenvía a otro escucha, donde se crean sitios de proxy inverso para los dominios bajo `*.v4.example.com`.
 
 ### Opciones del proxy inverso {#proxy-options}
 

@@ -15,6 +15,7 @@ STUN 得到的公网端口通常会变化，建议配合：
 
 - [动态域名](/docs/modules/ddns) 或 Webhook / 脚本，把新地址同步到解析；
 - [Web 服务](/docs/modules/web) 提供 HTTPS 入口。
+- Web 服务的重定向站点可以用 `{STUN_规则名_PORT}` 等变量引用规则当前的公网地址，端口变化后自动跳到新端口，见 [重定向变量](/docs/modules/web#redirect-vars)。
 
 ## 限制
 
