@@ -34,7 +34,7 @@ Einträge im Zugriffslog enthalten Client-IP, Methode, Domain und Pfad, Statusco
 
 ### Weiterleitungsvariablen {#redirect-vars}
 
-Das Ziel einer Weiterleitungs-Site kann die folgenden Variablen verwenden. Die Schreibweise entspricht Lucky, aus Lucky importierte Weiterleitungsregeln funktionieren daher unverändert:
+Das Ziel einer Weiterleitungs-Site kann die folgenden Variablen verwenden:
 
 | Variable | Bedeutung |
 | --- | --- |
@@ -49,8 +49,9 @@ Das Ziel einer Weiterleitungs-Site kann die folgenden Variablen verwenden. Die S
 | `{1}` | Der von `*` erfasste Teil einer Site-Domain wie `*.example.com`; leer bei exakter Domain, die vollständige Domain bei `*` oder der Standard-Site |
 | `{STUN_Regelname_PORT}` / `{STUN_Regelname_IP}` / `{STUN_Regelname_ADDR}` | Aktueller öffentlicher Port, IP und `IP:Port` einer [STUN-Traversal](/de/docs/modules/stun)-Regel; der Regelname ist der in der Liste angezeigte Name und darf Unterstriche enthalten |
 
-- Enthält das Ziel `{path}`, `{PATH}`, `{args}`, `{Args}` oder `{pathPartN}`, hängt „Pfad beibehalten“ den ursprünglichen Pfad nicht mehr an;
-- Ändert sich der STUN-Port, muss die Site nicht bearbeitet werden: Die nächste Anfrage geht an den neuen Port. Existiert die referenzierte Regel nicht, ist sie deaktiviert oder hat das Traversal noch nicht geklappt, antwortet die Site mit 503 und das Laufzeitprotokoll nennt den Grund;
+- Bei aktivem „Pfad beibehalten“ wird der ursprüngliche Pfad nicht mehr angehängt, wenn das Ziel `{path}`, `{PATH}` oder `{pathPartN}` enthält, und die ursprüngliche Query nicht mehr, wenn das Ziel `{args}`, `{Args}` oder eine eigene Query enthält; der jeweils andere Teil wird weiterhin angehängt;
+- Ändert sich der STUN-Port, muss die Site nicht bearbeitet werden: Die nächste Anfrage geht an den neuen Port. Existiert die referenzierte Regel nicht, ist sie deaktiviert, hat das Traversal noch nicht geklappt oder läuft gerade ein automatischer Neuversuch, antwortet die Site mit 503 und das Laufzeitprotokoll nennt den Grund;
+- Hat das Ziel nach dem Einsetzen der Variablen keinen Host (etwa wenn `{1}` bei einer exakten Domain leer ist und das Ziel nur `https://{1}` lautet), antwortet die Site mit 503; enthält der Host des Besuchers Zeichen, die in Domains nicht vorkommen, etwa `&`, `=`, `/` oder `@`, antwortet sie mit 400 und setzt ihn nicht ins Ziel ein;
 - Site-Domains unterstützen nur ein `*`, daher gibt es nur `{1}`;
 - Weiterleitungsziele in Pfad-Umschreiberegeln unterstützen weiterhin nur `{host}`; unbekannte `{xxx}` bleiben unverändert.
 

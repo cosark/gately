@@ -34,7 +34,7 @@ Les entrées du journal d'accès enregistrent l'IP du client, la méthode, le do
 
 ### Variables de redirection {#redirect-vars}
 
-La cible d'un site de redirection peut utiliser les variables suivantes. La syntaxe est la même que dans Lucky : les règles de redirection importées de Lucky fonctionnent telles quelles :
+La cible d'un site de redirection peut utiliser les variables suivantes :
 
 | Variable | Signification |
 | --- | --- |
@@ -49,8 +49,9 @@ La cible d'un site de redirection peut utiliser les variables suivantes. La synt
 | `{1}` | La partie couverte par `*` dans un domaine de site comme `*.example.com` ; vide si un domaine exact correspond, le domaine complet si `*` ou le site par défaut correspond |
 | `{STUN_NomRègle_PORT}` / `{STUN_NomRègle_IP}` / `{STUN_NomRègle_ADDR}` | Port, IP et `IP:port` publics actuels d'une règle de [Traversée STUN](/fr/docs/modules/stun) ; le nom est celui affiché dans la liste et peut contenir des tirets bas |
 
-- Si la cible contient `{path}`, `{PATH}`, `{args}`, `{Args}` ou `{pathPartN}`, « Conserver le chemin » n'ajoute plus le chemin d'origine ;
-- Quand le port STUN change, inutile de modifier le site : la requête suivante va vers le nouveau port. Si la règle référencée n'existe pas, est désactivée ou n'a pas encore réussi la traversée, le site renvoie 503 et le journal d'exécution en indique la raison ;
+- Avec « Conserver le chemin », une cible contenant `{path}`, `{PATH}` ou `{pathPartN}` ne reçoit plus le chemin d'origine, et une cible contenant `{args}`, `{Args}` ou sa propre chaîne de requête ne reçoit plus la requête d'origine ; l'autre partie est toujours ajoutée ;
+- Quand le port STUN change, inutile de modifier le site : la requête suivante va vers le nouveau port. Si la règle référencée n'existe pas, est désactivée, n'a pas encore réussi la traversée ou est en cours de nouvelle tentative, le site renvoie 503 et le journal d'exécution en indique la raison ;
+- Si la cible n'a plus d'hôte une fois les variables remplacées (par exemple `{1}` est vide parce qu'un domaine exact correspond, alors que la cible est seulement `https://{1}`), le site renvoie 503 ; si l'hôte du visiteur contient des caractères absents des noms de domaine, comme `&`, `=`, `/` ou `@`, il renvoie 400 sans l'insérer dans la cible ;
 - Les domaines de site n'acceptent qu'un seul `*`, il n'existe donc que `{1}` ;
 - Les cibles de redirection des règles de réécriture de chemin ne gèrent toujours que `{host}` ; un `{xxx}` inconnu est conservé tel quel.
 

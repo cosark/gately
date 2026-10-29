@@ -3,6 +3,7 @@ package webservice
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -146,10 +147,15 @@ func newSiteHandler(s Site, log *logbuf.Logger, auth *authenticator, waf WAFProv
 		h.handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// 目标中的 {host}、{path}、{1}、{STUN_规则名_PORT} 等变量按本次请求替换，见 redirectvars.go
 			to, err := redirectTarget(&s, r)
+			if errors.Is(err, errBadHost) {
+				writeErrorPage(w, r, http.StatusBadRequest, "请求无效", "请求的域名不合法")
+				return
+			}
 			if err != nil {
-				// 只有引用的 STUN 规则暂无公网地址时会失败，跳到半成品地址没有意义
+				// 引用的 STUN 规则暂无公网地址，或变量展开后缺少主机，跳到半成品地址没有意义。
+				// 原因（含规则名）只写日志，不展示给访客
 				h.reqLog(r).Warnf("重定向目标暂不可用: %v", err)
-				writeErrorPage(w, r, http.StatusServiceUnavailable, "重定向目标暂不可用", err.Error())
+				writeErrorPage(w, r, http.StatusServiceUnavailable, "重定向目标暂不可用", "跳转地址暂时无法确定，请稍后重试。")
 				return
 			}
 			applyHeaders(w.Header(), s.ResponseHeaders)

@@ -1,5 +1,5 @@
 // Package stunaddr 保存各条 STUN 穿透规则当前的公网地址，
-// 供 Web 服务的重定向目标等按规则名引用（{STUN_规则名_PORT} 等变量，与 Lucky 写法一致）。
+// 供 Web 服务的重定向目标等按规则名引用（{STUN_规则名_PORT} 等变量）。
 package stunaddr
 
 import (

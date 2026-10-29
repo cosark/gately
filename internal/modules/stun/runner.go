@@ -147,6 +147,9 @@ func (r *runner) loop(ctx context.Context) {
 			r.setStatus(StatusFailed, msg)
 			return
 		}
+		// 重试期间界面上的公网地址已清空，旧映射多半已失效：同步清掉，引用它的重定向返回 503，
+		// 而不是继续跳到可能打不开的旧端口；重新穿透成功后 publish 会再写入
+		stunaddr.Delete(r.rule.Key)
 		r.setStatus(StatusRetrying, msg)
 		select {
 		case <-ctx.Done():

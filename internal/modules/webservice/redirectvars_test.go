@@ -2,6 +2,7 @@ package webservice
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http/httptest"
 	"net/netip"
 	"net/url"
@@ -53,6 +54,15 @@ func TestRedirectTargetVars(t *testing.T) {
 			"http://a.test/", "https://a.test/?ip=192.0.2.1&r=192.0.2.1"},
 		{"未知变量原样保留", []string{"a.test"}, "https://a.test/{unknown}", false,
 			"http://a.test/", "https://a.test/{unknown}"},
+		// 「保留路径」按路径与查询串分别判断：只写了其中一类变量时，另一部分照常追加
+		{"只写路径变量时保留查询串", []string{"a.test"}, "https://new.test{path}", true,
+			"http://a.test/p?q=1", "https://new.test/p?q=1"},
+		{"只写查询变量时保留路径", []string{"a.test"}, "https://new.test/base?{Args}&from=a", true,
+			"http://a.test/p?q=1", "https://new.test/base/p?q=1&from=a"},
+		{"目标自带查询串时只追加路径", []string{"a.test"}, "https://new.test/base/?from=a", true,
+			"http://a.test/p?q=1", "https://new.test/base/p?from=a"},
+		{"保留路径不吞掉主机", []string{"a.test"}, "https://new.test/", true,
+			"http://a.test//evil.com/x", "https://new.test//evil.com/x"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -77,6 +87,40 @@ func TestRedirectTargetVars(t *testing.T) {
 	}
 	if _, err := time.Parse("2006-01-02 15:04:05", u.Query().Get("t")); err != nil {
 		t.Fatalf("{time} 格式错误: %q", got)
+	}
+
+	// 变量展开后主机为空时拒绝跳转：否则拼上 //evil.com 这样的访客路径会把访客带到别的站点
+	for _, c := range []struct {
+		domains []string
+		to, url string
+	}{
+		{[]string{"a.test", "*.a.test"}, "https://{1}", "http://a.test//evil.com/x"},
+		{[]string{"*.b.test"}, "https://{domainPart4}", "http://x.b.test//evil.com/x"},
+		{[]string{"a.test"}, "https://{pathPart3}", "http://a.test//evil.com/x"},
+	} {
+		s := Site{Domains: c.domains, RedirectTo: c.to, KeepPath: true}
+		if got, err := redirectTarget(&s, httptest.NewRequest("GET", c.url, nil)); err == nil {
+			t.Fatalf("%s 展开后主机为空，应拒绝跳转，却得到 %q", c.to, got)
+		}
+	}
+
+	// Host 中含 & = / 等字符时不代入跳转地址，避免改变目标主机或注入查询参数
+	for _, host := range []string{"a&admin=1.example.com", "evil.com/x.example.com", "a?b.example.com", "a@b.example.com"} {
+		for _, to := range []string{"https://t.test/?sub={1}", "https://{host}/", "https://{hostAndPort}/"} {
+			r := httptest.NewRequest("GET", "http://x.example.com/", nil)
+			r.Host = host
+			s := Site{Domains: []string{"*.example.com"}, RedirectTo: to}
+			if got, err := redirectTarget(&s, r); !errors.Is(err, errBadHost) {
+				t.Fatalf("Host %q 代入 %s 应被拒绝，得到 %q %v", host, to, got, err)
+			}
+		}
+	}
+
+	r := httptest.NewRequest("GET", "http://x.example.com/", nil)
+	r.Host = "a&b.example.com"
+	s = Site{Domains: []string{"*.example.com"}, RedirectTo: "https://{domainPart1}.t.test/"}
+	if got, err := redirectTarget(&s, r); !errors.Is(err, errBadHost) {
+		t.Fatalf("含非法字符的域名分段应被拒绝，得到 %q %v", got, err)
 	}
 
 	// 引用的 STUN 规则没有地址时报错
@@ -132,8 +176,15 @@ func TestRedirectSTUNEndToEnd(t *testing.T) {
 	}
 	stunaddr.Delete("e2e")
 	resp, body := get(t, c, addr, "zly.7772888.xyz", "/", map[string]string{"Accept": "text/html"})
-	if resp.StatusCode != 503 || resp.Header.Get("Location") != "" || !strings.Contains(body, "wz") {
-		t.Fatalf("STUN 无地址时应返回 503: %d %q", resp.StatusCode, body)
+	// 原因只写日志，页面不向访客透露 STUN 规则名
+	if resp.StatusCode != 503 || resp.Header.Get("Location") != "" || strings.Contains(body, "暂无公网地址") {
+		t.Fatalf("STUN 无地址时应返回 503 且不暴露规则名: %d %q", resp.StatusCode, body)
+	}
+
+	// Host 含非法字符时返回 400
+	resp, _ = get(t, c, addr, "a&b=1.7772888.xyz", "/", nil)
+	if resp.StatusCode != 400 || resp.Header.Get("Location") != "" {
+		t.Fatalf("非法 Host 应返回 400: %d %s", resp.StatusCode, resp.Header.Get("Location"))
 	}
 }
 

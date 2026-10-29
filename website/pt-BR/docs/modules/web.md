@@ -34,7 +34,7 @@ As entradas do log de acesso registram o IP do cliente, o método, o domínio e 
 
 ### Variáveis de redirecionamento {#redirect-vars}
 
-O destino de um site de redirecionamento pode usar as variáveis a seguir. A sintaxe é a mesma do Lucky, então regras de redirecionamento importadas do Lucky funcionam como estão:
+O destino de um site de redirecionamento pode usar as variáveis a seguir:
 
 | Variável | Significado |
 | --- | --- |
@@ -49,8 +49,9 @@ O destino de um site de redirecionamento pode usar as variáveis a seguir. A sin
 | `{1}` | A parte que corresponde ao `*` em um domínio do site como `*.example.com`; vazia quando um domínio exato corresponde, o domínio completo quando `*` ou o site padrão corresponde |
 | `{STUN_NomeRegra_PORT}` / `{STUN_NomeRegra_IP}` / `{STUN_NomeRegra_ADDR}` | Porta, IP e `IP:porta` públicos atuais de uma regra de [Travessia STUN](/pt-BR/docs/modules/stun); o nome é o exibido na lista e pode conter sublinhados |
 
-- Quando o destino contém `{path}`, `{PATH}`, `{args}`, `{Args}` ou `{pathPartN}`, “Manter caminho” não acrescenta mais o caminho original;
-- Quando a porta STUN muda, não é preciso editar o site: a próxima requisição vai para a porta nova. Se a regra referenciada não existir, estiver desativada ou ainda não tiver concluído a travessia, o site retorna 503 e o log de execução registra o motivo;
+- Com “Manter caminho” ligado, um destino com `{path}`, `{PATH}` ou `{pathPartN}` não recebe mais o caminho original, e um destino com `{args}`, `{Args}` ou uma consulta própria não recebe mais a consulta original; a outra parte continua sendo acrescentada;
+- Quando a porta STUN muda, não é preciso editar o site: a próxima requisição vai para a porta nova. Se a regra referenciada não existir, estiver desativada, ainda não tiver concluído a travessia ou estiver tentando novamente, o site retorna 503 e o log de execução registra o motivo;
+- Se, depois de substituir as variáveis, o destino ficar sem host (por exemplo, `{1}` vazio porque um domínio exato correspondeu, com destino apenas `https://{1}`), o site retorna 503; se o host do visitante tiver caracteres que nunca aparecem em domínios, como `&`, `=`, `/` ou `@`, retorna 400 e não o insere no destino;
 - Os domínios do site aceitam apenas um `*`, por isso só existe `{1}`;
 - Os destinos de redirecionamento das regras de reescrita de caminho continuam aceitando apenas `{host}`; um `{xxx}` desconhecido é mantido como está.
 

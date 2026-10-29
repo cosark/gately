@@ -34,7 +34,7 @@ Access log entries record the client IP, method, domain and path, status code, d
 
 ### Redirect variables {#redirect-vars}
 
-The target of a redirect site can use the following variables. The syntax is the same as Lucky, so redirect rules imported from Lucky work as they are:
+The target of a redirect site can use the following variables:
 
 | Variable | Meaning |
 | --- | --- |
@@ -49,8 +49,9 @@ The target of a redirect site can use the following variables. The syntax is the
 | `{1}` | The part matched by `*` in a site domain such as `*.example.com`; empty when an exact domain matched, the full domain when `*` or the default site matched |
 | `{STUN_RuleName_PORT}` / `{STUN_RuleName_IP}` / `{STUN_RuleName_ADDR}` | The current public port, IP and `IP:port` of a [STUN Traversal](/en/docs/modules/stun) rule; the rule name is the name shown in the list and may contain underscores |
 
-- When the target contains `{path}`, `{PATH}`, `{args}`, `{Args}` or `{pathPartN}`, "Keep path" no longer appends the original path;
-- When the STUN port changes, the site needs no edit: the next request goes to the new port. If the referenced rule does not exist, is disabled or has not traversed yet, the site returns 503 and the runtime log records why;
+- With "Keep path" on, a target containing `{path}`, `{PATH}` or `{pathPartN}` no longer gets the original path appended, and a target containing `{args}`, `{Args}` or its own query string no longer gets the original query string appended; the other part is still appended;
+- When the STUN port changes, the site needs no edit: the next request goes to the new port. If the referenced rule does not exist, is disabled, has not traversed yet or is retrying, the site returns 503 and the runtime log records why;
+- If the expanded target has no host (for example `{1}` is empty because an exact domain matched, but the target is just `https://{1}`), the site returns 503; if the visitor's host contains characters that never appear in a domain, such as `&`, `=`, `/` or `@`, the site returns 400 and the host is not inserted into the target;
 - Site domains support only one `*`, so only `{1}` exists;
 - Redirect targets in path rewrite rules still support only `{host}`; unknown `{xxx}` is kept as is.
 

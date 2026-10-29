@@ -127,7 +127,7 @@
   "addLocation": "新增路徑",
   "locationsHelp": "依路徑前綴把請求分到另一組後端，最長前綴優先，路徑原樣轉發；相當於 nginx 的 location /api/ + proxy_pass",
   "redirectHostHelp": "可用 {'{host}'} 代表訪客請求的網域，例如 https://{'{host}'} 搭配「保留路徑」把 HTTP 統一跳轉到 HTTPS",
-  "redirectVarsHelp": "還可用 {'{path}'}{'{args}'}（原路徑與查詢字串，寫了就不再依「保留路徑」附加）、{'{port}'}、{'{1}'}（網站網域 *.example.com 中 * 比對到的部分）、{'{STUN_規則名_PORT}'}、{'{STUN_規則名_IP}'}、{'{STUN_規則名_ADDR}'}（STUN 規則目前的公網位址），寫法與 Lucky 一致，例如 https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
+  "redirectVarsHelp": "還可用 {'{path}'}{'{args}'}（原路徑與查詢字串，寫了就不再依「保留路徑」附加）、{'{port}'}、{'{1}'}（網站網域 *.example.com 中 * 比對到的部分）、{'{STUN_規則名_PORT}'}、{'{STUN_規則名_IP}'}、{'{STUN_規則名_ADDR}'}（STUN 規則目前的公網位址），例如 https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "無副檔名網址",
   "cleanUrlsHelp": "找不到檔案時再嘗試 路徑.html 與 路徑/index.html，適用於 VitePress 等靜態網站，相當於 nginx 的 try_files",
   "notFoundPage": "404 頁面",

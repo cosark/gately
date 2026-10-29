@@ -1,9 +1,11 @@
 package webservice
 
 import (
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -11,7 +13,7 @@ import (
 	"github.com/wangwanjie/gately/internal/stunaddr"
 )
 
-// 重定向目标支持的变量，写法与 Lucky 一致：
+// 重定向目标支持的变量：
 //
 //	{host} {port} {hostAndPort}      访客请求的域名、访问端口、域名加端口
 //	{path} {PATH} {args} {Args}      请求路径（带/不带开头的 /）、查询串（带/不带开头的 ?）
@@ -29,16 +31,41 @@ type redirectRequest struct {
 	wildcard string
 }
 
-// pathVars 中的变量会带上原路径或查询串，目标里写了它们时不再按「保留路径」追加。
-var pathVars = []string{"{path}", "{PATH}", "{args}", "{Args}", "{pathPart"}
+// pathVars 中的变量会带上原路径，queryVars 会带上原查询串：
+// 目标里写了哪一类，「保留路径」就不再追加哪一部分，另一部分仍照常追加。
+var (
+	pathVars  = []string{"{path}", "{PATH}", "{pathPart"}
+	queryVars = []string{"{args}", "{Args}"}
+)
 
-func usesPathVars(tmpl string) bool {
-	for _, v := range pathVars {
+func usesAny(tmpl string, vars []string) bool {
+	for _, v := range vars {
 		if strings.Contains(tmpl, v) {
 			return true
 		}
 	}
 	return false
+}
+
+// errBadHost 表示访客的 Host 含有域名中不该出现的字符，不能代入跳转地址。
+var errBadHost = errors.New("请求的域名不合法")
+
+// safeHost 检查由 Host 派生的变量值只含域名、IP 与端口会用到的字符。
+// HTTP/1 的 Host 允许 & = 等字符，HTTP/3 的 :authority 甚至可以带 / ? #，
+// 原样代入会改变跳转地址的主机或查询参数。
+func safeHost(v string) (string, bool, error) {
+	for i := 0; i < len(v); i++ {
+		c := v[i]
+		if c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c >= '0' && c <= '9' {
+			continue
+		}
+		switch c {
+		case '.', '-', '_', ':', '[', ']':
+			continue
+		}
+		return "", false, errBadHost
+	}
+	return v, true, nil
 }
 
 // expandVars 把 tmpl 中的 {name} 替换为 lookup 的结果；lookup 返回 ok=false 时保留原样，返回错误时中止。
@@ -138,7 +165,7 @@ func requestPort(r *http.Request) string {
 	return "80"
 }
 
-// timeVar 返回 {time} 的值。格式与 Lucky 一致（2006-01-02 15:04:05），中间的空格写成 %20：
+// timeVar 返回 {time} 的值。格式为 2006-01-02 15:04:05，中间的空格写成 %20：
 // 原样写入 Location 时地址中含空格，不是合法的 URL，部分客户端会拒绝跳转或截断。
 // %20 在路径与查询串中都表示空格，接收方解码后得到原来的时间
 func timeVar(t time.Time) string {
@@ -150,11 +177,11 @@ func (q redirectRequest) lookup(name string) (string, bool, error) {
 	r := q.r
 	switch name {
 	case "host":
-		return hostOnly(r.Host), true, nil
+		return safeHost(hostOnly(r.Host))
 	case "port":
 		return requestPort(r), true, nil
 	case "hostAndPort":
-		return strings.ToLower(r.Host), true, nil
+		return safeHost(strings.ToLower(r.Host))
 	case "path":
 		return r.URL.EscapedPath(), true, nil
 	case "PATH":
@@ -175,10 +202,10 @@ func (q redirectRequest) lookup(name string) (string, bool, error) {
 	case "time":
 		return timeVar(time.Now()), true, nil
 	case "1":
-		return q.wildcard, true, nil
+		return safeHost(q.wildcard)
 	}
 	if n, ok := partIndex(name, "domainPart"); ok {
-		return nthPart(hostOnly(r.Host), ".", n), true, nil
+		return safeHost(nthPart(hostOnly(r.Host), ".", n))
 	}
 	if n, ok := partIndex(name, "pathPart"); ok {
 		return nthPart(r.URL.EscapedPath(), "/", n), true, nil
@@ -271,8 +298,29 @@ func redirectTarget(s *Site, r *http.Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if s.KeepPath && !usesPathVars(s.RedirectTo) {
-		to = strings.TrimRight(to, "/") + r.URL.RequestURI()
+	// 变量展开为空时（如精确域名命中时的 {1}、越界的 {domainPartN}）主机可能变空，
+	// 此时再拼上访客路径 //evil.com 会把访客带到别的站点，必须拒绝
+	u, err := url.Parse(to)
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return "", fmt.Errorf("跳转地址缺少协议或主机：%s", to)
 	}
-	return to, nil
+	if !s.KeepPath {
+		return to, nil
+	}
+	keepPath := !usesAny(s.RedirectTo, pathVars)
+	keepQuery := !usesAny(s.RedirectTo, queryVars) && u.RawQuery == "" && !u.ForceQuery
+	if keepPath && keepQuery && u.Fragment == "" {
+		// 最常见的情形，与此前的拼接结果保持一致
+		return strings.TrimRight(to, "/") + r.URL.RequestURI(), nil
+	}
+	if keepPath {
+		p := strings.TrimRight(u.EscapedPath(), "/") + r.URL.EscapedPath()
+		if dec, err := url.PathUnescape(p); err == nil {
+			u.Path, u.RawPath = dec, p
+		}
+	}
+	if keepQuery {
+		u.RawQuery = r.URL.RawQuery
+	}
+	return u.String(), nil
 }

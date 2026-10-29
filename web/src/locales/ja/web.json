@@ -127,7 +127,7 @@
   "addLocation": "パスを追加",
   "locationsHelp": "パスのプレフィックスごとに別のバックエンドへ送ります。最長一致が優先で、パスはそのまま転送します。nginx の location /api/ + proxy_pass に相当します",
   "redirectHostHelp": "{'{host}'} は訪問者のドメインを表します。例：https://{'{host}'} と「パスを保持」で HTTP を HTTPS にまとめてリダイレクト",
-  "redirectVarsHelp": "ほかに {'{path}'}{'{args}'}（元のパスとクエリ。書いた場合「パスを保持」では追加しません）、{'{port}'}、{'{1}'}（サイトドメイン *.example.com の * に一致した部分）、{'{STUN_ルール名_PORT}'}、{'{STUN_ルール名_IP}'}、{'{STUN_ルール名_ADDR}'}（STUN ルールの現在のパブリックアドレス）も使えます。書き方は Lucky と同じです。例：https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
+  "redirectVarsHelp": "ほかに {'{path}'}{'{args}'}（元のパスとクエリ。書いた場合「パスを保持」では追加しません）、{'{port}'}、{'{1}'}（サイトドメイン *.example.com の * に一致した部分）、{'{STUN_ルール名_PORT}'}、{'{STUN_ルール名_IP}'}、{'{STUN_ルール名_ADDR}'}（STUN ルールの現在のパブリックアドレス）も使えます。例：https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "拡張子なし URL",
   "cleanUrlsHelp": "ファイルがない場合に パス.html と パス/index.html も試します。VitePress などの静的サイト向けで、nginx の try_files に相当します",
   "notFoundPage": "404 ページ",

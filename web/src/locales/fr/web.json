@@ -127,7 +127,7 @@
   "addLocation": "Ajouter un chemin",
   "locationsHelp": "Envoie les requêtes d'un préfixe de chemin vers d'autres backends. Le préfixe le plus long l'emporte et le chemin est transmis tel quel. Équivaut à location /api/ + proxy_pass de nginx",
   "redirectHostHelp": "{'{host}'} représente le domaine du visiteur, ex. https://{'{host}'} avec « Conserver le chemin » pour renvoyer tout HTTP vers HTTPS",
-  "redirectVarsHelp": "Également : {'{path}'}{'{args}'} (chemin et requête d'origine ; s'ils sont utilisés, « Conserver le chemin » ne les ajoute plus), {'{port}'}, {'{1}'} (la partie couverte par * dans un domaine comme *.example.com), {'{STUN_nom de règle_PORT}'}, {'{STUN_nom de règle_IP}'}, {'{STUN_nom de règle_ADDR}'} (adresse publique actuelle de la règle STUN). Même syntaxe que Lucky, ex. https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
+  "redirectVarsHelp": "Également : {'{path}'}{'{args}'} (chemin et requête d'origine ; s'ils sont utilisés, « Conserver le chemin » ne les ajoute plus), {'{port}'}, {'{1}'} (la partie couverte par * dans un domaine comme *.example.com), {'{STUN_nom de règle_PORT}'}, {'{STUN_nom de règle_IP}'}, {'{STUN_nom de règle_ADDR}'} (adresse publique actuelle de la règle STUN). Ex. https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "URL sans extension",
   "cleanUrlsHelp": "Si le fichier manque, essaie aussi chemin.html et chemin/index.html. Pour VitePress et sites statiques similaires ; équivaut à try_files de nginx",
   "notFoundPage": "Page 404",

@@ -275,6 +275,9 @@ func TestTCPCheckFailureRetries(t *testing.T) {
 		HeartbeatInterval: 500, StunTimeout: 1000, RetryInterval: 500, AutoRetry: true,
 	}
 	_ = rule.Validate()
+	// 模拟上一次穿透成功留下的地址：进入重试后应被清掉，引用它的重定向返回 503 而不是跳到旧端口
+	stunaddr.Set(rule.Key, rule.Name, netip.MustParseAddrPort("203.0.113.5:40000"))
+	defer stunaddr.Delete(rule.Key)
 	_, lg := testLogger()
 	r := newRunner(rule, e.settings(), lg)
 	r.start(context.Background())
@@ -283,6 +286,9 @@ func TestTCPCheckFailureRetries(t *testing.T) {
 		s := r.snapshot()
 		return s.Status == StatusRetrying && strings.Contains(s.Error, "有效性检测失败")
 	})
+	if a, ok := stunaddr.Lookup("x"); ok {
+		t.Fatalf("重试期间 stunaddr 不应再提供旧地址，实际 %v", a)
+	}
 
 	// 关闭检测后同样的地址视为成功
 	rule.DisableCheck = true

@@ -127,7 +127,7 @@
   "addLocation": "경로 추가",
   "locationsHelp": "경로 접두사별로 다른 백엔드로 보냅니다. 가장 긴 접두사가 우선이며 경로는 그대로 전달됩니다. nginx의 location /api/ + proxy_pass와 같습니다",
   "redirectHostHelp": "{'{host}'}는 방문자 도메인을 뜻합니다. 예: https://{'{host}'}와 \"경로 유지\"로 HTTP를 모두 HTTPS로 리디렉션",
-  "redirectVarsHelp": "{'{path}'}{'{args}'}(원래 경로와 쿼리, 사용하면 \"경로 유지\"로 다시 붙이지 않음), {'{port}'}, {'{1}'}(사이트 도메인 *.example.com에서 *에 일치한 부분), {'{STUN_규칙이름_PORT}'}, {'{STUN_규칙이름_IP}'}, {'{STUN_규칙이름_ADDR}'}(STUN 규칙의 현재 공인 주소)도 쓸 수 있으며 Lucky와 같은 문법입니다. 예: https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
+  "redirectVarsHelp": "{'{path}'}{'{args}'}(원래 경로와 쿼리, 사용하면 \"경로 유지\"로 다시 붙이지 않음), {'{port}'}, {'{1}'}(사이트 도메인 *.example.com에서 *에 일치한 부분), {'{STUN_규칙이름_PORT}'}, {'{STUN_규칙이름_IP}'}, {'{STUN_규칙이름_ADDR}'}(STUN 규칙의 현재 공인 주소)도 쓸 수 있습니다. 예: https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "확장자 없는 URL",
   "cleanUrlsHelp": "파일이 없으면 경로.html과 경로/index.html도 시도합니다. VitePress 같은 정적 사이트용이며 nginx의 try_files와 같습니다",
   "notFoundPage": "404 페이지",

@@ -127,7 +127,7 @@
   "addLocation": "添加路径",
   "locationsHelp": "按路径前缀把请求分到另一组后端，最长前缀优先，路径原样转发；相当于 nginx 的 location /api/ + proxy_pass",
   "redirectHostHelp": "可用 {'{host}'} 代表访客请求的域名，例如 https://{'{host}'} 配合“保留路径”把 HTTP 统一跳到 HTTPS",
-  "redirectVarsHelp": "还可用 {'{path}'}{'{args}'}（原路径与查询串，写了就不再按“保留路径”追加）、{'{port}'}、{'{1}'}（站点域名 *.example.com 中 * 匹配的部分）、{'{STUN_规则名_PORT}'}、{'{STUN_规则名_IP}'}、{'{STUN_规则名_ADDR}'}（STUN 规则当前的公网地址），写法与 Lucky 一致，例如 https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
+  "redirectVarsHelp": "还可用 {'{path}'}{'{args}'}（原路径与查询串，写了就不再按“保留路径”追加）、{'{port}'}、{'{1}'}（站点域名 *.example.com 中 * 匹配的部分）、{'{STUN_规则名_PORT}'}、{'{STUN_规则名_IP}'}、{'{STUN_规则名_ADDR}'}（STUN 规则当前的公网地址），例如 https://{'{1}'}.v4.example.com:{'{STUN_web_PORT}'}{'{path}'}{'{args}'}",
   "cleanUrls": "无扩展名地址",
   "cleanUrlsHelp": "找不到文件时再尝试 路径.html 与 路径/index.html，适用于 VitePress 等静态站点，相当于 nginx 的 try_files",
   "notFoundPage": "404 页面",
