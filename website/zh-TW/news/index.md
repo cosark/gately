@@ -7,6 +7,10 @@ description: Gately 各版本的發布公告與更新說明。
 
 重要版本的發布公告如下，每個版本的完整變更與下載檔案見 [GitHub Releases](https://github.com/wangwanjie/gately/releases)。
 
+## [v0.6.0.4](/zh-TW/news/v0.6.0.4)
+
+2026 年 10 月 29 日 · 新增 OpenWrt 的 LuCI 外掛，可在 LuCI 中查看狀態、啟停服務與設定管理連接埠；重新導向站台支援 `{path}`、`{1}`、`{STUN_規則名_PORT}` 等變數；共享使用者與 OIDC 用戶端在全域設定中摘要顯示、彈窗編輯。
+
 ## [v0.6.0.3](/zh-TW/news/v0.6.0.3)
 
 2026 年 10 月 28 日 · 修復內網 Gately 經可信 PROXY 來源接收明文轉發時，無法辨識訪客使用 HTTPS，導致 https 簽發者的 OIDC 登入失敗、Cookie 缺少 Secure 與明文跳轉循環。

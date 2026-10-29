@@ -7,6 +7,10 @@ description: Anuncios y notas de cada versión de Gately.
 
 A continuación se listan los anuncios de las versiones principales. Consulta [GitHub Releases](https://github.com/wangwanjie/gately/releases) para ver todos los cambios y las descargas de cada versión.
 
+## [v0.6.0.4](/es/news/v0.6.0.4)
+
+29 de octubre de 2026 · Añade una aplicación LuCI para OpenWrt que permite ver el estado, iniciar y detener el servicio y definir el puerto de administración desde LuCI; los sitios de redirección admiten variables como `{path}`, `{1}` y `{STUN_NombreRegla_PORT}`; los usuarios compartidos y los clientes OIDC de los ajustes globales se muestran como resúmenes y se editan en un cuadro de diálogo.
+
 ## [v0.6.0.3](/es/news/v0.6.0.3)
 
 28 de octubre de 2026 · Corrige que un Gately de la LAN que recibe HTTP en claro desde un origen PROXY de confianza no reconociera que el visitante usaba HTTPS, lo que hacía fallar el inicio de sesión OIDC con emisor https, dejaba cookies sin Secure y provocaba bucles de redirección.
