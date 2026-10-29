@@ -9,6 +9,7 @@
   "totpDisable": "关闭 TOTP",
   "add": "添加共享用户",
   "nameFirst": "请先填写用户名",
+  "nameDuplicate": "用户名「{name}」已被其他共享用户使用",
   "qrTitle": "{name} 的 TOTP",
   "qrHelp": "用验证器 App（Google Authenticator、1Password 等）扫码或手动输入密钥，保存设置后生效；重新生成会使旧密钥失效",
   "emailPlaceholder": "邮箱（可选）",

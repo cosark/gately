@@ -9,6 +9,7 @@
   "totpDisable": "Désactiver le TOTP",
   "add": "Ajouter un utilisateur partagé",
   "nameFirst": "Saisissez d'abord le nom d'utilisateur",
+  "nameDuplicate": "Le nom d'utilisateur « {name} » est déjà utilisé par un autre utilisateur partagé",
   "qrTitle": "TOTP de {name}",
   "qrHelp": "Scannez avec une application d'authentification (Google Authenticator, 1Password…) ou saisissez la clé. Effectif après enregistrement ; régénérer invalide l'ancienne clé",
   "emailPlaceholder": "E-mail (facultatif)",

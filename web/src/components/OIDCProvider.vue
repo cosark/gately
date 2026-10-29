@@ -62,6 +62,7 @@
       width="600px"
       append-to-body
       :fullscreen="isMobile"
+      :close-on-click-modal="false"
     >
       <OIDCClientCard v-if="draft" v-model="draft" />
       <div class="form-help apply-help">{{ t('oidc.applyHelp') }}</div>

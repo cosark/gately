@@ -27,6 +27,9 @@
       width="560px"
       append-to-body
       :fullscreen="isMobile"
+      :close-on-click-modal="false"
+      :close-on-press-escape="!totpLoading"
+      :show-close="!totpLoading"
     >
       <el-form v-if="draft" :model="draft" label-width="100px" :label-position="labelPosition" @submit.prevent>
         <el-form-item :label="t('sharedUsers.nameLabel')" required>
@@ -78,8 +81,9 @@
       </el-form>
       <div class="form-help">{{ t('sharedUsers.applyHelp') }}</div>
       <template #footer>
-        <el-button @click="editorVisible = false">{{ t('common.cancel') }}</el-button>
-        <el-button type="primary" @click="applyEditor">{{ t('common.confirm') }}</el-button>
+        <!-- 生成 TOTP 密钥的请求返回前不能关闭，否则新密钥只写进被丢弃的副本，二维码却照常弹出 -->
+        <el-button :disabled="totpLoading" @click="editorVisible = false">{{ t('common.cancel') }}</el-button>
+        <el-button type="primary" :disabled="totpLoading" @click="applyEditor">{{ t('common.confirm') }}</el-button>
       </template>
     </el-dialog>
 
@@ -163,6 +167,11 @@ function applyEditor() {
     return
   }
   d.name = d.name.trim()
+  // 与后端一致按用户名精确比较，重名时当场提示，不必等到保存设置才报错
+  if (model.value.some((u, i) => i !== editingIndex.value && u.name.trim() === d.name)) {
+    ElMessage.warning(t('sharedUsers.nameDuplicate', { name: d.name }))
+    return
+  }
   if (editingIndex.value < 0) {
     model.value.push(d)
   } else {
@@ -219,6 +228,10 @@ async function setupTOTP() {
   totpLoading.value = true
   try {
     const r = await api.post<{ secret: string; url: string }>('/api/webservice/totp-secret', { name: u.name.trim() })
+    // 请求期间弹窗已关闭或换成了别的用户时丢弃结果，避免展示一个不会被保存的密钥
+    if (draft.value !== u || !editorVisible.value) {
+      return
+    }
     u.totpSecret = r.secret
     qrSecret.value = r.secret
     qrName.value = u.name.trim()

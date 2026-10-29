@@ -9,6 +9,7 @@
   "totpDisable": "TOTP を無効化",
   "add": "共有ユーザーを追加",
   "nameFirst": "先にユーザー名を入力してください",
+  "nameDuplicate": "ユーザー名「{name}」はほかの共有ユーザーが使用しています",
   "qrTitle": "{name} の TOTP",
   "qrHelp": "認証アプリ（Google Authenticator、1Password など）でスキャンするか鍵を手入力してください。設定を保存すると有効になり、再生成すると古い鍵は無効になります",
   "emailPlaceholder": "メール（任意）",

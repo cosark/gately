@@ -9,6 +9,7 @@
   "totpDisable": "Disable TOTP",
   "add": "Add shared user",
   "nameFirst": "Enter a username first",
+  "nameDuplicate": "The username “{name}” is already used by another shared user",
   "qrTitle": "TOTP for {name}",
   "qrHelp": "Scan with an authenticator app (Google Authenticator, 1Password, etc.) or enter the key manually. Takes effect after you save the settings; regenerating invalidates the old key",
   "emailPlaceholder": "Email (optional)",

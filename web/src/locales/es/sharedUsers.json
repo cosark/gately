@@ -9,6 +9,7 @@
   "totpDisable": "Desactivar TOTP",
   "add": "Añadir usuario compartido",
   "nameFirst": "Indica primero el usuario",
+  "nameDuplicate": "Otro usuario compartido ya usa el nombre «{name}»",
   "qrTitle": "TOTP de {name}",
   "qrHelp": "Escanea con una app de autenticación (Google Authenticator, 1Password, etc.) o introduce la clave a mano. Se aplica al guardar la configuración; regenerar invalida la clave anterior",
   "emailPlaceholder": "Correo (opcional)",

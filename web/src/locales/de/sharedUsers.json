@@ -9,6 +9,7 @@
   "totpDisable": "TOTP deaktivieren",
   "add": "Gemeinsamen Benutzer hinzufügen",
   "nameFirst": "Zuerst den Benutzernamen eingeben",
+  "nameDuplicate": "Der Benutzername „{name}“ wird bereits von einem anderen gemeinsamen Benutzer verwendet",
   "qrTitle": "TOTP für {name}",
   "qrHelp": "Mit einer Authenticator-App (Google Authenticator, 1Password usw.) scannen oder den Schlüssel eingeben. Wirksam nach dem Speichern; neu erzeugen macht den alten Schlüssel ungültig",
   "emailPlaceholder": "E-Mail (optional)",

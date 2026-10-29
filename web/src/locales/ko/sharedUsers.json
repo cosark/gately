@@ -9,6 +9,7 @@
   "totpDisable": "TOTP 끄기",
   "add": "공유 사용자 추가",
   "nameFirst": "먼저 사용자 이름을 입력하세요",
+  "nameDuplicate": "사용자 이름 \"{name}\"은(는) 다른 공유 사용자가 이미 사용 중입니다",
   "qrTitle": "{name}의 TOTP",
   "qrHelp": "인증 앱(Google Authenticator, 1Password 등)으로 스캔하거나 키를 직접 입력하세요. 설정을 저장하면 적용되며, 다시 생성하면 이전 키는 무효가 됩니다",
   "emailPlaceholder": "이메일(선택)",
