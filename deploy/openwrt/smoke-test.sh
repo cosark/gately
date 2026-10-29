@@ -49,8 +49,13 @@ echo "$st"
 # 全局设置只监听本机：LuCI 改端口时只换端口，主机部分保持不变，不能变成在所有地址上监听
 /etc/init.d/gately stop
 sleep 1
-sed -i "s/\"listen\": *\"[^\"]*\"/\"listen\": \"127.0.0.1:16680\"/" /etc/gately/gately.json
-grep -q "\"listen\": \"127.0.0.1:16680\"" /etc/gately/gately.json
+# 首次启动后还没保存过设置时没有 gately.json，只写监听地址即可，其余字段按默认值加载
+if [ -f /etc/gately/gately.json ]; then
+	sed -i "s/\"listen\": *\"[^\"]*\"/\"listen\": \"127.0.0.1:16680\"/" /etc/gately/gately.json
+else
+	echo "{\"listen\": \"127.0.0.1:16680\"}" >/etc/gately/gately.json
+fi
+grep -q "\"listen\": *\"127.0.0.1:16680\"" /etc/gately/gately.json
 /etc/init.d/gately start
 sleep 2
 uci set gately.main.port=16681
