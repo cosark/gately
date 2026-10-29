@@ -111,6 +111,10 @@ If you forget the password or lose your authenticator, run `gately reset-passwor
 
 Port forwarding, STUN, and web services listen on host ports, so `--network host` is recommended. If you do not need Docker management, drop the `docker.sock` mount. `--cap-add NET_ADMIN` lets Intrusion Prevention write bans to the host's nftables firewall; without it, bans still apply to Gately's own services.
 
+### One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/Gately/)
+
 ### Binary
 
 Download the archive for your platform from [Releases](https://github.com/wangwanjie/gately/releases) (Linux amd64/arm64/arm/mips/mipsle/riscv64, macOS, Windows, FreeBSD), extract it, and run:
