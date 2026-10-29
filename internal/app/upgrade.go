@@ -489,8 +489,10 @@ func (a *App) handleUpgrade(w http.ResponseWriter, r *http.Request) {
 	a.setUpgradeStatus(func(st *upgradeStatus) {
 		*st = upgradeStatus{State: upgradeStateChecking, From: version.Version, StartedAt: time.Now()}
 	})
+	// 先取状态再启动后台升级：后台协程可能立即进入下载阶段，响应应固定为刚开始时的 checking
+	st := a.upgradeSnapshot()
 	go a.runUpgrade(sup.Executable)
-	httpx.WriteJSON(w, http.StatusAccepted, a.upgradeSnapshot())
+	httpx.WriteJSON(w, http.StatusAccepted, st)
 }
 
 func (a *App) upgradeSnapshot() upgradeStatus {
