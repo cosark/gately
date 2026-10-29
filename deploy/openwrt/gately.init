@@ -4,6 +4,10 @@
 #   cp gately.init /etc/init.d/gately && chmod +x /etc/init.d/gately
 #   /etc/init.d/gately enable && /etc/init.d/gately start
 #   默认账号 admin / gately.cn；忘记密码：gately reset-password
+#
+# 可选的 UCI 配置 /etc/config/gately（LuCI 插件 luci-app-gately 读写，没有该文件时按默认值运行）：
+#   config gately 'main'
+#     option port '16680'   # 管理界面端口，填写后覆盖 Gately 全局设置中的监听地址，留空则以全局设置为准
 
 START=99
 STOP=10
@@ -13,14 +17,34 @@ PROG=/usr/bin/gately
 CONF_DIR=/etc/gately
 
 start_service() {
+	local port
+
+	config_load gately
+	config_get port main port ""
+
 	mkdir -p "$CONF_DIR"
 	chmod 700 "$CONF_DIR"
 	procd_open_instance
 	procd_set_param command "$PROG" -c "$CONF_DIR"
+	# 端口必须是 1-65535 的整数，无效值忽略，避免因配置写错导致服务起不来
+	case "$port" in
+	"" | *[!0-9]*)
+		;;
+	*)
+		if [ "$port" -ge 1 ] && [ "$port" -le 65535 ]; then
+			procd_append_param command -listen ":$port"
+		fi
+		;;
+	esac
 	# 进程异常退出后自动拉起：阈值 3600 秒内最多 5 次，间隔 5 秒
 	procd_set_param respawn 3600 5 5
 	procd_set_param limits nofile="65535 65535"
 	procd_set_param stdout 1
 	procd_set_param stderr 1
 	procd_close_instance
+}
+
+# 修改 /etc/config/gately 并提交（如在 LuCI 中保存并应用）后重新加载，启动参数变化时 procd 会重启进程
+service_triggers() {
+	procd_add_reload_trigger gately
 }

@@ -1,0 +1,127 @@
+#!/bin/sh
+# luci-app-gately 的 rpcd 插件，为 LuCI 页面提供 ubus 对象 luci.gately：
+#   status  读取运行状态、开机自启、版本号与管理界面地址（来自 /etc/gately/gately.json 与 /etc/config/gately）
+#   action  启动 / 停止 / 重启服务，启用 / 停用开机自启
+# 调用权限见 /usr/share/rpcd/acl.d/luci-app-gately.json。
+
+. /usr/share/libubox/jshn.sh
+
+PROG=/usr/bin/gately
+INIT=/etc/init.d/gately
+CONF_DIR=/etc/gately
+VERSION_CACHE=/tmp/luci-gately-version
+
+# 读取 gately.json 中的字段，文件不存在或字段缺失时输出空
+setting() {
+	jsonfilter -i "$CONF_DIR/gately.json" -e "@.$1" 2>/dev/null
+}
+
+# 程序版本号。执行一次 gately version 需要启动整个程序，按二进制的修改时间与大小缓存结果，页面轮询时不重复执行
+program_version() {
+	local stamp cached ver
+
+	[ -x "$PROG" ] || return 0
+	stamp="$(date -r "$PROG" +%s 2>/dev/null) $(wc -c <"$PROG" 2>/dev/null)"
+	if [ -f "$VERSION_CACHE" ]; then
+		cached=$(head -n 1 "$VERSION_CACHE")
+		if [ "$cached" = "$stamp" ]; then
+			sed -n 2p "$VERSION_CACHE"
+			return 0
+		fi
+	fi
+	ver=$(jsonfilter -s "$("$PROG" version 2>/dev/null)" -e '@.version' 2>/dev/null)
+	printf '%s\n%s\n' "$stamp" "$ver" >"$VERSION_CACHE"
+	echo "$ver"
+}
+
+# procd 中登记的主进程 PID，服务未运行时为空
+service_pid() {
+	ubus call service list '{"name":"gately"}' 2>/dev/null | jsonfilter -e '@.gately.instances[*].pid' 2>/dev/null | head -n 1
+}
+
+status() {
+	local pid rss port
+
+	json_init
+	if [ -x "$PROG" ] && [ -x "$INIT" ]; then
+		json_add_boolean installed 1
+	else
+		json_add_boolean installed 0
+	fi
+
+	pid=$(service_pid)
+	if [ -n "$pid" ] && [ -d "/proc/$pid" ]; then
+		json_add_boolean running 1
+		json_add_int pid "$pid"
+		# 常驻内存（KB）
+		rss=$(awk '/^VmRSS:/ { print $2 }' "/proc/$pid/status" 2>/dev/null)
+		[ -n "$rss" ] && json_add_int rss_kb "$rss"
+	else
+		json_add_boolean running 0
+	fi
+
+	if [ -x "$INIT" ] && "$INIT" enabled; then
+		json_add_boolean enabled 1
+	else
+		json_add_boolean enabled 0
+	fi
+
+	json_add_string version "$(program_version)"
+	json_add_string conf_dir "$CONF_DIR"
+	# 全局设置中的管理界面地址；首次启动前 gately.json 尚未生成，此时为空，页面按默认端口 16680 处理
+	json_add_string listen "$(setting listen)"
+	json_add_string https_listen "$(setting httpsListen)"
+	json_add_string safe_path "$(setting safePath)"
+	if [ "$(setting lanOnly)" = true ]; then
+		json_add_boolean lan_only 1
+	else
+		json_add_boolean lan_only 0
+	fi
+	# LuCI 中设置的端口（覆盖全局设置）
+	port=$(uci -q get gately.main.port)
+	json_add_string port "$port"
+	json_dump
+}
+
+action() {
+	local input name code
+
+	read -r input
+	json_load "$input"
+	json_get_var name name
+	case "$name" in
+	start | stop | restart | enable | disable)
+		;;
+	*)
+		echo '{"error":"unsupported action"}'
+		return 0
+		;;
+	esac
+	if [ ! -x "$INIT" ]; then
+		echo '{"error":"gately is not installed"}'
+		return 0
+	fi
+	"$INIT" "$name" >/dev/null 2>&1
+	code=$?
+	json_init
+	json_add_int code "$code"
+	json_dump
+}
+
+case "$1" in
+list)
+	echo '{"status":{},"action":{"name":"start"}}'
+	;;
+call)
+	case "$2" in
+	status)
+		# 无参数方法也会收到一个 JSON 对象，读掉即可
+		read -r _
+		status
+		;;
+	action)
+		action
+		;;
+	esac
+	;;
+esac

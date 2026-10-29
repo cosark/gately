@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: es\n"
+
+msgid "Admin interface"
+msgstr "Interfaz de administración"
+
+msgid "Admin port"
+msgstr "Puerto de la interfaz de administración"
+
+msgid "Configuration directory"
+msgstr "Directorio de configuración"
+
+msgid "Default account admin / gately.cn. If you forget the password, run gately reset-password on the router."
+msgstr "Cuenta predeterminada admin / gately.cn. Si olvida la contraseña, ejecute gately reset-password en el router."
+
+msgid "Disable start on boot"
+msgstr "Desactivar inicio automático"
+
+msgid "Disabled"
+msgstr "Desactivado"
+
+msgid "Enable start on boot"
+msgstr "Activar inicio automático"
+
+msgid "Enabled"
+msgstr "Activado"
+
+msgid "Failed to run the action: %s"
+msgstr "No se pudo ejecutar la acción: %s"
+
+msgid "Gately is an open-source network gateway: port forwarding, reverse proxy, DDNS, ACME certificates, WAF and more. Manage the service here and open the Gately admin interface for everything else."
+msgstr "Gately es una puerta de enlace de red de código abierto: reenvío de puertos, proxy inverso, DDNS, certificados ACME, WAF y más. Gestione el servicio aquí y abra la interfaz de administración de Gately para todo lo demás."
+
+msgid "Gately is not installed. Install the gately package first."
+msgstr "Gately no está instalado. Instale primero el paquete gately."
+
+msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
+msgstr "Solo LAN está activado en la configuración global de Gately, así que solo las direcciones de la LAN pueden abrirla"
+
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgstr "Déjelo vacío para usar la dirección de escucha de la configuración global de Gately (actualmente %s). Si se indica, Gately escucha en este puerto en todas las direcciones, y los cambios de dirección de escucha hechos en Gately solo se aplican tras vaciar este campo."
+
+msgid "Memory"
+msgstr "Memoria"
+
+msgid "Not running"
+msgstr "Detenido"
+
+msgid "Only reachable from the router itself (listening on %s)"
+msgstr "Solo accesible desde el propio router (escuchando en %s)"
+
+msgid "Open admin interface"
+msgstr "Abrir interfaz de administración"
+
+msgid "Restart"
+msgstr "Reiniciar"
+
+msgid "Running (PID %d)"
+msgstr "En ejecución (PID %d)"
+
+msgid "Running state"
+msgstr "Estado del servicio"
+
+msgid "Settings"
+msgstr "Configuración"
+
+msgid "Start on boot"
+msgstr "Inicio automático"
+
+msgid "Start"
+msgstr "Iniciar"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "Stop"
+msgstr "Detener"
+
+msgid "Version"
+msgstr "Versión"

@@ -1,6 +1,6 @@
 #!/bin/sh
-# OpenWrt 安装包冒烟测试：打出 amd64 的 .ipk / .apk，分别在 OpenWrt 24.10（opkg）与 25.12（apk）的官方 rootfs 容器中
-# 安装、确认服务启动并登记到包管理器，再卸载确认服务停止。需要 Docker，CI 中运行。
+# OpenWrt 安装包冒烟测试：打出 amd64 的 .ipk / .apk 与 LuCI 插件，分别在 OpenWrt 24.10（opkg）与 25.12（apk）的官方 rootfs 容器中
+# 安装、确认服务启动并登记到包管理器，检查 LuCI 插件的 rpcd 接口（状态、启停、UCI 端口覆盖），再卸载确认服务停止。需要 Docker，CI 中运行。
 #
 # 用法：deploy/openwrt/smoke-test.sh <linux/amd64 的 gately 二进制>
 set -eu
@@ -22,7 +22,7 @@ trap 'docker rm -f "$NAME" >/dev/null 2>&1 || true; docker run --rm -v "$WORK:/w
 cp "$1" "$WORK/gately"
 
 docker run --rm -v "$REPO:/w:ro" -v "$WORK:/work" -w /w "$ALPINE" \
-	deploy/openwrt/build.sh v0.0.0-rc1 amd64 /work/gately /work/out
+	sh -ec 'deploy/openwrt/build.sh v0.0.0-rc1 amd64 /work/gately /work/out && deploy/openwrt/build-luci.sh v0.0.0-rc1 /work/out'
 
 # 在容器中以 procd 为 init 启动 OpenWrt，执行安装、检查与卸载。
 # sh -e 不会因 ! 取反的命令失败而退出，卸载后的检查用 if 显式判断
@@ -36,18 +36,51 @@ check() {
 	docker rm -f "$NAME" >/dev/null
 }
 
+# LuCI 插件检查：UCI 配置已创建，rpcd 接口返回运行状态，修改 UCI 端口后服务按新端口重启，启停操作生效，未知操作被拒绝
+LUCI_CHECK='
+grep -q "config gately .main." /etc/config/gately
+[ -f /www/luci-static/resources/view/gately/main.js ]
+[ -f /usr/share/luci/menu.d/luci-app-gately.json ]
+[ -f /usr/lib/lua/luci/i18n/gately.zh-cn.lmo ]
+st=$(ubus call luci.gately status)
+echo "$st"
+[ "$(jsonfilter -s "$st" -e @.running)" = true ]
+[ "$(jsonfilter -s "$st" -e @.enabled)" = true ]
+uci set gately.main.port=16681
+uci commit gately
+# 与 LuCI 保存并应用相同，直接发出 config.change 事件（reload_config 首次运行时没有基准，不会发事件）
+ubus call service event "{\"type\":\"config.change\",\"data\":{\"package\":\"gately\"}}"
+sleep 3
+ubus call service list "{\"name\":\"gately\"}" | grep -q -- "-listen"
+grep -q ":4129 " /proc/net/tcp6 /proc/net/tcp
+[ "$(ubus call luci.gately status | jsonfilter -e @.port)" = 16681 ]
+ubus call luci.gately action "{\"name\":\"stop\"}"
+sleep 2
+[ "$(ubus call luci.gately status | jsonfilter -e @.running)" = false ]
+ubus call luci.gately action "{\"name\":\"start\"}"
+sleep 2
+[ "$(ubus call luci.gately status | jsonfilter -e @.running)" = true ]
+ubus call luci.gately action "{\"name\":\"rm\"}" | grep -q error
+'
+GONE_CHECK='
+if pidof gately || [ -e /etc/init.d/gately ] || [ -n "$(ls /etc/rc.d | grep gately)" ] || [ -e /usr/libexec/rpcd/luci.gately ]; then
+	echo "卸载后仍有残留" >&2
+	exit 1
+fi
+'
+
 check "$OPKG_IMAGE" '
 opkg install /pkgs/*.ipk
 sleep 3
 pidof gately
 /etc/init.d/gately enabled
 opkg list-installed | grep "^gately - 0.0.0~rc1-r1"
+opkg list-installed | grep "^luci-app-gately - 0.0.0~rc1-r1"
+'"$LUCI_CHECK"'
+opkg remove luci-app-gately
 opkg remove gately
 sleep 1
-if pidof gately || [ -e /etc/init.d/gately ] || [ -n "$(ls /etc/rc.d | grep gately)" ]; then
-	echo "卸载后仍有残留" >&2
-	exit 1
-fi
+'"$GONE_CHECK"'
 '
 
 check "$APK_IMAGE" '
@@ -56,12 +89,11 @@ sleep 3
 pidof gately
 /etc/init.d/gately enabled
 grep -qx "P:gately" /lib/apk/db/installed
-apk del gately
+grep -qx "P:luci-app-gately" /lib/apk/db/installed
+'"$LUCI_CHECK"'
+apk del luci-app-gately gately
 sleep 1
-if pidof gately || [ -e /etc/init.d/gately ] || [ -n "$(ls /etc/rc.d | grep gately)" ]; then
-	echo "卸载后仍有残留" >&2
-	exit 1
-fi
+'"$GONE_CHECK"'
 '
 
 echo "OpenWrt 安装包冒烟测试通过"

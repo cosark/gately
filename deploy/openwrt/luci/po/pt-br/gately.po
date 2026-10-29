@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: pt-br\n"
+
+msgid "Admin interface"
+msgstr "Interface de administração"
+
+msgid "Admin port"
+msgstr "Porta da interface de administração"
+
+msgid "Configuration directory"
+msgstr "Diretório de configuração"
+
+msgid "Default account admin / gately.cn. If you forget the password, run gately reset-password on the router."
+msgstr "Conta padrão admin / gately.cn. Se esquecer a senha, execute gately reset-password no roteador."
+
+msgid "Disable start on boot"
+msgstr "Desativar início automático"
+
+msgid "Disabled"
+msgstr "Desativado"
+
+msgid "Enable start on boot"
+msgstr "Ativar início automático"
+
+msgid "Enabled"
+msgstr "Ativado"
+
+msgid "Failed to run the action: %s"
+msgstr "Falha ao executar a ação: %s"
+
+msgid "Gately is an open-source network gateway: port forwarding, reverse proxy, DDNS, ACME certificates, WAF and more. Manage the service here and open the Gately admin interface for everything else."
+msgstr "Gately é um gateway de rede de código aberto: redirecionamento de portas, proxy reverso, DDNS, certificados ACME, WAF e muito mais. Gerencie o serviço aqui e abra a interface de administração do Gately para todo o resto."
+
+msgid "Gately is not installed. Install the gately package first."
+msgstr "O Gately não está instalado. Instale primeiro o pacote gately."
+
+msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
+msgstr "Somente LAN está ativado nas configurações globais do Gately, então apenas endereços da LAN podem abri-la"
+
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgstr "Deixe vazio para usar o endereço de escuta das configurações globais do Gately (atualmente %s). Se preenchido, o Gately escuta nesta porta em todos os endereços, e as mudanças de endereço de escuta feitas no Gately só valem depois que este campo for esvaziado."
+
+msgid "Memory"
+msgstr "Memória"
+
+msgid "Not running"
+msgstr "Parado"
+
+msgid "Only reachable from the router itself (listening on %s)"
+msgstr "Acessível apenas pelo próprio roteador (escutando em %s)"
+
+msgid "Open admin interface"
+msgstr "Abrir interface de administração"
+
+msgid "Restart"
+msgstr "Reiniciar"
+
+msgid "Running (PID %d)"
+msgstr "Em execução (PID %d)"
+
+msgid "Running state"
+msgstr "Estado do serviço"
+
+msgid "Settings"
+msgstr "Configurações"
+
+msgid "Start on boot"
+msgstr "Início automático"
+
+msgid "Start"
+msgstr "Iniciar"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Stop"
+msgstr "Parar"
+
+msgid "Version"
+msgstr "Versão"

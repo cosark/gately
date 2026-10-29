@@ -39,6 +39,10 @@ function describe(name: string, other: string): { os: string; arch: string } {
             : n.includes('linux')
               ? 'Linux'
               : other
+  // LuCI 插件 luci-app-gately 与架构无关，标记为 LuCI 以便和程序安装包区分
+  if (n.startsWith('luci-app-')) {
+    return { os, arch: 'LuCI' }
+  }
   const arch = ['amd64', 'x86_64', 'x86', 'arm64', 'aarch64', 'armv7', 'armv6', 'arm', 'mipsle', 'mips64le', 'mips', 'riscv64', '386']
     .find((a) => n.includes(a)) ?? ''
   return { os, arch }

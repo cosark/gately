@@ -143,6 +143,7 @@ Jedes Release enthält OpenWrt-Pakete: `gately_<version>_openwrt_<Architektur>.i
 - Der Dienst wird bei der Installation aktiviert und gestartet; die Verwaltungsoberfläche ist unter `http://<Router-Adresse>:16680` erreichbar, Standardkonto `admin`, Standardpasswort `gately.cn`.
 - Die Konfiguration liegt in `/etc/gately` und bleibt bei Upgrades, Deinstallation und Firmware-Upgrades (sysupgrade) erhalten. Für ein Upgrade installieren Sie das neuere Paket; das Online-Upgrade auf der Seite „Über“ verweist dann auf den Paketmanager.
 - Die Binärdatei ist etwa 32 MB groß; die Pakete eignen sich daher für x86-Soft-Router, ARM64-Boxen und andere Geräte mit reichlich Speicher. Das arm-Paket erfordert ARMv7 mit Hardware-Gleitkommaeinheit.
+- Eine architekturunabhängige LuCI-App, `luci-app-gately_<Version>_openwrt_all.ipk` / `.apk`, ergänzt LuCI um **Dienste → Gately**: Dienststatus, Starten / Stoppen, Autostart, Port der Verwaltungsoberfläche und ein Direktlink zur Oberfläche.
 
 ### Monitoring
 

@@ -38,6 +38,8 @@ fnOS 사용자는 네이티브 앱을 바로 설치할 수 있습니다. 위 목
 
 OpenWrt 사용자는 위 목록의 OpenWrt 그룹에서 패키지를 내려받을 수 있습니다. OpenWrt 24.10 이하(iStoreOS 포함)는 `.ipk`를 골라 `opkg install`로, OpenWrt 25.12 이상은 `.apk`를 골라 `apk add --allow-untrusted`로 설치합니다. 아키텍처는 `/etc/openwrt_release`의 `DISTRIB_ARCH`에 따라 고르세요. 설치하면 서비스가 바로 시작되며 설정은 `/etc/gately`에 저장됩니다.
 
+같은 그룹의 `luci-app-gately_<버전>_openwrt_all` 은 LuCI 앱입니다. 아키텍처와 무관하며 Gately 다음에 설치하면 LuCI 「서비스 → Gately」에서 서비스를 관리할 수 있습니다.
+
 자세한 내용은 [설치 및 배포 · OpenWrt](/ko/docs/guide/install#openwrt)를 참고하세요.
 
 ## 소스에서 빌드

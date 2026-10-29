@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ja\n"
+
+msgid "Admin interface"
+msgstr "管理画面"
+
+msgid "Admin port"
+msgstr "管理画面のポート"
+
+msgid "Configuration directory"
+msgstr "設定ディレクトリ"
+
+msgid "Default account admin / gately.cn. If you forget the password, run gately reset-password on the router."
+msgstr "既定のアカウントは admin / gately.cn です。パスワードを忘れた場合は、ルーターで gately reset-password を実行してください。"
+
+msgid "Disable start on boot"
+msgstr "自動起動を無効にする"
+
+msgid "Disabled"
+msgstr "無効"
+
+msgid "Enable start on boot"
+msgstr "自動起動を有効にする"
+
+msgid "Enabled"
+msgstr "有効"
+
+msgid "Failed to run the action: %s"
+msgstr "操作に失敗しました: %s"
+
+msgid "Gately is an open-source network gateway: port forwarding, reverse proxy, DDNS, ACME certificates, WAF and more. Manage the service here and open the Gately admin interface for everything else."
+msgstr "Gately はオープンソースのネットワークゲートウェイです：ポート転送、リバースプロキシ、DDNS、ACME 証明書、WAF など。ここではサービスを管理し、その他の機能は Gately の管理画面で操作します。"
+
+msgid "Gately is not installed. Install the gately package first."
+msgstr "Gately がインストールされていません。先に gately パッケージをインストールしてください。"
+
+msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
+msgstr "Gately のグローバル設定で「LAN のみ」が有効なため、LAN のアドレスからのみ開けます"
+
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgstr "空欄にすると Gately のグローバル設定の待ち受けアドレス（現在 %s）を使います。入力すると Gately はすべてのアドレスでこのポートを待ち受け、Gately で変更した待ち受けアドレスはこの欄を空にするまで反映されません。"
+
+msgid "Memory"
+msgstr "メモリ"
+
+msgid "Not running"
+msgstr "停止中"
+
+msgid "Only reachable from the router itself (listening on %s)"
+msgstr "ルーター本体からのみアクセスできます（待ち受け %s）"
+
+msgid "Open admin interface"
+msgstr "管理画面を開く"
+
+msgid "Restart"
+msgstr "再起動"
+
+msgid "Running (PID %d)"
+msgstr "実行中（PID %d）"
+
+msgid "Running state"
+msgstr "動作状態"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Start on boot"
+msgstr "自動起動"
+
+msgid "Start"
+msgstr "開始"
+
+msgid "Status"
+msgstr "状態"
+
+msgid "Stop"
+msgstr "停止"
+
+msgid "Version"
+msgstr "バージョン"

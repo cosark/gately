@@ -69,22 +69,9 @@ riscv64)
 	;;
 esac
 
-# 版本号转换：v0.5.4 → 0.5.4-r1。预发布版本需排在正式版之前，两种包管理器写法不同：
-# apk 写作 0.6.0_rc1-r1，opkg 不认识 _rc 后缀（会排在正式版之后），改用 dpkg 风格的 0.6.0~rc1-r1
-VER=${TAG#v}
-# apk 只认 alpha / beta / pre / rc 等预发布后缀，其他写法在打包前报错
-if ! echo "$VER" | grep -Eq '^[0-9]+(\.[0-9]+)*(-(alpha|beta|pre|rc)[0-9]*)?$'; then
-	echo "版本号格式不支持: $TAG（应形如 v0.5.4 或 v0.6.0-rc1）" >&2
-	exit 1
-fi
-APK_VER="$VER-r1"
-IPK_VER="$VER-r1"
-case "$VER" in
-*-*)
-	APK_VER="${VER%%-*}_${VER#*-}-r1"
-	IPK_VER="${VER%%-*}~${VER#*-}-r1"
-	;;
-esac
+# 版本号转换（v0.5.4 → 0.5.4-r1，预发布版本两种包管理器写法不同），与 build-luci.sh 共用
+. "$HERE/pkgver.sh"
+pkg_versions "$TAG"
 NAME="gately_${TAG}_openwrt_${GOARCH_NAME}"
 
 WORK=$(mktemp -d)
@@ -138,6 +125,11 @@ if ! arch_ok; then
 	echo "gately: 已跳过启动，请执行 apk del gately 移除后安装正确架构的安装包" >&2
 	exit 1
 fi
+# UCI 配置 /etc/config/gately 只在缺失时创建，不随包分发，升级时不会覆盖用户在 LuCI 中的设置
+if [ ! -f "${IPKG_INSTROOT}/etc/config/gately" ]; then
+	mkdir -p "${IPKG_INSTROOT}/etc/config"
+	printf "\nconfig gately 'main'\n" >"${IPKG_INSTROOT}/etc/config/gately"
+fi
 if [ -n "${IPKG_INSTROOT}" ]; then
 	mkdir -p "${IPKG_INSTROOT}/etc/rc.d"
 	ln -sf ../init.d/gately "${IPKG_INSTROOT}/etc/rc.d/S99gately"
@@ -161,7 +153,7 @@ if [ "${PKG_UPGRADE}" = 1 ]; then
 fi
 /etc/init.d/gately enable
 start_or_restart
-echo "gately: 已启动，管理界面 http://<路由器地址>:16680，默认账号 admin，默认密码 gately.cn"
+echo "gately: 已启动，管理界面 http://<路由器地址>:16680，默认账号 admin，默认密码 gately.cn；安装 luci-app-gately 后可在 LuCI「服务 → Gately」中管理"
 exit 0
 EOF
 } >"$SCRIPTS/postinst"

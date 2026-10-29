@@ -38,6 +38,8 @@ GitHub 在部分网络环境下访问较慢，NAS 与软路由用户可以先通
 
 OpenWrt 用户可以在上方列表的 OpenWrt 分组中下载安装包：OpenWrt 24.10 及以前（含 iStoreOS）选 `.ipk`，执行 `opkg install` 安装；OpenWrt 25.12 起选 `.apk`，执行 `apk add --allow-untrusted` 安装。架构按 `/etc/openwrt_release` 中的 `DISTRIB_ARCH` 选择，安装后自动启动，配置保存在 `/etc/gately`。
 
+同一分组中的 `luci-app-gately_<版本>_openwrt_all` 是 LuCI 插件，与架构无关，装好 Gately 后安装即可在 LuCI「服务 → Gately」中管理服务。
+
 详见 [安装部署 · OpenWrt](/docs/guide/install#openwrt)。
 
 ## 从源码构建

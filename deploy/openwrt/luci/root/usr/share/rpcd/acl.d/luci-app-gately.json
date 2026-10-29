@@ -1,0 +1,17 @@
+{
+	"luci-app-gately": {
+		"description": "Grant access to Gately",
+		"read": {
+			"ubus": {
+				"luci.gately": [ "status" ]
+			},
+			"uci": [ "gately" ]
+		},
+		"write": {
+			"ubus": {
+				"luci.gately": [ "action" ]
+			},
+			"uci": [ "gately" ]
+		}
+	}
+}

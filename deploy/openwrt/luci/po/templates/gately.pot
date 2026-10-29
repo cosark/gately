@@ -1,0 +1,80 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Admin interface"
+msgstr ""
+
+msgid "Admin port"
+msgstr ""
+
+msgid "Configuration directory"
+msgstr ""
+
+msgid "Default account admin / gately.cn. If you forget the password, run gately reset-password on the router."
+msgstr ""
+
+msgid "Disable start on boot"
+msgstr ""
+
+msgid "Disabled"
+msgstr ""
+
+msgid "Enable start on boot"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Failed to run the action: %s"
+msgstr ""
+
+msgid "Gately is an open-source network gateway: port forwarding, reverse proxy, DDNS, ACME certificates, WAF and more. Manage the service here and open the Gately admin interface for everything else."
+msgstr ""
+
+msgid "Gately is not installed. Install the gately package first."
+msgstr ""
+
+msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
+msgstr ""
+
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgstr ""
+
+msgid "Memory"
+msgstr ""
+
+msgid "Not running"
+msgstr ""
+
+msgid "Only reachable from the router itself (listening on %s)"
+msgstr ""
+
+msgid "Open admin interface"
+msgstr ""
+
+msgid "Restart"
+msgstr ""
+
+msgid "Running (PID %d)"
+msgstr ""
+
+msgid "Running state"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Start on boot"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "Version"
+msgstr ""

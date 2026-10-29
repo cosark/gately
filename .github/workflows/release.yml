@@ -55,12 +55,12 @@ jobs:
           sudo install -m 0755 fnpack /usr/local/bin/fnpack
           deploy/fnos/build.sh "$GITHUB_REF_NAME" x86 "$RUNNER_TEMP/linux-bin/amd64/gately" dist
           deploy/fnos/build.sh "$GITHUB_REF_NAME" arm "$RUNNER_TEMP/linux-bin/arm64/gately" dist
-      - name: 打包 OpenWrt 安装包（.ipk / .apk）
+      - name: 打包 OpenWrt 安装包与 LuCI 插件（.ipk / .apk）
         run: |
           # 在固定摘要的 Alpine 容器中以 root 打包，使用其自带的 apk-tools v3 生成 OpenWrt 25.12 的 apk 包
           docker run --rm -v "$PWD:/w" -v "$RUNNER_TEMP/linux-bin:/bin-in:ro" -w /w \
             alpine:3.24@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6 \
-            sh -ec 'for arch in amd64 arm64 arm mipsle mips riscv64; do deploy/openwrt/build.sh "$1" "$arch" "/bin-in/$arch/gately" dist; done' sh "$GITHUB_REF_NAME"
+            sh -ec 'for arch in amd64 arm64 arm mipsle mips riscv64; do deploy/openwrt/build.sh "$1" "$arch" "/bin-in/$arch/gately" dist; done; deploy/openwrt/build-luci.sh "$1" dist' sh "$GITHUB_REF_NAME"
           sudo chown -R "$(id -u):$(id -g)" dist
       - name: 生成校验和
         run: cd dist && sha256sum *.tar.gz *.fpk *.ipk *.apk > checksums.txt

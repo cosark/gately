@@ -97,6 +97,26 @@ cp gately.init /etc/init.d/gately && chmod +x /etc/init.d/gately
 /etc/init.d/gately enable && /etc/init.d/gately start
 ```
 
+#### LuCI app {#openwrt-luci}
+
+Each release also ships an architecture-independent LuCI app, `luci-app-gately_<version>_openwrt_all.ipk` / `.apk`. Install it after Gately:
+
+```bash
+# OpenWrt 24.10 / iStoreOS
+opkg install ./luci-app-gately_<version>_openwrt_all.ipk
+# OpenWrt 25.12
+apk add --allow-untrusted ./luci-app-gately_<version>_openwrt_all.apk
+```
+
+Then open **Services → Gately** in LuCI to:
+
+- see the service state, version, memory usage and whether it starts at boot;
+- start, stop and restart the service, and enable or disable start at boot;
+- open the Gately admin interface in one click, with the safe entrance from the global settings already in the link;
+- set the admin port. It is stored in `/etc/config/gately` and, when set, overrides the listen address in the Gately global settings, which helps when the admin interface is unreachable because of a port conflict or a wrong port; leave it empty to follow the global settings.
+
+Everything else is still configured in the Gately admin interface. The app follows the LuCI language and is translated into Simplified Chinese, Traditional Chinese, English, Japanese, Korean, German, French, Spanish, Russian and Portuguese (Brazil). To uninstall, remove `luci-app-gately` first (`opkg remove luci-app-gately` or `apk del luci-app-gately`), then gately.
+
 ## fnOS native app {#fnos}
 
 Every release ships offline packages for fnOS: `gately_<version>_fnos_x86.fpk` (Intel / AMD) and `gately_<version>_fnos_arm.fpk` (ARM). They are not listed in the official App Center, so install them manually:

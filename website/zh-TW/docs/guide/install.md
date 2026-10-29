@@ -97,6 +97,26 @@ cp gately.init /etc/init.d/gately && chmod +x /etc/init.d/gately
 /etc/init.d/gately enable && /etc/init.d/gately start
 ```
 
+#### LuCI 外掛 {#openwrt-luci}
+
+每個版本另附與架構無關的 LuCI 外掛 `luci-app-gately_<版本>_openwrt_all.ipk` / `.apk`，裝好 Gately 後再安裝：
+
+```bash
+# OpenWrt 24.10 / iStoreOS
+opkg install ./luci-app-gately_<版本>_openwrt_all.ipk
+# OpenWrt 25.12
+apk add --allow-untrusted ./luci-app-gately_<版本>_openwrt_all.apk
+```
+
+安裝後在 LuCI 的「服務 → Gately」中可以：
+
+- 查看執行狀態、版本、記憶體使用量與開機自動啟動狀態；
+- 啟動、停止、重新啟動服務，啟用或停用開機自動啟動；
+- 一鍵開啟 Gately 管理介面，連結自動帶上全域設定中的安全入口；
+- 設定管理介面連接埠。連接埠儲存在 `/etc/config/gately`，填寫後覆蓋 Gately 全域設定中的監聽位址，連接埠衝突或改錯連接埠打不開管理介面時可以在這裡改回；留空則以全域設定為準。
+
+其餘功能仍在 Gately 管理介面中設定。外掛介面跟隨 LuCI 的語言設定，支援簡體中文、繁體中文、英文、日文、韓文、德文、法文、西班牙文、俄文與葡萄牙文（巴西）。解除安裝時先執行 `opkg remove luci-app-gately` 或 `apk del luci-app-gately`，再解除安裝 gately。
+
 ## 飛牛 fnOS 原生應用 {#fnos}
 
 每個版本附帶飛牛 fnOS 的離線安裝包：`gately_<版本>_fnos_x86.fpk`（Intel / AMD）與 `gately_<版本>_fnos_arm.fpk`（ARM）。安裝包沒有上架官方應用中心，需要手動安裝：

@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+
+msgid "Admin interface"
+msgstr "Verwaltungsoberfläche"
+
+msgid "Admin port"
+msgstr "Port der Verwaltungsoberfläche"
+
+msgid "Configuration directory"
+msgstr "Konfigurationsverzeichnis"
+
+msgid "Default account admin / gately.cn. If you forget the password, run gately reset-password on the router."
+msgstr "Standardkonto admin / gately.cn. Wenn Sie das Passwort vergessen, führen Sie auf dem Router gately reset-password aus."
+
+msgid "Disable start on boot"
+msgstr "Autostart deaktivieren"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Enable start on boot"
+msgstr "Autostart aktivieren"
+
+msgid "Enabled"
+msgstr "Aktiviert"
+
+msgid "Failed to run the action: %s"
+msgstr "Aktion fehlgeschlagen: %s"
+
+msgid "Gately is an open-source network gateway: port forwarding, reverse proxy, DDNS, ACME certificates, WAF and more. Manage the service here and open the Gately admin interface for everything else."
+msgstr "Gately ist ein quelloffenes Netzwerk-Gateway: Portweiterleitung, Reverse-Proxy, DDNS, ACME-Zertifikate, WAF und mehr. Hier verwalten Sie den Dienst, alles Weitere erledigen Sie in der Gately-Verwaltungsoberfläche."
+
+msgid "Gately is not installed. Install the gately package first."
+msgstr "Gately ist nicht installiert. Installieren Sie zuerst das Paket gately."
+
+msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
+msgstr "In den globalen Gately-Einstellungen ist Nur LAN aktiv, daher können nur LAN-Adressen sie öffnen"
+
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgstr "Leer lassen, um die Listen-Adresse aus den globalen Gately-Einstellungen zu verwenden (derzeit %s). Wenn gesetzt, lauscht Gately auf allen Adressen auf diesem Port, und in Gately geänderte Listen-Adressen greifen erst, wenn dieses Feld geleert ist."
+
+msgid "Memory"
+msgstr "Arbeitsspeicher"
+
+msgid "Not running"
+msgstr "Läuft nicht"
+
+msgid "Only reachable from the router itself (listening on %s)"
+msgstr "Nur vom Router selbst erreichbar (lauscht auf %s)"
+
+msgid "Open admin interface"
+msgstr "Verwaltungsoberfläche öffnen"
+
+msgid "Restart"
+msgstr "Neu starten"
+
+msgid "Running (PID %d)"
+msgstr "Läuft (PID %d)"
+
+msgid "Running state"
+msgstr "Betriebszustand"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Start on boot"
+msgstr "Autostart"
+
+msgid "Start"
+msgstr "Starten"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Stop"
+msgstr "Stoppen"
+
+msgid "Version"
+msgstr "Version"

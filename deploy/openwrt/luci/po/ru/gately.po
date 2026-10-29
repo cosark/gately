@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "Admin interface"
+msgstr "Панель управления"
+
+msgid "Admin port"
+msgstr "Порт панели управления"
+
+msgid "Configuration directory"
+msgstr "Каталог конфигурации"
+
+msgid "Default account admin / gately.cn. If you forget the password, run gately reset-password on the router."
+msgstr "Учётная запись по умолчанию admin / gately.cn. Если вы забыли пароль, выполните на роутере gately reset-password."
+
+msgid "Disable start on boot"
+msgstr "Отключить автозапуск"
+
+msgid "Disabled"
+msgstr "Отключён"
+
+msgid "Enable start on boot"
+msgstr "Включить автозапуск"
+
+msgid "Enabled"
+msgstr "Включён"
+
+msgid "Failed to run the action: %s"
+msgstr "Не удалось выполнить действие: %s"
+
+msgid "Gately is an open-source network gateway: port forwarding, reverse proxy, DDNS, ACME certificates, WAF and more. Manage the service here and open the Gately admin interface for everything else."
+msgstr "Gately — сетевой шлюз с открытым исходным кодом: проброс портов, обратный прокси, DDNS, сертификаты ACME, WAF и многое другое. Здесь можно управлять службой, всё остальное настраивается в панели управления Gately."
+
+msgid "Gately is not installed. Install the gately package first."
+msgstr "Gately не установлен. Сначала установите пакет gately."
+
+msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
+msgstr "В глобальных настройках Gately включён режим «Только LAN», поэтому открыть панель можно только с адресов локальной сети"
+
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgstr "Оставьте пустым, чтобы использовать адрес прослушивания из глобальных настроек Gately (сейчас %s). Если указано, Gately слушает этот порт на всех адресах, а изменения адреса прослушивания в Gately применятся только после очистки этого поля."
+
+msgid "Memory"
+msgstr "Память"
+
+msgid "Not running"
+msgstr "Не запущен"
+
+msgid "Only reachable from the router itself (listening on %s)"
+msgstr "Доступно только с самого роутера (прослушивается %s)"
+
+msgid "Open admin interface"
+msgstr "Открыть панель управления"
+
+msgid "Restart"
+msgstr "Перезапустить"
+
+msgid "Running (PID %d)"
+msgstr "Работает (PID %d)"
+
+msgid "Running state"
+msgstr "Состояние службы"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Start on boot"
+msgstr "Автозапуск"
+
+msgid "Start"
+msgstr "Запустить"
+
+msgid "Status"
+msgstr "Состояние"
+
+msgid "Stop"
+msgstr "Остановить"
+
+msgid "Version"
+msgstr "Версия"

@@ -38,6 +38,8 @@ See [Installation · fnOS native app](/en/docs/guide/install#fnos).
 
 OpenWrt users can download a package from the OpenWrt group in the list above: pick the `.ipk` for OpenWrt 24.10 and earlier (including iStoreOS) and install it with `opkg install`, or the `.apk` for OpenWrt 25.12 and later and install it with `apk add --allow-untrusted`. Choose the architecture by `DISTRIB_ARCH` in `/etc/openwrt_release`. The service starts right after install and keeps its config in `/etc/gately`.
 
+`luci-app-gately_<version>_openwrt_all` in the same group is the LuCI app. It does not depend on the architecture; install it after Gately to manage the service from **Services → Gately** in LuCI.
+
 See [Installation · OpenWrt](/en/docs/guide/install#openwrt).
 
 ## Build from source

@@ -1,0 +1,13 @@
+{
+	"admin/services/gately": {
+		"title": "Gately",
+		"order": 60,
+		"action": {
+			"type": "view",
+			"path": "gately/main"
+		},
+		"depends": {
+			"acl": [ "luci-app-gately" ]
+		}
+	}
+}

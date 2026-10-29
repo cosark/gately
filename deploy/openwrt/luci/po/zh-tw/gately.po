@@ -1,0 +1,82 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: zh-tw\n"
+
+msgid "Admin interface"
+msgstr "管理介面"
+
+msgid "Admin port"
+msgstr "管理介面連接埠"
+
+msgid "Configuration directory"
+msgstr "設定目錄"
+
+msgid "Default account admin / gately.cn. If you forget the password, run gately reset-password on the router."
+msgstr "預設帳號 admin / gately.cn。忘記密碼時，在路由器上執行 gately reset-password。"
+
+msgid "Disable start on boot"
+msgstr "停用開機自動啟動"
+
+msgid "Disabled"
+msgstr "已停用"
+
+msgid "Enable start on boot"
+msgstr "啟用開機自動啟動"
+
+msgid "Enabled"
+msgstr "已啟用"
+
+msgid "Failed to run the action: %s"
+msgstr "操作失敗：%s"
+
+msgid "Gately is an open-source network gateway: port forwarding, reverse proxy, DDNS, ACME certificates, WAF and more. Manage the service here and open the Gately admin interface for everything else."
+msgstr "Gately 是開源的網路閘道：連接埠轉發、反向代理、DDNS、ACME 憑證、WAF 等。在這裡管理服務，其他功能請開啟 Gately 管理介面操作。"
+
+msgid "Gately is not installed. Install the gately package first."
+msgstr "未安裝 Gately，請先安裝 gately 套件。"
+
+msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
+msgstr "Gately 全域設定中開啟了「僅內網存取」，只有內網位址能開啟"
+
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgstr "留空則使用 Gately 全域設定中的監聽位址（目前為 %s）。填寫後 Gately 在所有位址上監聽此連接埠，在 Gately 中修改的監聽位址要清空此項後才生效。"
+
+msgid "Memory"
+msgstr "記憶體使用量"
+
+msgid "Not running"
+msgstr "未執行"
+
+msgid "Only reachable from the router itself (listening on %s)"
+msgstr "只能在路由器本機存取（監聽 %s）"
+
+msgid "Open admin interface"
+msgstr "開啟管理介面"
+
+msgid "Restart"
+msgstr "重新啟動"
+
+msgid "Running (PID %d)"
+msgstr "執行中（PID %d）"
+
+msgid "Running state"
+msgstr "執行狀態"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Start on boot"
+msgstr "開機自動啟動"
+
+msgid "Start"
+msgstr "啟動"
+
+msgid "Status"
+msgstr "狀態"
+
+msgid "Stop"
+msgstr "停止"
+
+msgid "Version"
+msgstr "版本"
