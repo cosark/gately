@@ -39,8 +39,8 @@ msgstr "Gately n'est pas installé. Installez d'abord le paquet gately."
 msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
 msgstr "L'option Réseau local uniquement est activée dans les paramètres globaux de Gately : seules les adresses du réseau local peuvent l'ouvrir"
 
-msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
-msgstr "Laissez vide pour utiliser l'adresse d'écoute des paramètres globaux de Gately (actuellement %s). Si renseigné, Gately écoute sur ce port sur toutes les adresses, et les changements d'adresse d'écoute faits dans Gately ne s'appliquent qu'une fois ce champ vidé."
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port and keeps the host part of that address; listen address changes made in Gately are saved and take effect after this field is cleared."
+msgstr "Laissez vide pour utiliser l'adresse d'écoute des paramètres globaux de Gately (actuellement %s). Si renseigné, Gately écoute sur ce port en gardant la partie hôte de cette adresse ; les changements d'adresse d'écoute faits dans Gately sont enregistrés et s'appliquent une fois ce champ vidé."
 
 msgid "Memory"
 msgstr "Mémoire"
@@ -66,17 +66,20 @@ msgstr "État du service"
 msgid "Settings"
 msgstr "Paramètres"
 
-msgid "Start on boot"
-msgstr "Démarrage automatique"
-
 msgid "Start"
 msgstr "Démarrer"
+
+msgid "Start on boot"
+msgstr "Démarrage automatique"
 
 msgid "Status"
 msgstr "État"
 
 msgid "Stop"
 msgstr "Arrêter"
+
+msgid "This port is already used by the HTTPS listen address in the Gately global settings"
+msgstr "Ce port est déjà utilisé par l'adresse d'écoute HTTPS des paramètres globaux de Gately"
 
 msgid "Version"
 msgstr "Version"

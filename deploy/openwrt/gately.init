@@ -7,7 +7,7 @@
 #
 # 可选的 UCI 配置 /etc/config/gately（LuCI 插件 luci-app-gately 读写，没有该文件时按默认值运行）：
 #   config gately 'main'
-#     option port '16680'   # 管理界面端口，填写后覆盖 Gately 全局设置中的监听地址，留空则以全局设置为准
+#     option port '16680'   # 管理界面端口，填写后替换 Gately 全局设置中监听地址的端口（主机部分不变），留空则以全局设置为准
 
 START=99
 STOP=10
@@ -15,6 +15,18 @@ USE_PROCD=1
 
 PROG=/usr/bin/gately
 CONF_DIR=/etc/gately
+
+# listen_host 输出 gately.json 中监听地址的主机部分（IPv6 带方括号），未设置或只有端口时为空
+listen_host() {
+	local listen
+
+	listen=$(jsonfilter -i "$CONF_DIR/gately.json" -e '@.listen' 2>/dev/null)
+	case "$listen" in
+	*:*)
+		echo "${listen%:*}"
+		;;
+	esac
+}
 
 start_service() {
 	local port
@@ -32,7 +44,8 @@ start_service() {
 		;;
 	*)
 		if [ "$port" -ge 1 ] && [ "$port" -le 65535 ]; then
-			procd_append_param command -listen ":$port"
+			# 只换端口，保留全局设置中只监听本机或内网地址的选择，避免改端口后变成在所有地址（含 WAN）上监听
+			procd_append_param command -listen "$(listen_host):$port"
 		fi
 		;;
 	esac

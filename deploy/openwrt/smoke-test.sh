@@ -46,13 +46,24 @@ st=$(ubus call luci.gately status)
 echo "$st"
 [ "$(jsonfilter -s "$st" -e @.running)" = true ]
 [ "$(jsonfilter -s "$st" -e @.enabled)" = true ]
+# 全局设置只监听本机：LuCI 改端口时只换端口，主机部分保持不变，不能变成在所有地址上监听
+/etc/init.d/gately stop
+sleep 1
+sed -i "s/\"listen\": *\"[^\"]*\"/\"listen\": \"127.0.0.1:16680\"/" /etc/gately/gately.json
+grep -q "\"listen\": \"127.0.0.1:16680\"" /etc/gately/gately.json
+/etc/init.d/gately start
+sleep 2
 uci set gately.main.port=16681
 uci commit gately
 # 与 LuCI 保存并应用相同，直接发出 config.change 事件（reload_config 首次运行时没有基准，不会发事件）
 ubus call service event "{\"type\":\"config.change\",\"data\":{\"package\":\"gately\"}}"
 sleep 3
 ubus call service list "{\"name\":\"gately\"}" | grep -q -- "-listen"
-grep -q ":4129 " /proc/net/tcp6 /proc/net/tcp
+grep -q "0100007F:4129 " /proc/net/tcp
+if grep -q "00000000:4129 " /proc/net/tcp || grep -q "00000000000000000000000000000000:4129 " /proc/net/tcp6 2>/dev/null; then
+	echo "LuCI 端口覆盖丢掉了监听地址的主机部分" >&2
+	exit 1
+fi
 [ "$(ubus call luci.gately status | jsonfilter -e @.port)" = 16681 ]
 ubus call luci.gately action "{\"name\":\"stop\"}"
 sleep 2

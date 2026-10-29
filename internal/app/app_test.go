@@ -883,3 +883,60 @@ func TestImportLuckyBaseDNSFormats(t *testing.T) {
 		t.Fatalf("DNS 导入结果错误: %v", got)
 	}
 }
+
+// 命令行 -listen 覆盖（如 OpenWrt 的 LuCI 设置了端口）期间：没改监听地址时配置文件保持原值，
+// 在界面上改了则写入配置文件，运行中仍以覆盖值为准，去掉覆盖后生效
+func TestSettingsListenOverride(t *testing.T) {
+	a, srv, c := loginApp(t)
+	const override = "127.0.0.1:17001"
+	a.settingsMu.Lock()
+	a.opts.Listen = override
+	a.settings.Listen = override
+	a.settingsMu.Unlock()
+	fileListen := func() string {
+		t.Helper()
+		b, err := os.ReadFile(filepath.Join(a.opts.ConfigDir, settingsName+".json"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var s struct {
+			Listen string `json:"listen"`
+		}
+		_ = json.Unmarshal(b, &s)
+		return s.Listen
+	}
+
+	_, body := doJSON(t, c, "GET", srv.URL+"/api/system/settings", nil)
+	var s settingsView
+	_ = json.Unmarshal(body, &s)
+	if s.Listen != override {
+		t.Fatalf("覆盖期间界面应显示实际监听地址: %s", s.Listen)
+	}
+	s.SessionHours = 48
+	if code, body := doJSON(t, c, "PUT", srv.URL+"/api/system/settings", s); code != 200 {
+		t.Fatalf("保存设置失败 %d %s", code, body)
+	}
+	if got := fileListen(); got != DefaultListen {
+		t.Fatalf("未修改监听地址时配置文件应保持原值 %s，实际 %s", DefaultListen, got)
+	}
+
+	s.Listen = "192.168.1.1:17500"
+	if code, body := doJSON(t, c, "PUT", srv.URL+"/api/system/settings", s); code != 200 {
+		t.Fatalf("保存设置失败 %d %s", code, body)
+	}
+	if got := fileListen(); got != "192.168.1.1:17500" {
+		t.Fatalf("界面上修改的监听地址应写入配置文件，实际 %s", got)
+	}
+	_, body = doJSON(t, c, "GET", srv.URL+"/api/system/settings", nil)
+	_ = json.Unmarshal(body, &s)
+	if s.Listen != override || s.SessionHours != 48 {
+		t.Fatalf("运行中仍应以覆盖值为准: %s", body)
+	}
+	// 再保存一次不改监听地址，配置文件中的新地址不能被覆盖值冲掉
+	if code, body := doJSON(t, c, "PUT", srv.URL+"/api/system/settings", s); code != 200 {
+		t.Fatalf("保存设置失败 %d %s", code, body)
+	}
+	if got := fileListen(); got != "192.168.1.1:17500" {
+		t.Fatalf("再次保存后配置文件中的地址应保持，实际 %s", got)
+	}
+}

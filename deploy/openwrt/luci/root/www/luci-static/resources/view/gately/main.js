@@ -64,12 +64,19 @@ function adminURL(scheme, listen, safePath) {
 	return scheme + '://' + host + ':' + listen.port + (normalizeSafePath(safePath) || '/');
 }
 
-// 实际生效的 HTTP 监听地址：LuCI 中设置的端口优先，其次是 gately.json 的 listen，都没有时为默认端口
+function validPort(v) {
+	return /^\d+$/.test(v || '') && +v >= 1 && +v <= 65535;
+}
+
+// 实际生效的 HTTP 监听地址：gately.json 的 listen，LuCI 中设置了端口时只替换端口、主机部分不变（与启动脚本一致），
+// 都没有时为默认端口
 function effectiveListen(st) {
-	if (/^\d+$/.test(st.port || '') && +st.port >= 1 && +st.port <= 65535) {
-		return { host: '', port: st.port };
+	var base = splitListen(st.listen) || { host: '', port: DEFAULT_PORT };
+
+	if (validPort(st.port)) {
+		return { host: base.host, port: st.port };
 	}
-	return splitListen(st.listen) || { host: '', port: DEFAULT_PORT };
+	return base;
 }
 
 function formatMemory(kb) {
@@ -97,12 +104,13 @@ return view.extend({
 		    links = [],
 		    notes = [];
 
+		// LuCI 的 E() 把单个字符串子节点当作 HTML 插入，地址与说明来自 Gately 配置，包成数组按纯文本插入
 		links.push(E('a', { 'href': adminURL('http', http, st.safe_path), 'target': '_blank', 'rel': 'noreferrer' },
-			adminURL('http', http, st.safe_path)));
+			[ adminURL('http', http, st.safe_path) ]));
 		if (https) {
 			links.push(E('br'));
 			links.push(E('a', { 'href': adminURL('https', https, st.safe_path), 'target': '_blank', 'rel': 'noreferrer' },
-				adminURL('https', https, st.safe_path)));
+				[ adminURL('https', https, st.safe_path) ]));
 		}
 		if (isLoopback(http.host)) {
 			notes.push(_('Only reachable from the router itself (listening on %s)').format(http.host + ':' + http.port));
@@ -111,7 +119,7 @@ return view.extend({
 			notes.push(_('LAN only is on in the Gately global settings, so only LAN addresses can open it'));
 		}
 		notes.forEach(function(note) {
-			links.push(E('div', { 'class': 'cbi-value-description' }, note));
+			links.push(E('div', { 'class': 'cbi-value-description' }, [ note ]));
 		});
 		return links;
 	},
@@ -128,13 +136,13 @@ return view.extend({
 		rows.push(this.statusRow(_('Running state'), running
 			? E('span', { 'style': 'color:green;font-weight:bold' }, _('Running (PID %d)').format(st.pid))
 			: E('span', { 'style': 'color:red;font-weight:bold' }, _('Not running'))));
-		rows.push(this.statusRow(_('Version'), st.version || '-'));
+		rows.push(this.statusRow(_('Version'), [ st.version || '-' ]));
 		if (running && st.rss_kb) {
 			rows.push(this.statusRow(_('Memory'), formatMemory(st.rss_kb)));
 		}
 		rows.push(this.statusRow(_('Start on boot'), st.enabled ? _('Enabled') : _('Disabled')));
 		rows.push(this.statusRow(_('Admin interface'), this.renderAddresses(st)));
-		rows.push(this.statusRow(_('Configuration directory'), st.conf_dir));
+		rows.push(this.statusRow(_('Configuration directory'), [ st.conf_dir ]));
 
 		return E('table', { 'class': 'table' }, rows);
 	},
@@ -195,10 +203,10 @@ return view.extend({
 
 		return callAction(name).then(function(res) {
 			if (res.error || res.code) {
-				ui.addNotification(null, E('p', _('Failed to run the action: %s').format(res.error || ('exit code ' + res.code))), 'error');
+				ui.addNotification(null, E('p', [ _('Failed to run the action: %s').format(res.error || ('exit code ' + res.code)) ]), 'error');
 			}
 		}).catch(function(err) {
-			ui.addNotification(null, E('p', _('Failed to run the action: %s').format(err.message || err)), 'error');
+			ui.addNotification(null, E('p', [ _('Failed to run the action: %s').format(err.message || err) ]), 'error');
 		}).then(function() {
 			// procd 启停是异步的，稍等再读状态
 			return new Promise(function(resolve) {
@@ -224,11 +232,20 @@ return view.extend({
 
 		current = splitListen(st.listen) || { host: '', port: DEFAULT_PORT };
 		o = s.option(form.Value, 'port', _('Admin port'),
-			_('Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared.')
-				.format((current.host ? current.host : '') + ':' + current.port));
-		o.datatype = 'port';
+			_('Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port and keeps the host part of that address; listen address changes made in Gately are saved and take effect after this field is cleared.')
+				.format('%h'.format((current.host.indexOf(':') >= 0 ? '[' + current.host + ']' : current.host) + ':' + current.port)));
+		o.datatype = 'range(1,65535)';
 		o.placeholder = current.port;
 		o.rmempty = true;
+		// 与 HTTPS 监听同端口时 HTTP 会先占住端口，HTTPS 起不来；Gately 保存设置时的同端口检查在这里被绕过，需要单独拦截
+		o.validate = function(section_id, value) {
+			var https = splitListen(st.https_listen);
+
+			if (value && https && https.port === String(value).trim()) {
+				return _('This port is already used by the HTTPS listen address in the Gately global settings');
+			}
+			return true;
+		};
 
 		poll.add(function() {
 			return callStatus().then(function(res) {

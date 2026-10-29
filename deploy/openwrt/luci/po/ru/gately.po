@@ -39,8 +39,8 @@ msgstr "Gately не установлен. Сначала установите п
 msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
 msgstr "В глобальных настройках Gately включён режим «Только LAN», поэтому открыть панель можно только с адресов локальной сети"
 
-msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
-msgstr "Оставьте пустым, чтобы использовать адрес прослушивания из глобальных настроек Gately (сейчас %s). Если указано, Gately слушает этот порт на всех адресах, а изменения адреса прослушивания в Gately применятся только после очистки этого поля."
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port and keeps the host part of that address; listen address changes made in Gately are saved and take effect after this field is cleared."
+msgstr "Оставьте пустым, чтобы использовать адрес прослушивания из глобальных настроек Gately (сейчас %s). Если указано, Gately слушает этот порт, сохраняя хост из этого адреса; изменения адреса прослушивания в Gately сохраняются и применятся после очистки этого поля."
 
 msgid "Memory"
 msgstr "Память"
@@ -66,17 +66,20 @@ msgstr "Состояние службы"
 msgid "Settings"
 msgstr "Настройки"
 
-msgid "Start on boot"
-msgstr "Автозапуск"
-
 msgid "Start"
 msgstr "Запустить"
+
+msgid "Start on boot"
+msgstr "Автозапуск"
 
 msgid "Status"
 msgstr "Состояние"
 
 msgid "Stop"
 msgstr "Остановить"
+
+msgid "This port is already used by the HTTPS listen address in the Gately global settings"
+msgstr "Этот порт уже используется адресом прослушивания HTTPS в глобальных настройках Gately"
 
 msgid "Version"
 msgstr "Версия"

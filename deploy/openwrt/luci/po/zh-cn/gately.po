@@ -39,8 +39,8 @@ msgstr "未安装 Gately，请先安装 gately 软件包。"
 msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
 msgstr "Gately 全局设置中开启了「仅内网访问」，只有内网地址能打开"
 
-msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
-msgstr "留空则使用 Gately 全局设置中的监听地址（当前为 %s）。填写后 Gately 在所有地址上监听此端口，在 Gately 中修改的监听地址要清空此项后才生效。"
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port and keeps the host part of that address; listen address changes made in Gately are saved and take effect after this field is cleared."
+msgstr "留空则使用 Gately 全局设置中的监听地址（当前为 %s）。填写后 Gately 改为监听此端口，监听地址的主机部分保持不变；在 Gately 中修改的监听地址会保存，清空此项后生效。"
 
 msgid "Memory"
 msgstr "内存占用"
@@ -66,17 +66,20 @@ msgstr "运行状态"
 msgid "Settings"
 msgstr "设置"
 
-msgid "Start on boot"
-msgstr "开机自启"
-
 msgid "Start"
 msgstr "启动"
+
+msgid "Start on boot"
+msgstr "开机自启"
 
 msgid "Status"
 msgstr "状态"
 
 msgid "Stop"
 msgstr "停止"
+
+msgid "This port is already used by the HTTPS listen address in the Gately global settings"
+msgstr "该端口已被 Gately 全局设置中的 HTTPS 监听地址使用"
 
 msgid "Version"
 msgstr "版本"

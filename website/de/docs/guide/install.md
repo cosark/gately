@@ -113,7 +113,7 @@ Danach können Sie in LuCI unter **Dienste → Gately**:
 - Dienststatus, Version, Speicherverbrauch und Autostart einsehen;
 - den Dienst starten, stoppen und neu starten sowie den Autostart ein- oder ausschalten;
 - die Gately-Verwaltungsoberfläche mit einem Klick öffnen, der sichere Einstiegspfad aus den globalen Einstellungen ist bereits im Link enthalten;
-- den Port der Verwaltungsoberfläche festlegen. Er wird in `/etc/config/gately` gespeichert und überschreibt, wenn gesetzt, die Listen-Adresse aus den globalen Gately-Einstellungen. Das hilft, wenn die Oberfläche wegen eines Portkonflikts oder eines falschen Ports nicht erreichbar ist; leer gelassen gelten die globalen Einstellungen.
+- den Port der Verwaltungsoberfläche festlegen. Er wird in `/etc/config/gately` gespeichert und ersetzt, wenn gesetzt, den Port der Listen-Adresse aus den globalen Gately-Einstellungen (ein Host-Teil wie eine Loopback- oder LAN-Adresse bleibt erhalten). Das hilft, wenn die Oberfläche wegen eines Portkonflikts oder eines falschen Ports nicht erreichbar ist; leer gelassen gelten die globalen Einstellungen.
 
 Alles Weitere wird wie bisher in der Gately-Verwaltungsoberfläche eingestellt. Die App folgt der LuCI-Sprache und ist auf Chinesisch (vereinfacht und traditionell), Englisch, Japanisch, Koreanisch, Deutsch, Französisch, Spanisch, Russisch und Portugiesisch (Brasilien) übersetzt. Zum Deinstallieren entfernen Sie zuerst `luci-app-gately` (`opkg remove luci-app-gately` bzw. `apk del luci-app-gately`) und danach gately.
 

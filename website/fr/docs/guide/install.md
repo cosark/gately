@@ -113,7 +113,7 @@ Ouvrez ensuite **Services → Gately** dans LuCI pour :
 - voir l'état du service, la version, la mémoire utilisée et le démarrage automatique ;
 - démarrer, arrêter et redémarrer le service, et activer ou désactiver le démarrage automatique ;
 - ouvrir l'interface d'administration de Gately en un clic, avec l'entrée sécurisée des paramètres globaux déjà incluse dans le lien ;
-- définir le port de l'interface d'administration. Il est enregistré dans `/etc/config/gately` et, s'il est renseigné, remplace l'adresse d'écoute des paramètres globaux de Gately, ce qui dépanne quand l'interface est inaccessible à cause d'un conflit de port ou d'un mauvais port ; laissez-le vide pour suivre les paramètres globaux.
+- définir le port de l'interface d'administration. Il est enregistré dans `/etc/config/gately` et, s'il est renseigné, remplace le port de l'adresse d'écoute des paramètres globaux de Gately (la partie hôte, comme une adresse de boucle locale ou du LAN, est conservée), ce qui dépanne quand l'interface est inaccessible à cause d'un conflit de port ou d'un mauvais port ; laissez-le vide pour suivre les paramètres globaux.
 
 Tout le reste se configure toujours dans l'interface d'administration de Gately. L'application suit la langue de LuCI et est traduite en chinois simplifié et traditionnel, anglais, japonais, coréen, allemand, français, espagnol, russe et portugais (Brésil). Pour désinstaller, supprimez d'abord `luci-app-gately` (`opkg remove luci-app-gately` ou `apk del luci-app-gately`), puis gately.
 

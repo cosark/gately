@@ -84,7 +84,7 @@ mkdir -p "$IPK/control"
 cat >"$IPK/control/control" <<EOF
 Package: luci-app-gately
 Version: $IPK_VER
-Depends: gately, luci-base
+Depends: gately (>= $IPK_VER), luci-base
 License: Apache-2.0
 Section: luci
 URL: $URL
@@ -110,7 +110,7 @@ apk mkpkg \
 	--info "origin:gately" \
 	--info "url:$URL" \
 	--info "maintainer:$MAINT" \
-	--info "depends:gately luci-base" \
+	--info "depends:gately>=$APK_VER luci-base" \
 	--script "post-install:$SCRIPTS/postinst" \
 	--script "post-upgrade:$SCRIPTS/postinst" \
 	--script "post-deinstall:$SCRIPTS/postrm" \

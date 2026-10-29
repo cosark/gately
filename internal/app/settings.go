@@ -285,8 +285,9 @@ func (a *App) handlePutSettings(w http.ResponseWriter, r *http.Request) {
 	}
 	// 令牌不再通过全局设置管理，忽略客户端提交的旧字段
 	next.LegacyAPIToken = old.LegacyAPIToken
-	// 命令行 -listen 覆盖时不改写配置文件中的地址
-	if a.opts.Listen != "" {
+	// 命令行 -listen 覆盖时（如 OpenWrt 的 LuCI 中设置了端口）：没改监听地址就保留配置文件中的原地址；
+	// 在界面上改了则写入配置文件，运行中仍以覆盖值为准，去掉覆盖后生效
+	if a.opts.Listen != "" && next.Listen == old.Listen {
 		next.Listen = a.fileListen
 	}
 	if err := a.store.Save(settingsName, next); err != nil {

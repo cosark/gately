@@ -21,7 +21,8 @@ program_version() {
 	local stamp cached ver
 
 	[ -x "$PROG" ] || return 0
-	stamp="$(date -r "$PROG" +%s 2>/dev/null) $(wc -c <"$PROG" 2>/dev/null)"
+	# 大小从 ls 取：BusyBox 的 wc -c 会把约 40 MB 的二进制逐字节读一遍，每 5 秒轮询一次时开销明显
+	stamp="$(date -r "$PROG" +%s 2>/dev/null) $(ls -ln "$PROG" 2>/dev/null | awk '{ print $5 }')"
 	if [ -f "$VERSION_CACHE" ]; then
 		cached=$(head -n 1 "$VERSION_CACHE")
 		if [ "$cached" = "$stamp" ]; then

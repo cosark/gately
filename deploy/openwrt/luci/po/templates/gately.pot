@@ -37,7 +37,7 @@ msgstr ""
 msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
 msgstr ""
 
-msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port and keeps the host part of that address; listen address changes made in Gately are saved and take effect after this field is cleared."
 msgstr ""
 
 msgid "Memory"
@@ -64,16 +64,19 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-msgid "Start on boot"
+msgid "Start"
 msgstr ""
 
-msgid "Start"
+msgid "Start on boot"
 msgstr ""
 
 msgid "Status"
 msgstr ""
 
 msgid "Stop"
+msgstr ""
+
+msgid "This port is already used by the HTTPS listen address in the Gately global settings"
 msgstr ""
 
 msgid "Version"

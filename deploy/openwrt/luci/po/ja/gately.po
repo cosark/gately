@@ -39,8 +39,8 @@ msgstr "Gately がインストールされていません。先に gately パッ
 msgid "LAN only is on in the Gately global settings, so only LAN addresses can open it"
 msgstr "Gately のグローバル設定で「LAN のみ」が有効なため、LAN のアドレスからのみ開けます"
 
-msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port on all addresses, and listen address changes made in Gately take effect only after this field is cleared."
-msgstr "空欄にすると Gately のグローバル設定の待ち受けアドレス（現在 %s）を使います。入力すると Gately はすべてのアドレスでこのポートを待ち受け、Gately で変更した待ち受けアドレスはこの欄を空にするまで反映されません。"
+msgid "Leave empty to use the listen address in the Gately global settings (currently %s). When set, Gately listens on this port and keeps the host part of that address; listen address changes made in Gately are saved and take effect after this field is cleared."
+msgstr "空欄にすると Gately のグローバル設定の待ち受けアドレス（現在 %s）を使います。入力すると Gately はこのポートで待ち受け、アドレスのホスト部分はそのまま使います。Gately で変更した待ち受けアドレスは保存され、この欄を空にすると反映されます。"
 
 msgid "Memory"
 msgstr "メモリ"
@@ -66,17 +66,20 @@ msgstr "動作状態"
 msgid "Settings"
 msgstr "設定"
 
-msgid "Start on boot"
-msgstr "自動起動"
-
 msgid "Start"
 msgstr "開始"
+
+msgid "Start on boot"
+msgstr "自動起動"
 
 msgid "Status"
 msgstr "状態"
 
 msgid "Stop"
 msgstr "停止"
+
+msgid "This port is already used by the HTTPS listen address in the Gately global settings"
+msgstr "このポートは Gately のグローバル設定の HTTPS 待ち受けアドレスで使用されています"
 
 msgid "Version"
 msgstr "バージョン"
